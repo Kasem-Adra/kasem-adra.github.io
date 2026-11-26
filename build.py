@@ -270,7 +270,7 @@ def localize_pages():
                 heading, summary = {
                     'en': ('Protocol summary', 'ACO‑LLM proposes a controller that uses a task contract to choose between direct inference and bounded tool use. Observable failures can trigger limited repair attempts. The evaluation compared it with the fixed-route reference arm with tool support using the same local model and execution budgets, on matched Arabic and English tasks with controlled tool failures. The protocol describes the study design. The evaluation results were published separately.'),
                     'ar': ('ملخّص البروتوكول', 'يقترح ACO‑LLM آلية تستخدم عقد المهمة للاختيار بين الاستدلال المباشر واستخدام الأدوات ضمن حدود محددة، مع محاولات إصلاح محدودة عند رصد إخفاق. وقارن التقييم هذه الآلية بالذراع المرجعية ذات المسار الثابت الداعم للأدوات باستخدام النموذج المحلي نفسه وميزانيات تنفيذ متساوية، على مهام متكافئة بالعربية والإنجليزية مع إدخال أعطال مضبوطة في الأدوات. يصف البروتوكول تصميم الدراسة. ونُشرت نتائج التقييم في ورقة مستقلة.'),
-                    'fr': ('Résumé du protocole', 'ACO‑LLM propose un contrôleur qui s’appuie sur un contrat de tâche pour choisir entre inférence directe et usage limité des outils. Une défaillance observable peut déclencher un nombre limité de tentatives de correction. L’évaluation a comparé ce contrôleur au bras de référence à parcours fixe avec outils, avec le même modèle local et les mêmes budgets, sur des tâches équivalentes en arabe et en anglais avec injection de pannes contrôlées. Le protocole décrit le plan de l’étude. Les résultats de l’évaluation ont été publiés séparément.'),
+                    'fr': ('Résumé du protocole', 'ACO‑LLM propose un contrôleur qui s’appuie sur un contrat de tâche pour choisir entre inférence directe et usage limité des outils. Une défaillance observable peut déclencher un nombre limité de tentatives de correction. L’évaluation a comparé ce contrôleur au bras de référence utilisant un routage fixe avec accès aux outils, avec le même modèle local et les mêmes budgets, sur des tâches équivalentes en arabe et en anglais avec injection de pannes contrôlées. Le protocole décrit le plan de l’étude. Les résultats de l’évaluation ont été publiés séparément.'),
                 }[lang]
                 abstract = f'<h2>{heading}</h2><p>{summary}</p>'
                 pdf_link = f'<p><a href="{escape(publication["pdf"], quote=True)}">{label} · v1.7</a></p>'
@@ -287,6 +287,14 @@ def localize_pages():
             if path == paper:
                 label = {'en':'View evaluation results','ar':'اطّلع على نتائج التقييم','fr':'Voir les résultats de l’évaluation'}[lang]
                 body = body.replace('</div></main>', f'<p><a href="{locale_path(lang, results.PATH)}">{label}</a></p></div></main>', 1)
+            if path == '/publications/':
+                category, card_title, card_description = {
+                    'en': ('PREPRINT', 'ACO‑LLM evaluation results', 'Results from the held-out evaluation of structural verification and repair.'),
+                    'ar': ('ورقة أولية', 'نتائج تقييم ACO‑LLM', 'نتائج تقييم التحقق البنيوي والإصلاح على مجموعة مهام مستقلة عن التجربة التمهيدية.'),
+                    'fr': ('PRÉPUBLICATION', 'Résultats de l’évaluation ACO‑LLM', 'Résultats de l’évaluation de la vérification structurelle et de la réparation sur des tâches réservées au test.'),
+                }[lang]
+                card = row(category, card_title, card_description, locale_path(lang, results.PATH))
+                body = body.replace('</div></main>', card + '</div></main>', 1)
             about_title, membership = {
                 'en': ('About', 'Member of the Association nationale de l’intelligence artificielle (ANIA), France.'),
                 'ar': ('عني', 'عضو في الجمعية الوطنية للذكاء الاصطناعي (ANIA)، فرنسا.'),
