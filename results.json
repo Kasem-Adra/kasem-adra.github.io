@@ -1,0 +1,9 @@
+{
+ "record":"https://zenodo.org/records/24549236",
+ "pdf":"https://zenodo.org/api/records/24549236/files/ACO-LLM_results_preprint.pdf/content",
+ "model":"gemma4:12b-it-qat",
+ "base_tasks":96,"episodes_per_arm":1344,"episodes_total":8064,
+ "main":{"delta_pp":20.83,"ci_low":18.23,"ci_high":23.44,"resamples":10000},
+ "B":{"ok":834,"n":1344,"silent_ok":0,"silent_n":384,"sec":2.096,"tok":44.57},
+ "D":{"ok":1192,"n":1344,"silent_ok":363,"silent_n":384,"sec":2.279,"tok":49.83}
+}

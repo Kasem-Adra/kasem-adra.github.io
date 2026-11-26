@@ -19,3 +19,8 @@ body{background:var(--surface)}
 .bio-panel p + p{margin-top:.8rem}
 .portrait{display:block;width:100%;height:auto;aspect-ratio:auto;border-radius:.6rem}
 @media(max-width:640px){.bio-panel{grid-template-columns:1fr}.portrait{grid-row:1;width:8rem;margin-inline:auto}}
+.results-table{overflow-x:auto;margin-block:1rem}
+.results-table table{border-collapse:collapse;width:100%;min-width:34rem}
+.results-table :is(th,td){text-align:start;border-bottom:1px solid var(--line);padding:.55rem}
+.results-table td{white-space:nowrap}
+.subpage h2{margin-block:1.5rem .5rem}

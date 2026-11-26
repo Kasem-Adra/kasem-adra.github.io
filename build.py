@@ -4,6 +4,7 @@ from xml.etree.ElementTree import Element, SubElement, ElementTree
 from html import escape
 from json import dumps, loads
 from re import sub
+import results
 
 public_build = environ.get('SITE_PUBLIC') == '1'
 origin = 'https://kasemadra.com'
@@ -189,6 +190,11 @@ biographies = {
 }
 
 
+about = '/about/'
+page(about, 'About', 'Home', '')
+page(results.PATH, 'ACO‑LLM results', 'Research', '')
+
+
 def localize_pages():
     import re
     labels = {'en': 'English', 'ar': 'العربية', 'fr': 'Français'}
@@ -197,7 +203,7 @@ def localize_pages():
         'ar': {'en': 'الإنجليزية', 'ar': 'العربية', 'fr': 'الفرنسية'},
         'fr': {'en': 'Anglais', 'ar': 'Arabe', 'fr': 'Français'},
     }
-    paths = ('/', *tuple(nav.values())[1:], project, paper, note, arabic)
+    paths = ('/', *tuple(nav.values())[1:], project, paper, results.PATH, about, note, arabic)
     for path in paths:
         base = Path(f'dist{path}index.html').read_text(encoding='utf-8')
         for lang in labels:
@@ -262,9 +268,9 @@ def localize_pages():
             if path == paper:
                 label = {'en': 'Download PDF', 'ar': 'تحميل ملف PDF', 'fr': 'Télécharger le PDF'}[lang]
                 heading, summary = {
-                    'en': ('Protocol summary', 'ACO‑LLM proposes a controller that uses a task contract to choose between direct inference and bounded tool use. Observable failures can trigger limited repair attempts. The planned evaluation compares it with a fixed-effort agent using the same local model and execution budgets, on matched Arabic and English tasks with controlled tool failures. The protocol reports no empirical model results.'),
-                    'ar': ('ملخّص البروتوكول', 'يقترح ACO‑LLM آلية تستخدم عقد المهمة للاختيار بين الاستدلال المباشر واستخدام الأدوات ضمن حدود محددة، مع محاولات إصلاح محدودة عند رصد إخفاق. وتقارن التجربة المخططة هذه الآلية بوكيل يعمل بجهد ثابت باستخدام النموذج المحلي نفسه وميزانيات تنفيذ متساوية، على مهام متكافئة بالعربية والإنجليزية مع إدخال أعطال مضبوطة في الأدوات. لا يتضمن البروتوكول نتائج تجريبية للنموذج.'),
-                    'fr': ('Résumé du protocole', 'ACO‑LLM propose un contrôleur qui s’appuie sur un contrat de tâche pour choisir entre inférence directe et usage limité des outils. Une défaillance observable peut déclencher un nombre limité de tentatives de correction. L’évaluation prévue compare ce contrôleur à un agent à effort fixe, avec le même modèle local et les mêmes budgets, sur des tâches équivalentes en arabe et en anglais avec injection de pannes contrôlées. Le protocole ne présente aucun résultat empirique sur le modèle.'),
+                    'en': ('Protocol summary', 'ACO‑LLM proposes a controller that uses a task contract to choose between direct inference and bounded tool use. Observable failures can trigger limited repair attempts. The evaluation compared it with the fixed-route reference arm with tool support using the same local model and execution budgets, on matched Arabic and English tasks with controlled tool failures. The protocol describes the study design. The evaluation results were published separately.'),
+                    'ar': ('ملخّص البروتوكول', 'يقترح ACO‑LLM آلية تستخدم عقد المهمة للاختيار بين الاستدلال المباشر واستخدام الأدوات ضمن حدود محددة، مع محاولات إصلاح محدودة عند رصد إخفاق. وقارن التقييم هذه الآلية بالذراع المرجعية ذات المسار الثابت الداعم للأدوات باستخدام النموذج المحلي نفسه وميزانيات تنفيذ متساوية، على مهام متكافئة بالعربية والإنجليزية مع إدخال أعطال مضبوطة في الأدوات. يصف البروتوكول تصميم الدراسة. ونُشرت نتائج التقييم في ورقة مستقلة.'),
+                    'fr': ('Résumé du protocole', 'ACO‑LLM propose un contrôleur qui s’appuie sur un contrat de tâche pour choisir entre inférence directe et usage limité des outils. Une défaillance observable peut déclencher un nombre limité de tentatives de correction. L’évaluation a comparé ce contrôleur au bras de référence à parcours fixe avec outils, avec le même modèle local et les mêmes budgets, sur des tâches équivalentes en arabe et en anglais avec injection de pannes contrôlées. Le protocole décrit le plan de l’étude. Les résultats de l’évaluation ont été publiés séparément.'),
                 }[lang]
                 abstract = f'<h2>{heading}</h2><p>{summary}</p>'
                 pdf_link = f'<p><a href="{escape(publication["pdf"], quote=True)}">{label} · v1.7</a></p>'
@@ -274,6 +280,24 @@ def localize_pages():
             contact_label = {'en': 'Email', 'ar': 'راسلني', 'fr': 'Contact'}[lang]
             contact_link = f'<a href="mailto:hello@kasemadra.com">{contact_label}</a>'
             body = body.replace('>Zenodo</a></div>', '>Zenodo</a>' + contact_link + '</div>')
+            if path == results.PATH:
+                body = body.replace('<main></main>', '<main>' + results.render(lang) + '</main>')
+            if path == '/':
+                body = sub(r'(<section><h2>[^<]+</h2>.*?)(</section>)', lambda match: match[1] + results.homepage_summary(lang) + match[2], body, count=1)
+            if path == paper:
+                label = {'en':'View evaluation results','ar':'اطّلع على نتائج التقييم','fr':'Voir les résultats de l’évaluation'}[lang]
+                body = body.replace('</div></main>', f'<p><a href="{locale_path(lang, results.PATH)}">{label}</a></p></div></main>', 1)
+            about_title, membership = {
+                'en': ('About', 'Member of the Association nationale de l’intelligence artificielle (ANIA), France.'),
+                'ar': ('عني', 'عضو في الجمعية الوطنية للذكاء الاصطناعي (ANIA)، فرنسا.'),
+                'fr': ('À propos', 'Membre de l’Association nationale de l’intelligence artificielle (ANIA).'),
+            }[lang]
+            about_link = f'<a href="{locale_path(lang, about)}">{about_title}</a>'
+            body = body.replace('</nav></header>', about_link + '</nav></header>', 1)
+            if path == about:
+                paragraphs = ''.join(f'<p>{escape(paragraph)}</p>' for paragraph in biographies[lang][:-1])
+                body = body.replace('<main></main>', f'<main><div class="subpage"><h1>{about_title}</h1>{paragraphs}<p>{membership}</p></div></main>')
+                head = sub(r'<title>[^<]*</title>', lambda _: f'<title>{about_title} · Kasem Adra</title>', head)
             theme_label = {'en': 'Dark mode', 'ar': 'الوضع الداكن', 'fr': 'Mode sombre'}[lang]
             theme_button = f'<button class="theme-toggle" type="button" aria-label="{theme_label}" aria-pressed="false" hidden><span aria-hidden="true"></span></button>'
             body = body.replace('</nav></header>', f'</nav><div class="header-controls">{switcher}{theme_button}</div></header>')
@@ -293,6 +317,9 @@ def localize_pages():
                 }[lang]
                 head = sub(r'<title>[^<]*</title>', lambda _: f'<title>{escape(title)}</title>', head)
                 head = sub(r'<meta name="description" content="[^"]*">', lambda _: f'<meta name="description" content="{escape(description, quote=True)}">', head)
+            if path == results.PATH:
+                head = sub(r'<title>[^<]*</title>', lambda _: f'<title>{escape(results.T[lang]["title"])}</title>', head)
+                head = sub(r'<meta name="description" content="[^"]*">', lambda _: f'<meta name="description" content="{escape(results.description(lang), quote=True)}">', head)
             rendered = head.replace('</head>', f'{alternates}</head>') + '<body>' + body
             output.write_text(rendered, encoding='utf-8')
             if lang == 'en':
