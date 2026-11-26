@@ -280,6 +280,14 @@ def localize_pages():
                 alternates += f'<link rel="canonical" href="{canonical}">'
             output = Path(f'dist{locale_path(lang, path)}index.html')
             output.parent.mkdir(parents=True, exist_ok=True)
+            if path == '/':
+                title, description = {
+                    'en': ('Kasem Adra', 'Kasem Adra is an independent AI researcher in France. Explore his work on local AI assistants, the ACO‑LLM protocol, and Arabic calligraphy.'),
+                    'ar': ('قاسم عدرا', 'قاسم عدرا، باحث مستقل في الذكاء الاصطناعي من بانياس ويعيش في فرنسا. تعرّف على مشاريعه في الذكاء الاصطناعي المحلي وبروتوكول ACO‑LLM وكتاباته عن الخط العربي.'),
+                    'fr': ('Kasem Adra', 'Kasem Adra est chercheur indépendant en IA en France. Découvrez ses projets sur les assistants IA locaux, le protocole ACO‑LLM et ses articles sur la calligraphie arabe.'),
+                }[lang]
+                head = sub(r'<title>[^<]*</title>', lambda _: f'<title>{escape(title)}</title>', head)
+                head = sub(r'<meta name="description" content="[^"]*">', lambda _: f'<meta name="description" content="{escape(description, quote=True)}">', head)
             rendered = head.replace('</head>', f'{alternates}</head>') + '<body>' + body
             output.write_text(rendered, encoding='utf-8')
             if lang == 'en':
