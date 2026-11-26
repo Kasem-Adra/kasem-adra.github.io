@@ -268,7 +268,9 @@ def localize_pages():
                 }[lang]
                 abstract = f'<h2>{heading}</h2><p>{summary}</p>'
                 pdf_link = f'<p><a href="{escape(publication["pdf"], quote=True)}">{label} · v1.7</a></p>'
-                body = body.replace('</div></main>', abstract + pdf_link + '</div></main>', 1)
+                results_label = {'en': 'Read the separate empirical results paper on Zenodo', 'ar': 'اقرأ ورقة النتائج التجريبية المستقلة على Zenodo', 'fr': 'Lire la publication distincte des résultats empiriques sur Zenodo'}[lang]
+                results_link = f'<p><a href="https://doi.org/10.5281/zenodo.24549236">{results_label}</a></p>'
+                body = body.replace('</div></main>', abstract + pdf_link + results_link + '</div></main>', 1)
             contact_label = {'en': 'Email', 'ar': 'راسلني', 'fr': 'Contact'}[lang]
             contact_link = f'<a href="mailto:hello@kasemadra.com">{contact_label}</a>'
             body = body.replace('>Zenodo</a></div>', '>Zenodo</a>' + contact_link + '</div>')
