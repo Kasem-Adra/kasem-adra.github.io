@@ -269,6 +269,9 @@ def localize_pages():
                 abstract = f'<h2>{heading}</h2><p>{summary}</p>'
                 pdf_link = f'<p><a href="{escape(publication["pdf"], quote=True)}">{label} · v1.7</a></p>'
                 body = body.replace('</div></main>', abstract + pdf_link + '</div></main>', 1)
+            contact_label = {'en': 'Email', 'ar': 'راسلني', 'fr': 'Contact'}[lang]
+            contact_link = f'<a href="mailto:hello@kasemadra.com">{contact_label}</a>'
+            body = body.replace('>Zenodo</a></div>', '>Zenodo</a>' + contact_link + '</div>')
             theme_label = {'en': 'Dark mode', 'ar': 'الوضع الداكن', 'fr': 'Mode sombre'}[lang]
             theme_button = f'<button class="theme-toggle" type="button" aria-label="{theme_label}" aria-pressed="false" hidden><span aria-hidden="true"></span></button>'
             body = body.replace('</nav></header>', f'</nav><div class="header-controls">{switcher}{theme_button}</div></header>')
