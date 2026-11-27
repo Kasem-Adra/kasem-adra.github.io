@@ -82,10 +82,15 @@ results_pdf_target = Path('dist' + results_pdf)
 results_pdf_target.parent.mkdir(parents=True, exist_ok=True)
 results_pdf_target.write_bytes(b64decode(Path('_publications/aco-llm-results.pdf.b64').read_text(encoding='ascii')))
 hero_b64 = Path('_posts/assets/local-ai-agent-reliability-hero.webp.b64')
-if hero_b64.exists():
+hero_parts = [hero_b64] + [
+    Path(f'_posts/assets/local-ai-agent-reliability-hero-part-{index:02d}.b64')
+    for index in (2, 3, 4)
+]
+if all(part.exists() for part in hero_parts):
+    hero_data = ''.join(part.read_text(encoding='ascii').strip() for part in hero_parts)
     hero_target = Path('dist/assets/local-ai-agent-reliability-hero.webp')
     hero_target.parent.mkdir(parents=True, exist_ok=True)
-    hero_target.write_bytes(b64decode(hero_b64.read_text(encoding='ascii')))
+    hero_target.write_bytes(b64decode(hero_data))
 
 
 def row(category, title, description, url, lang='en'):
