@@ -156,7 +156,7 @@ These are the execution settings reported in the results preprint; they should n
 
 The primary estimate showed that arm D increased task success, as judged by the independent evaluator, by **20.83 percentage points** compared with arm B. The 95% confidence interval ranged from 18.23 to 23.44 percentage points.
 
-The estimate was calculated from paired differences within each of the 96 base tasks, with equal weight assigned to every base task. A cluster bootstrap with 10,000 resamples of base tasks within their strata was used to estimate the confidence interval. [2](https://doi.org/10.5281/zenodo.24549236)
+The estimate was calculated from paired differences within each of the 96 base tasks, with equal weight assigned to every base task. Percentile intervals used 10,000 resamples of complete base-task clusters within each stratum, with seed 20261126 and base-task IDs sorted before resampling. The estimate also exceeded the protocol's provisional five-percentage-point practical-relevance target; that target was proposed for this study and is not an established operational standard. [2](https://doi.org/10.5281/zenodo.24549236)
 
 ### 6.2 Raw success rates
 
