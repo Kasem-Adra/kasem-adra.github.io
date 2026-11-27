@@ -327,8 +327,21 @@ def localize_pages():
             about_link = f'<a href="{locale_path(lang, about)}">{about_title}</a>'
             body = body.replace('</nav></header>', about_link + '</nav></header>', 1)
             if path == about:
-                paragraphs = ''.join(f'<p>{escape(paragraph)}</p>' for paragraph in biographies[lang][:-1])
-                body = body.replace('<main></main>', f'<main><div class="subpage"><h1>{about_title}</h1>{paragraphs}<p>{membership}</p></div></main>')
+                *bio, portrait_alt = biographies[lang]
+                paragraphs = ''.join(f'<p>{escape(paragraph)}</p>' for paragraph in bio)
+                portrait = f'<img class="portrait" src="/assets/kasem-adra-portrait.jpg" alt="{escape(portrait_alt, quote=True)}" width="782" height="1024" style="width:min(160px,100%);height:auto">'
+                identity = {k: v for k, v in person.items() if k != '@context'}
+                identity['name'], identity['alternateName'] = ('قاسم عدرا', 'Kasem Adra') if lang == 'ar' else ('Kasem Adra', 'قاسم عدرا')
+                profile_page = {
+                    '@context': 'https://schema.org', '@type': 'ProfilePage',
+                    'url': origin + locale_path(lang, path), 'inLanguage': lang,
+                    'mainEntity': identity,
+                }
+                head = head.replace('</head>', '<script type="application/ld+json">' + dumps(profile_page, ensure_ascii=False) + '</script></head>')
+                research_label = {'en': 'ACO-LLM research', 'ar': 'أبحاث ACO-LLM', 'fr': 'Recherche ACO-LLM'}[lang]
+                research_links = f'<p><a href="{locale_path(lang, paper)}">{research_label}</a></p>'
+                identity_links = '<div class="profiles">' + ''.join(f'<a href="{url}">{label}</a>' for label, url in [('ORCID', 'https://orcid.org/0009-0004-7615-4978'), ('GitHub', 'https://github.com/Kasem-Adra')]) + '</div>'
+                body = body.replace('<main></main>', f'<main><div class="subpage"><h1>{about_title} · {identity["name"]}</h1><p>{identity["alternateName"]}</p>{portrait}{paragraphs}<p>{membership}</p>{identity_links}{research_links}</div></main>')
                 head = sub(r'<title>[^<]*</title>', lambda _: f'<title>{about_title} · Kasem Adra</title>', head)
             theme_label = {'en': 'Dark mode', 'ar': 'الوضع الداكن', 'fr': 'Mode sombre'}[lang]
             theme_button = f'<button class="theme-toggle" type="button" aria-label="{theme_label}" aria-pressed="false" hidden><span aria-hidden="true"></span></button>'
