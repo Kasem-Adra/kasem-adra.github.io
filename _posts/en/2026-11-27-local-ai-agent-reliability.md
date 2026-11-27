@@ -247,6 +247,14 @@ No. The evaluation used simulated tools in a controlled environment. A separate 
 
 No. It is a results preprint that has not been peer reviewed. Its methods and results are available on Zenodo and should be interpreted with that status in mind.
 
+## Original research and related pages
+
+For the underlying research documents, rather than this explanatory overview alone, see:
+- [ACO-LLM protocol page on this website](https://kasemadra.com/en/publications/aco-llm/).
+- [ACO-LLM evaluation results page on this website](https://kasemadra.com/en/publications/aco-llm-results/).
+- [ACO-LLM research protocol on Zenodo](https://doi.org/10.5281/zenodo.24488951).
+- [ACO-LLM results preprint on Zenodo](https://doi.org/10.5281/zenodo.24549236).
+
 ## Conclusion
 
 The reliability of an AI assistant should not be measured by how confidently it responds or how readily it announces completion. The more important criterion is whether the final state matches the request and whether appropriate evidence can be provided.
