@@ -9,6 +9,16 @@ import results
 import article_render as article_renderer
 
 public_build = environ.get('SITE_PUBLIC') == '1'
+
+# Remove stale generated pages before rebuilding, while preserving source assets,
+# stylesheets, scripts and publication PDFs stored under dist/.
+dist_root = Path("dist")
+if dist_root.exists():
+    for generated_page in dist_root.rglob("index.html"):
+        generated_page.unlink()
+    (dist_root / "sitemap.xml").unlink(missing_ok=True)
+    (dist_root / "robots.txt").unlink(missing_ok=True)
+
 origin = 'https://kasemadra.com'
 robots_meta = '' if public_build else '<meta name="robots" content="noindex">'
 
