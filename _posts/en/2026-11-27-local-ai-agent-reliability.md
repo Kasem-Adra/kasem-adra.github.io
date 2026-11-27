@@ -5,7 +5,7 @@ description: "An evidence-based guide to local AI assistant reliability, silent 
 subtitle: "From running language models locally to building agents that execute tasks and verify their outcomes"
 summary: "A success message does not prove that an AI agent completed a task. This article explains silent tool failures, task routing, verification and bounded repair, then examines the ACO-LLM evaluation, its reported results and the limits of their interpretation."
 lang: "en"
-permalink: "/blog/local-ai-agent-reliability/"
+permalink: "/en/blog/local-ai-agent-reliability/"
 date_published: "2026-11-27"
 date_modified: "2026-11-27"
 published_label: "27 November 2026"
