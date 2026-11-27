@@ -156,7 +156,7 @@ These are the execution settings reported in the results preprint; they should n
 
 The primary estimate showed that arm D increased task success, as judged by the independent evaluator, by **20.83 percentage points** compared with arm B. The 95% confidence interval ranged from 18.23 to 23.44 percentage points.
 
-The estimate was calculated from paired differences within each of the 96 base tasks, with equal weight assigned to every base task. A cluster bootstrap with 10,000 resamples of base tasks within their strata was used to estimate the confidence interval.
+The estimate was calculated from paired differences within each of the 96 base tasks, with equal weight assigned to every base task. A cluster bootstrap with 10,000 resamples of base tasks within their strata was used to estimate the confidence interval. [2](https://doi.org/10.5281/zenodo.24549236)
 
 ### 6.2 Raw success rates
 
@@ -171,7 +171,7 @@ The following table reports successful episodes and raw success rates across all
 | E | 1,203 of 1,344 | 89.51% |
 | F | 1,191 of 1,344 | 88.62% |
 
-The raw difference between B and D was **26.64 percentage points**. It is not the same as the primary estimate of 20.83 points because the raw rate counts every episode, whereas the primary estimate gives each base task equal weight. Tool tasks were run under three conditions and therefore contribute more episodes to the raw rate.
+The raw difference between B and D was **26.64 percentage points**. It is not the same as the primary estimate of 20.83 points because the raw rate counts every episode, whereas the primary estimate gives each base task equal weight. Tool tasks were run under three conditions and therefore contribute more episodes to the raw rate. [2](https://doi.org/10.5281/zenodo.24549236)
 
 ### 6.3 Silent-failure condition
 
@@ -186,7 +186,7 @@ For episodes assigned to the silent-failure condition, the results across all si
 | E | 363 of 384 | 94.53% |
 | F | 363 of 384 | 94.53% |
 
-This shows a substantial improvement for the arms with verification and bounded repair under the specific injected condition. It does not mean that every silent failure was resolved: 21 of the 384 episodes remained unsuccessful in each of D, E and F.
+This shows a substantial improvement for the arms with verification and bounded repair under the specific injected condition. It does not mean that every silent failure was resolved: 21 of the 384 episodes remained unsuccessful in each of D, E and F. [2](https://doi.org/10.5281/zenodo.24549236)
 
 ### 6.4 Execution cost
 
@@ -201,7 +201,7 @@ Mean time and generated tokens across the six arms were:
 | E | 2.286 s | 49.83 |
 | F | 2.287 s | 49.81 |
 
-Compared with B, D used an additional 0.183 seconds per episode on average (+8.73%) and generated 5.26 additional tokens (+11.80%). Verification and repair should therefore not be described as cost-free.
+Compared with B, D used an additional 0.183 seconds per episode on average (+8.73%) and generated 5.26 additional tokens (+11.80%). Verification and repair should therefore not be described as cost-free. [2](https://doi.org/10.5281/zenodo.24549236)
 
 ### 6.5 Secondary contrasts and component interpretation
 
@@ -218,13 +218,13 @@ The following table reports the planned secondary contrasts, including the overa
 
 The median paired D-minus-B latency difference on deterministic reasoning tasks alone was −47 milliseconds (−78 to −31). In the assigned-fault analysis, D-minus-C success was +46.48 percentage points (43.36 to 48.83), regardless of whether execution actually reached the fault trigger.
 
-These contrasts are secondary and exploratory, and their intervals are unadjusted for multiple comparisons. The C−B and D−F intervals include zero: the study therefore did not establish a positive routing-only effect in these two contrasts, although this is not proof of no effect or equivalence. By contrast, F−B and D−C were positive; both compare the addition of the verification-and-repair bundle under different routing policies. Because verification and repair were tested together, their separate effects cannot be isolated. The interaction interval also includes zero and does not provide clear evidence of an interaction.
+These contrasts are secondary and exploratory, and their intervals are unadjusted for multiple comparisons. The C−B and D−F intervals include zero: the study therefore did not establish a positive routing-only effect in these two contrasts, although this is not proof of no effect or equivalence. By contrast, F−B and D−C were positive; both compare the addition of the verification-and-repair bundle under different routing policies. Because verification and repair were tested together, their separate effects cannot be isolated. The interaction interval also includes zero and does not provide clear evidence of an interaction. [2](https://doi.org/10.5281/zenodo.24549236)
 
 ## 7. What does “verification” mean in this evaluation?
 
 Not all checks provide the same level of evidence. A runtime check that an agent can use during execution is different from an independent evaluator that determines whether the final result is correct.
 
-In one evaluation example, an output passed a structural check because it contained integers, but it did not match the correct value checked by the independent evaluator: the expected product was 1908, while the output contained 1938. The example illustrates why structural validity is not equivalent to substantive correctness.
+In one evaluation example, an output passed a structural check because it contained integers, but it did not match the correct value checked by the independent evaluator: the expected product was 1908, while the output contained 1938. The example illustrates why structural validity is not equivalent to substantive correctness. [2](https://doi.org/10.5281/zenodo.24549236)
 
 Acceptance criteria must therefore match the task. File existence is insufficient when the requested content must also be checked. A valid CSV schema does not prove that every value is correct, and completion of an intermediate step does not prove that an entire workflow succeeded.
 
@@ -232,11 +232,11 @@ The strength of an evaluation also depends on the quality of its evaluator and i
 
 ### 7.1 Limits of the structural verifier
 
-Across the arms with a verification gate, the structural verifier accepted 69 episodes in D, 60 in E and 69 in F that the independent evaluator scored as unsuccessful: 198 cases in total. This illustrates that checking file presence or structure is not equivalent to verifying the correctness of its contents.
+Across the arms with a verification gate, the structural verifier accepted 69 episodes in D, 60 in E and 69 in F that the independent evaluator scored as unsuccessful: 198 cases in total. This illustrates that checking file presence or structure is not equivalent to verifying the correctness of its contents. [2](https://doi.org/10.5281/zenodo.24549236)
 
 ### 7.2 Completion claims
 
-The preprint records no model-authored structured success claims through the structured final_success action. The denominator for a conditional false-claim rate was therefore zero, so that rate could not be estimated. Automatic completion performed by the runner was attributed to the runner, not to the model. The experiment consequently does not quantify false-completion claims in natural-language responses.
+The preprint records no model-authored structured success claims through the structured final_success action. The denominator for a conditional false-claim rate was therefore zero, so that rate could not be estimated. Automatic completion performed by the runner was attributed to the runner, not to the model. The experiment consequently does not quantify false-completion claims in natural-language responses. [2](https://doi.org/10.5281/zenodo.24549236)
 
 ## 8. Limits of the results and claims that are not established
 
