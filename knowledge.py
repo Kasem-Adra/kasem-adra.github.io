@@ -38,10 +38,6 @@ PERSON = {
         "Tool use and error recovery in AI agents",
         "Arabic language technology",
         "Baniyas local history and archival documentation"
-    ],
-    "subjectOf": [
-        {"@type": "ScholarlyArticle", "@id": PROTOCOL_DOI, "url": PROTOCOL_DOI},
-        {"@type": "ScholarlyArticle", "@id": RESULTS_DOI, "url": RESULTS_DOI}
     ]
 }
 
