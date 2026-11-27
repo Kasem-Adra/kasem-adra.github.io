@@ -28,6 +28,7 @@ jobs:
       - name: Validate article pages and structured data
         run: |
           python3 - <<'PY'
+          import hashlib
           import json
           import re
           from pathlib import Path
@@ -63,6 +64,7 @@ jobs:
           assert hero.exists(), "Missing generated hero image"
           data = hero.read_bytes()
           assert data[:4] == b"RIFF" and data[8:12] == b"WEBP", "Hero image is not a valid WebP file"
+          assert hashlib.sha256(data).hexdigest() == "02e985665e63a3988c01ddfbfb64f546134c958898962cd9a8d9462518e1929b", "Hero image bytes do not match the verified source image"
 
           sitemap = (root / "sitemap.xml").read_text(encoding="utf-8")
           for lang in expected_titles:
@@ -71,7 +73,7 @@ jobs:
           for lang in expected_titles:
               protocol = (root / lang / "publications/aco-llm/index.html").read_text(encoding="utf-8")
               results = (root / lang / "publications/aco-llm-results/index.html").read_text(encoding="utf-8")
-              assert article_path.replace("blog/", "blog/") in protocol or "local-ai-agent-reliability" in protocol
+              assert "local-ai-agent-reliability" in protocol
               assert "local-ai-agent-reliability" in results
 
           print("Validated: three localized article pages, structured data, canonicals, hreflang, sitemap, cross-links and WebP hero image.")
