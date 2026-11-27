@@ -20,7 +20,7 @@ editorial_note: "This is an explanatory article. It does not replace the researc
 article_section: "Artificial intelligence; local models; AI agents; reliability engineering"
 keywords: ["local AI", "local AI assistant reliability", "AI agent reliability", "silent tool failure", "independent verification", "ACO-LLM", "Gemma 4", "local language models"]
 about: ["Local artificial intelligence", "AI agents", "task execution verification", "reliability engineering"]
-citations: [{"name":"ACO-LLM Research Protocol","url":"https://doi.org/10.5281/zenodo.24488951"},{"name":"ACO-LLM Evaluation Results preprint","url":"https://doi.org/10.5281/zenodo.24549236"},{"name":"Gemma 4 model overview","url":"https://deepmind.google/models/gemma/gemma-4/"},{"name":"NIST AI 600-1 Generative AI Profile","url":"https://doi.org/10.6028/NIST.AI.600-1"},{"name":"OWASP Top 10 for Agentic Applications 2026","url":"https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/"}]
+citations: [{"name":"ACO-LLM research protocol, version 1.7","url":"https://doi.org/10.5281/zenodo.24488951"},{"name":"ACO-LLM held-out evaluation preprint, version 1","url":"https://doi.org/10.5281/zenodo.24549236"},{"name":"Google DeepMind Gemma 4 model overview","url":"https://deepmind.google/models/gemma/gemma-4/"},{"name":"Ollama gemma4:12b-it-qat model listing","url":"https://ollama.com/library/gemma4:12b-it-qat"},{"name":"NIST AI 600-1 Generative AI Profile","url":"https://doi.org/10.6028/NIST.AI.600-1"},{"name":"OWASP Top 10 for Agentic Applications 2026","url":"https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/"},{"name":"ReAct: Synergizing Reasoning and Acting in Language Models","url":"https://arxiv.org/abs/2210.03629"},{"name":"Reflexion: Language Agents with Verbal Reinforcement Learning","url":"https://arxiv.org/abs/2303.11366"},{"name":"AgentBench: Evaluating LLMs as Agents","url":"https://arxiv.org/abs/2308.03688"},{"name":"Tau-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains","url":"https://arxiv.org/abs/2406.12045"},{"name":"AgentDojo: A Dynamic Environment to Evaluate Prompt Injection Attacks and Defenses for LLM Agents","url":"https://arxiv.org/abs/2406.13352"}]
 ---
 ## Overview
 
@@ -35,7 +35,7 @@ This article examines local AI assistant reliability from a systems-engineering 
 | Subject | Reliability of local AI assistants and tool-using agents |
 | Author | Kasem Adra |
 | Research case study | ACO-LLM |
-| Model used in the evaluation | Gemma 4 12B IT QAT, identifier gemma4:12b-it-qat |
+| Model used in the evaluation | Gemma 4 12B IT QAT, identifier gemma4:12b-it-qat [4] |
 | Task set | 96 base tasks, each with Arabic and English variants |
 | Evaluation size | 8,064 episodes across six experimental arms |
 | Primary comparison | Arm D versus arm B |
@@ -97,6 +97,8 @@ A **task contract** describes the required outcome, whether environmental intera
 
 Routing uses this information to select an execution path. The intention is to avoid unnecessary processing for simple tasks while applying additional controls when a task requires external action.
 
+An important qualification concerns routing: the model was not asked to infer from an unrestricted natural-language request whether tool use was necessary. Each benchmark scenario supplied a public route flag in its task contract. The experiment therefore evaluates routing from known contract metadata, not the accuracy of a general router that must infer the path from arbitrary user requests. [1](https://doi.org/10.5281/zenodo.24488951)
+
 ### 4.2 Outcome verification
 
 A task is not considered successful simply because the model or a tool reports completion. The resulting state must be compared with defined acceptance criteria, ideally by an evaluator independent of the model's success claim.
@@ -124,12 +126,28 @@ These comparisons help examine different parts of the policy. The primary compar
 
 ## 5. Experimental design
 
-The evaluation used one local model: **Gemma 4 12B IT QAT**, with the identifier gemma4:12b-it-qat. The test set contained 96 base tasks, each with an Arabic and an English variant:
+The results preprint reports a held-out set of 96 base tasks, excluding the 24 pilot tasks and all pilot outcomes. The 96 held-out tasks were divided equally among three strata, with 32 tasks in each: deterministic reasoning, single-file data transformation, and multi-output workflows. Each task had Arabic and English variants:
 
-- 32 deterministic-reasoning tasks, evaluated in the clean condition.
-- 64 tool-required tasks, evaluated under three conditions: clean execution, a controlled explicit failure, and a silent no-op in which the tool acknowledges an action without making the state change.
+- 32 deterministic-reasoning tasks, evaluated in the clean condition only.
+- 32 single-file data-transformation tasks and 32 multi-output workflows, each evaluated under three conditions: clean execution, a controlled explicit failure, and a silent no-op in which the tool acknowledged an action without changing state.
 
-Each scheduled case was repeated three times across six experimental arms. This produced 1,344 episodes per arm and **8,064 episodes in total**. The evaluation used simulated tools in a controlled environment; it was not a test of real services or production APIs. [2](https://doi.org/10.5281/zenodo.24549236)
+Each scheduled case was repeated three times across six experimental arms, with episodes matched by base task, language, assigned fault and repetition. This produced 1,344 episodes per arm and **8,064 episodes in total**. The evaluation used simulated tools in a controlled environment; it was not a test of real services or production APIs. [2](https://doi.org/10.5281/zenodo.24549236)
+
+The results preprint reports the following execution settings:
+
+| Setting | Value |
+|---|---|
+| Model | gemma4:12b-it-qat; model ID prefix 38044be4f923 |
+| Runtime | Ollama 0.40.18 |
+| Context length | 2,048 tokens |
+| Temperature | 0 |
+| Per-response generation cap | 512 tokens |
+| Per-episode controller budget | 4,096 controller token units |
+| Tool and verification calls | Maximum of 8 per episode |
+| Repair attempts | Maximum of 2 |
+| Worker watchdog | 180 seconds per episode |
+
+These are the execution settings reported in the results preprint; they should not be confused with the prospective settings described in the protocol. [2](https://doi.org/10.5281/zenodo.24549236)
 
 ## 6. Main results
 
@@ -141,36 +159,65 @@ The estimate was calculated from paired differences within each of the 96 base t
 
 ### 6.2 Raw success rates
 
-| Metric | Arm B | Arm D |
-|---|---:|---:|
-| Successful episodes | 834 of 1,344 | 1,192 of 1,344 |
-| Raw success rate | 62.05% | 88.69% |
-| Raw difference | — | +26.64 percentage points |
+The following table reports successful episodes and raw success rates across all six arms:
 
-The raw difference of 26.64 points is not the same as the primary estimate of 20.83 points because the two calculations use different weighting. The raw rate counts every episode, whereas the primary estimate gives each base task equal weight. Tool tasks were run under three conditions and therefore contribute more episodes to the raw rate.
+| Arm | Successful episodes | Raw success rate |
+|---|---:|---:|
+| A | 111 of 1,344 | 8.26% |
+| B | 834 of 1,344 | 62.05% |
+| C | 839 of 1,344 | 62.43% |
+| D | 1,192 of 1,344 | 88.69% |
+| E | 1,203 of 1,344 | 89.51% |
+| F | 1,191 of 1,344 | 88.62% |
+
+The raw difference between B and D was **26.64 percentage points**. It is not the same as the primary estimate of 20.83 points because the raw rate counts every episode, whereas the primary estimate gives each base task equal weight. Tool tasks were run under three conditions and therefore contribute more episodes to the raw rate.
 
 ### 6.3 Silent-failure condition
 
-For episodes assigned to the silent-failure condition, the results were:
+For episodes assigned to the silent-failure condition, the results across all six arms were:
 
-| Metric | Arm B | Arm D |
+| Arm | Successful episodes | Success rate |
 |---|---:|---:|
-| Successful episodes | 0 of 384 | 363 of 384 |
-| Success rate | 0.00% | 94.53% |
-| Unsuccessful episodes | 384 | 21 |
+| A | 0 of 384 | 0.00% |
+| B | 0 of 384 | 0.00% |
+| C | 0 of 384 | 0.00% |
+| D | 363 of 384 | 94.53% |
+| E | 363 of 384 | 94.53% |
+| F | 363 of 384 | 94.53% |
 
-This is a substantial improvement for arm D under the specific tested condition. It does not mean that every silent failure was resolved: 21 of the 384 arm-D episodes remained unsuccessful.
+This shows a substantial improvement for the arms with verification and bounded repair under the specific injected condition. It does not mean that every silent failure was resolved: 21 of the 384 episodes remained unsuccessful in each of D, E and F.
 
 ### 6.4 Execution cost
 
-The improvement was accompanied by higher resource use in arm D compared with arm B:
+Mean time and generated tokens across the six arms were:
 
-| Metric | Arm B | Arm D | Increase in D |
-|---|---:|---:|---:|
-| Mean time per episode | 2.096 s | 2.279 s | 0.183 s (+8.73%) |
-| Mean generated tokens | 44.57 | 49.83 | 5.26 (+11.80%) |
+| Arm | Mean time per episode | Mean generated tokens |
+|---|---:|---:|
+| A | 1.547 s | 43.69 |
+| B | 2.096 s | 44.57 |
+| C | 2.055 s | 44.59 |
+| D | 2.279 s | 49.83 |
+| E | 2.286 s | 49.83 |
+| F | 2.287 s | 49.81 |
 
-These figures show that verification and repair can add time and token consumption. They should not be described as cost-free or as improving every metric simultaneously.
+Compared with B, D used an additional 0.183 seconds per episode on average (+8.73%) and generated 5.26 additional tokens (+11.80%). Verification and repair should therefore not be described as cost-free.
+
+### 6.5 Secondary contrasts and component interpretation
+
+The following table reports the planned secondary contrasts, including the overall interaction between routing and the verification-and-repair bundle:
+
+| Contrast | Difference (percentage points) | 95% confidence interval |
+|---|---:|---:|
+| C − B | +0.87 | −1.04 to +2.95 |
+| D − F | +0.17 | −2.08 to +2.60 |
+| F − B | +20.66 | +19.27 to +21.88 |
+| D − C | +19.97 | +18.23 to +21.35 |
+| E − D | +0.87 | +0.17 to +1.91 |
+| (D − F) − (C − B) | −0.69 | −1.91 to +0.35 |
+
+The median paired D-minus-B latency difference on deterministic reasoning tasks alone was −47 milliseconds (−78 to −31). In the assigned-fault analysis, D-minus-C success was +46.48 percentage points (43.36 to 48.83), regardless of whether execution actually reached the fault trigger.
+
+These contrasts are secondary and exploratory, and their intervals are unadjusted for multiple comparisons. The C−B and D−F intervals include zero: the study therefore did not establish a positive routing-only effect in these two contrasts, although this is not proof of no effect or equivalence. By contrast, F−B and D−C were positive; both compare the addition of the verification-and-repair bundle under different routing policies. Because verification and repair were tested together, their separate effects cannot be isolated. The interaction interval also includes zero and does not provide clear evidence of an interaction.
 
 ## 7. What does “verification” mean in this evaluation?
 
@@ -182,19 +229,31 @@ Acceptance criteria must therefore match the task. File existence is insufficien
 
 The strength of an evaluation also depends on the quality of its evaluator and its ability to reject incorrect outputs and prohibited side effects.
 
+### 7.1 Limits of the structural verifier
+
+Across the arms with a verification gate, the structural verifier accepted 69 episodes in D, 60 in E and 69 in F that the independent evaluator scored as unsuccessful: 198 cases in total. This illustrates that checking file presence or structure is not equivalent to verifying the correctness of its contents.
+
+### 7.2 Completion claims
+
+The preprint records no model-authored structured success claims through the designated action. The denominator for a conditional false-claim rate was therefore zero, so that rate could not be estimated. Automatic completion performed by the runner was attributed to the runner, not to the model. The experiment consequently does not quantify false-completion claims in natural-language responses.
+
 ## 8. Limits of the results and claims that are not established
 
-The results support a bounded conclusion: within the tested task set, environment and model, policy D achieved a higher independently assessed success rate than reference arm B. They do not establish that the same result will occur in every deployment.
+The results support a bounded conclusion: within the tested task set, environment and model, policy D achieved a higher independently assessed success rate than reference arm B. They do not establish that the same result will occur in every deployment or production environment.
 
 Key limitations include:
 
 - **One model:** The evaluation used only Gemma 4 12B IT QAT. The findings cannot automatically be generalized to other models.
 - **Simulated tools:** Simulated tools do not reproduce every issue involving real services, networks or permissions.
-- **A defined task set:** The 96 base tasks do not necessarily represent all long-horizon tasks or professional workflows.
+- **A defined task set:** The held-out analysis used 96 base tasks after excluding 24 pilot tasks; this set does not necessarily represent all long-horizon tasks or professional workflows.
+- **Public routing metadata:** The route flag was supplied in the task contract; the experiment did not test natural-language route inference.
 - **Specific fault types:** The evaluation included controlled explicit failures and silent no-op failures; it does not establish robustness to every attack or persistent fault.
-- **Limits of verification:** A structural check alone cannot prove semantic correctness or open-ended factual accuracy.
+- **Limits of verification:** A structural check alone cannot prove semantic correctness or open-ended factual accuracy, and some structurally accepted outputs were rejected by the independent evaluator.
 - **Additional cost:** Arm D used more time and generated tokens per episode on average than arm B.
-- **Publication status:** The results are reported in a preprint that has not been peer reviewed.
+- **Incomplete environment inventory:** The results preprint states that a complete hardware and operating-system inventory was unavailable for this draft.
+- **Publication status:** The results are reported in a preprint that has not been peer reviewed. The confidence interval describes uncertainty under this benchmark's resampling design; it is not a guarantee of generalization to other environments.
+
+The preprint states that a companion archive contains logs, the matched schedule, runner sources, an analysis script, machine-readable results and a freeze manifest. However, the linked Zenodo record page listed only the preprint PDF when checked on 27 November 2026; it did not expose a separate download link for that archive. A direct archive link is needed before readers can independently inspect those materials. [2](https://doi.org/10.5281/zenodo.24549236)
 
 The research protocol and the results paper are separate documents: the protocol describes the design and analysis rules, while the results preprint reports the evaluation and its outputs. [1](https://doi.org/10.5281/zenodo.24488951) [2](https://doi.org/10.5281/zenodo.24549236)
 
@@ -211,17 +270,17 @@ Core practices include:
 - **Time and resource limits:** Define execution deadlines, tool-call limits and repair budgets.
 - **Treat external content as untrusted:** Files, web pages and tool messages may contain misleading instructions and should not automatically be treated as trusted commands.
 
-Frameworks such as the NIST Generative AI Risk Management Profile and the OWASP Top 10 for Agentic Applications address related aspects of governance and security, including tool misuse, privilege abuse and context manipulation. They are complementary references, not evidence that the ACO-LLM evaluation tested all of these risks. [4](https://doi.org/10.6028/NIST.AI.600-1) [5](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/)
+Frameworks such as the NIST Generative AI Risk Management Profile and the OWASP Top 10 for Agentic Applications address related aspects of governance and security, including tool misuse, privilege abuse and context manipulation. They are complementary references, not evidence that the ACO-LLM evaluation tested all of these risks. [5](https://doi.org/10.6028/NIST.AI.600-1) [6](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/)
 
 ## 10. Relationship to previous research
 
-ACO-LLM sits within a broader research area concerned with moving language models from text generation to interaction with tools and environments.
+ACO-LLM sits within a broader research area concerned with moving language models from text generation to interaction with tools and environments. The works cited below are selected examples relevant to this topic, not a systematic literature review.
 
-- **ReAct** introduced an approach that combines reasoning, actions and environmental interaction. [6](https://arxiv.org/abs/2210.03629)
-- **Reflexion** studied the use of feedback and verbal memory to improve agents across attempts. [7](https://arxiv.org/abs/2303.11366)
-- **AgentBench** introduced a framework for evaluating language models as agents in interactive environments. [8](https://arxiv.org/abs/2308.03688)
-- **τ-bench** focused on tool-agent-user interaction and outcome evaluation in practical domains. [9](https://arxiv.org/abs/2406.12045)
-- **AgentDojo** provided an environment for studying prompt injection and attacks on tool-using agents. [10](https://arxiv.org/abs/2406.13352)
+- **ReAct** introduced an approach that combines reasoning, actions and environmental interaction. [7](https://arxiv.org/abs/2210.03629)
+- **Reflexion** studied the use of feedback and verbal memory to improve agents across attempts. [8](https://arxiv.org/abs/2303.11366)
+- **AgentBench** introduced a framework for evaluating language models as agents in interactive environments. [9](https://arxiv.org/abs/2308.03688)
+- **τ-bench** focused on tool-agent-user interaction and outcome evaluation in practical domains. [10](https://arxiv.org/abs/2406.12045)
+- **AgentDojo** provided an environment for studying prompt injection and attacks on tool-using agents. [11](https://arxiv.org/abs/2406.13352)
 
 ACO-LLM does not claim that tool use, external verification or adaptive routing are individually new ideas. Its research question concerns a specific integration of task-contract routing, verification and bounded repair on a fixed local model, evaluated with bilingual tasks, controlled fault injection and resource accounting. [1](https://doi.org/10.5281/zenodo.24488951)
 
@@ -247,6 +306,14 @@ No. The evaluation used simulated tools in a controlled environment. A separate 
 
 No. It is a results preprint that has not been peer reviewed. Its methods and results are available on Zenodo and should be interpreted with that status in mind.
 
+### Does ACO-LLM infer the need for a tool from free-form user text?
+
+No. In the evaluation, the route flag was supplied in the task contract. The experiment did not test routing accuracy on unrestricted natural-language requests.
+
+### Did the experiment measure false-completion claims?
+
+No. The preprint records no model-authored structured success claims, so there was no denominator for estimating a conditional false-claim rate. The experiment does not establish the rate of false claims in natural-language responses.
+
 ## Original research and related pages
 
 For the underlying research documents, rather than this explanatory overview alone, see:
@@ -265,13 +332,14 @@ The ACO-LLM evaluation indicates that task-aware routing, verification and bound
 
 ## References
 
-1. Adra, K. (2026). *Adaptive Cognitive Orchestration for Resource-Constrained Local Language Models (ACO-LLM): Research Protocol.* [Zenodo: 10.5281/zenodo.24488951](https://doi.org/10.5281/zenodo.24488951).
-2. Adra, K. (2026). *ACO-LLM: Evaluation Results.* Results preprint, not peer reviewed. [Zenodo: 10.5281/zenodo.24549236](https://doi.org/10.5281/zenodo.24549236).
-3. Google DeepMind. *Gemma 4.* [Official model page](https://deepmind.google/models/gemma/gemma-4/).
-4. Autio, C. et al. (2024). *Artificial Intelligence Risk Management Framework: Generative Artificial Intelligence Profile.* NIST AI 600-1. [DOI](https://doi.org/10.6028/NIST.AI.600-1).
-5. OWASP GenAI Security Project. *Top 10 for Agentic Applications 2026.* [Source](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/).
-6. Yao, S. et al. (2022). *ReAct: Synergizing Reasoning and Acting in Language Models.* [arXiv:2210.03629](https://arxiv.org/abs/2210.03629).
-7. Shinn, N. et al. (2023). *Reflexion: Language Agents with Verbal Reinforcement Learning.* [arXiv:2303.11366](https://arxiv.org/abs/2303.11366).
-8. Liu, X. et al. (2023). *AgentBench: Evaluating LLMs as Agents.* [arXiv:2308.03688](https://arxiv.org/abs/2308.03688).
-9. Yao, S. et al. (2024). *τ-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains.* [arXiv:2406.12045](https://arxiv.org/abs/2406.12045).
-10. Debenedetti, E. et al. (2024). *AgentDojo: A Dynamic Environment to Evaluate Prompt Injection Attacks and Defenses for LLM Agents.* [arXiv:2406.13352](https://arxiv.org/abs/2406.13352).
+1. Adra, K. (2026). *Adaptive Cognitive Orchestration for Resource-Constrained Local Language Models (ACO-LLM): A Contract-Driven Research Protocol with Formal Guarantees and Reference Implementation* (Version 1.7). Zenodo. [DOI: 10.5281/zenodo.24488951](https://doi.org/10.5281/zenodo.24488951).
+2. Adra, K. (2026). *Adaptive Cognitive Orchestration for Local Language Models: A Held-Out Evaluation of Structural Verification and Repair* [Preprint, v1]. Zenodo, 26 November 2026. [DOI: 10.5281/zenodo.24549236](https://doi.org/10.5281/zenodo.24549236).
+3. Google DeepMind. *Gemma 4.* Official model overview. [Model page](https://deepmind.google/models/gemma/gemma-4/).
+4. Ollama. *gemma4:12b-it-qat* [Model listing]. [Ollama Library](https://ollama.com/library/gemma4:12b-it-qat).
+5. Autio, C. et al. (2024). *Artificial Intelligence Risk Management Framework: Generative Artificial Intelligence Profile.* NIST AI 600-1. [DOI](https://doi.org/10.6028/NIST.AI.600-1).
+6. OWASP GenAI Security Project. *Top 10 for Agentic Applications 2026.* [Source](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/).
+7. Yao, S. et al. (2022). *ReAct: Synergizing Reasoning and Acting in Language Models.* [arXiv:2210.03629](https://arxiv.org/abs/2210.03629).
+8. Shinn, N. et al. (2023). *Reflexion: Language Agents with Verbal Reinforcement Learning.* [arXiv:2303.11366](https://arxiv.org/abs/2303.11366).
+9. Liu, X. et al. (2023). *AgentBench: Evaluating LLMs as Agents.* [arXiv:2308.03688](https://arxiv.org/abs/2308.03688).
+10. Yao, S. et al. (2024). *τ-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains.* [arXiv:2406.12045](https://arxiv.org/abs/2406.12045).
+11. Debenedetti, E. et al. (2024). *AgentDojo: A Dynamic Environment to Evaluate Prompt Injection Attacks and Defenses for LLM Agents.* [arXiv:2406.13352](https://arxiv.org/abs/2406.13352).
