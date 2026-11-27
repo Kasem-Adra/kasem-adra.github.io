@@ -250,18 +250,20 @@ Key limitations include:
 
 - **One model:** The evaluation used only Gemma 4 12B IT QAT. The findings cannot automatically be generalized to other models.
 - **Simulated tools:** Simulated tools do not reproduce every issue involving real services, networks or permissions.
-- **A defined task set:** The held-out analysis used 96 base tasks after excluding 24 pilot tasks; this set does not necessarily represent all long-horizon tasks or professional workflows.
+- **Three related task families:** The 96 base tasks belong to three generated, related families: deterministic reasoning, single-file data transformation and multi-output workflows. They should not be interpreted as 96 wholly independent task types designed separately.
+- **Pilot exclusion:** The 24 pilot tasks and their outcomes were excluded from the held-out analysis. The test set does not necessarily represent all long-horizon tasks or professional workflows.
 - **Public routing metadata:** The route flag was supplied in the task contract; the experiment did not test natural-language route inference.
 - **Optional reads in reasoning tasks:** None of the reasoning episodes used the optional read tool available in fixed-path arms, limiting what the routing contrasts say about settings where reasoning tasks actively use tools.
 - **Specific fault types:** The evaluation included controlled explicit failures and silent no-op failures; it does not establish robustness to every attack or persistent fault.
 - **Limits of verification:** A structural check alone cannot prove semantic correctness or open-ended factual accuracy, and some structurally accepted outputs were rejected by the independent evaluator.
+- **Limits on independent rescoring:** The run log records the independent evaluator's outcome for each episode, but the hidden answer key is not included. Once the log is available, readers can reproduce the aggregate analysis from the recorded outcomes; they cannot independently rescore every answer from the answer key.
 - **Additional cost:** Arm D used more time and generated tokens per episode on average than arm B.
 - **Incomplete environment inventory:** The results preprint states that a complete hardware and operating-system inventory was unavailable for this draft.
 - **Publication status:** The results are reported in a preprint that has not been peer reviewed. The confidence interval describes uncertainty under this benchmark's resampling design; it is not a guarantee of generalization to other environments.
 
-The preprint states that a companion archive contains logs, the matched schedule, runner sources, an analysis script, machine-readable results and a freeze manifest. However, the linked Zenodo record page listed only the preprint PDF when checked on 27 November 2026; it did not expose a separate download link for that archive. A direct archive link is needed before readers can independently inspect those materials. [2](https://doi.org/10.5281/zenodo.24549236)
+The results preprint describes a companion archive containing the run log, matched schedule, runner sources, analysis script, machine-readable results and freeze manifest. These materials have been located in the author's working repository, but they have not yet been released in a public repository. The Zenodo record for the results preprint currently lists only the PDF; it does not provide a download for the companion archive. Public release is pending finalization of the software and research-material licensing. Readers therefore cannot currently download the raw log or inspect and run the accompanying source code independently. [2](https://doi.org/10.5281/zenodo.24549236)
 
-The research protocol and the results paper are separate documents: the protocol describes the design and analysis rules, while the results preprint reports the evaluation and its outputs. [1](https://doi.org/10.5281/zenodo.24488951) [2](https://doi.org/10.5281/zenodo.24549236)
+The research protocol and the results paper are separate documents: the protocol describes the proposed design and analysis rules, while the results preprint reports the executed evaluation and its outputs. [1](https://doi.org/10.5281/zenodo.24488951) [2](https://doi.org/10.5281/zenodo.24549236)
 
 ## 9. Engineering and security considerations for reliable agents
 
