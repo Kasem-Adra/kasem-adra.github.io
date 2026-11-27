@@ -622,7 +622,7 @@ def write_root_gateway(dist, public_build):
 <link rel="icon" type="image/png" href="/assets/kasem-calligraphy-transparent.png">
 <meta property="og:site_name" content="Kasem Adra"><meta property="og:type" content="website">
 <meta property="og:title" content="{escape(title,quote=True)}"><meta property="og:description" content="{escape(desc,quote=True)}">
-<meta property="og:url" content="{ORIGIN}/"><meta property="og:image" content="{ORIGIN}/assets/kasem-adra-portrait.jpg"><meta property="og:image:alt" content="Portrait of Kasem Adra">
+<meta property="og:url" content="{ORIGIN}/"><meta property="og:locale" content="en_US"><meta property="og:image" content="{ORIGIN}/assets/kasem-adra-portrait.jpg"><meta property="og:image:alt" content="Portrait of Kasem Adra">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{escape(title,quote=True)}"><meta name="twitter:description" content="{escape(desc,quote=True)}"><meta name="twitter:image" content="{ORIGIN}/assets/kasem-adra-portrait.jpg"><meta name="twitter:image:alt" content="Portrait of Kasem Adra">
 <script type="application/ld+json">{dumps(graph,ensure_ascii=False,separators=(",",":"))}</script>
 <link rel="stylesheet" href="/style.css"></head>
