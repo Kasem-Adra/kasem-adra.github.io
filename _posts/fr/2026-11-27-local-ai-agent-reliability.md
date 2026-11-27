@@ -99,6 +99,8 @@ L’orientation utilise ces informations pour sélectionner un parcours d’exé
 
 Une précision est essentielle pour interpréter l’orientation : dans cette expérience, le modèle ne devait pas déduire à partir d’une demande libre en langage naturel si un outil était nécessaire. Chaque scénario de test comportait un indicateur de routage public dans son contrat de tâche. L’étude évalue donc l’orientation à partir de métadonnées connues, et non la capacité d’un routeur général à choisir un parcours à partir de demandes utilisateur non contraintes. [1](https://doi.org/10.5281/zenodo.24488951)
 
+Dans le protocole, le terme « adaptatif » désigne une correction déclenchée par des éléments observables d’échec pendant l’exécution ; il ne signifie pas que le modèle déduit de manière autonome un parcours à partir d’une demande libre en langage naturel. [1](https://doi.org/10.5281/zenodo.24488951)
+
 ### 4.2 Vérification du résultat
 
 Une tâche n’est pas considérée comme réussie simplement parce que le modèle ou un outil annonce son achèvement. L’état obtenu doit être comparé à des critères d’acceptation définis, idéalement par un évaluateur indépendant de l’affirmation de réussite du modèle.
@@ -121,6 +123,8 @@ L’évaluation a été conçue pour comparer six bras présentant des politique
 | D | Orientation selon le contrat de tâche, avec vérification obligatoire et correction limitée pour les tâches utilisant des outils |
 | E | Bras D avec mémoire structurée des échecs, limitée à l’épisode |
 | F | Parcours fixe avec outils, vérification obligatoire et correction limitée |
+
+Le parcours fixe signifie que chaque tâche entre dans une boucle capable d’utiliser des outils ; il n’impose pas un appel d’outil à chaque tâche, et le modèle peut toujours répondre directement. La récupération ordinaire après une erreur d’outil restait également autorisée dans les limites communes du bras de référence ; B ne constitue donc pas une référence sans tentative de récupération. [1](https://doi.org/10.5281/zenodo.24488951)
 
 Ces comparaisons permettent d’examiner différentes composantes de la politique. La comparaison principale, **D par rapport à B**, estime l’effet de la politique combinée ; elle ne permet pas, à elle seule, d’isoler l’effet de l’orientation de ceux de la vérification et de la correction. D’autres contrastes prévus, notamment C par rapport à B, D par rapport à F, F par rapport à B et D par rapport à C, contribuent à interpréter les composantes. [1](https://doi.org/10.5281/zenodo.24488951)
 
@@ -247,6 +251,7 @@ Les principales limites sont les suivantes :
 - **Outils simulés :** les outils simulés ne reproduisent pas tous les problèmes liés aux services réels, aux réseaux ou aux permissions.
 - **Un corpus défini :** l’analyse réservée a utilisé 96 tâches de base après exclusion de 24 tâches pilotes ; cet ensemble ne représente pas nécessairement toutes les tâches de longue durée ou les flux de travail professionnels.
 - **Métadonnées de routage publiques :** l’indicateur de routage était fourni dans le contrat de tâche ; l’expérience n’a pas testé l’inférence du parcours à partir du langage naturel.
+- **Lectures facultatives dans les tâches de raisonnement :** aucun épisode de raisonnement n’a utilisé l’outil de lecture facultatif disponible dans les bras à parcours fixe, ce qui limite l’interprétation des contrastes de routage dans les environnements où les tâches de raisonnement utilisent réellement des outils.
 - **Types de défaillances spécifiques :** l’évaluation comprenait des échecs explicites contrôlés et des no-op silencieux ; elle ne démontre pas une robustesse à toutes les attaques ou défaillances persistantes.
 - **Limites de la vérification :** un contrôle structurel seul ne peut pas prouver l’exactitude sémantique ou la véracité de faits ouverts ; certaines sorties acceptées structurellement ont été rejetées par l’évaluateur indépendant.
 - **Coût supplémentaire :** le bras D a consommé en moyenne davantage de temps et de jetons générés par épisode que le bras B.
