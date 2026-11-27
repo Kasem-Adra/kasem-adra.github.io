@@ -96,17 +96,28 @@ def page(route, title, section, main):
             f'<meta name="citation_{key}" content="{escape(value, quote=True)}">'
             for key, value in citations.items()
         )
-    if route == results.PATH:
+    if route in (paper, results.PATH):
         article = {
             '@context': 'https://schema.org',
             '@type': 'ScholarlyArticle',
-            '@id': 'https://doi.org/10.5281/zenodo.24549236',
-            'headline': 'ACO-LLM: evaluation results',
+            '@id': f'{origin}/en{route}#article',
+            'headline': paper_title if route == paper else 'ACO-LLM: evaluation results',
             'author': {'@id': person['@id'], 'name': person['name'], '@type': 'Person'},
-            'url': 'https://doi.org/10.5281/zenodo.24549236',
-            'isBasedOn': doi,
+            'url': f'{origin}/en{route}',
+            'sameAs': doi if route == paper else 'https://doi.org/10.5281/zenodo.24549236',
         }
-        metadata = '<script type="application/ld+json">' + dumps(article, ensure_ascii=False) + '</script>'
+        article['identifier'] = {'@type': 'PropertyValue', 'propertyID': 'DOI', 'value': article['sameAs'].removeprefix('https://doi.org/')}
+        if route == paper:
+            article['isPartOf'] = {'@id': f'{origin}/en/publications/#collection'}
+        else:
+            article['isBasedOn'] = doi
+            article['isPartOf'] = {'@id': f'{origin}/en/publications/#collection'}
+        metadata += '<script type="application/ld+json">' + dumps(article, ensure_ascii=False) + '</script>'
+    if route == '/publications/':
+        collection = {'@context': 'https://schema.org', '@type': 'CollectionPage',
+                      '@id': f'{origin}/en/publications/#collection',
+                      'url': f'{origin}/en/publications/', 'about': {'@id': person['@id']}}
+        metadata += '<script type="application/ld+json">' + dumps(collection) + '</script>'
     target = Path('dist'+route+'index.html')
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(f'''<!doctype html>
