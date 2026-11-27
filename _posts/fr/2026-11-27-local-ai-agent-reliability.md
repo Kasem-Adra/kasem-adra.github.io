@@ -35,7 +35,7 @@ Cet article examine la fiabilité des assistants IA locaux sous l’angle de l�
 | Sujet | Fiabilité des assistants IA locaux et des agents utilisant des outils |
 | Auteur | Kasem Adra |
 | Étude de cas | ACO-LLM |
-| Modèle utilisé dans l’évaluation | Gemma 4 12B IT QAT, identifiant gemma4:12b-it-qat [4] |
+| Modèle utilisé dans l’évaluation | Gemma 4 12B IT QAT, identifiant gemma4:12b-it-qat [4](https://ollama.com/library/gemma4:12b-it-qat) |
 | Corpus de tâches | 96 tâches de base, chacune en versions arabe et anglaise |
 | Taille de l’évaluation | 8 064 épisodes répartis sur six bras expérimentaux |
 | Comparaison principale | Bras D par rapport au bras B |
