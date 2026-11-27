@@ -40,6 +40,24 @@ jobs:
               "en": "Can We Trust a Local AI Assistant?",
               "fr": "Peut-on faire confiance à un assistant IA local ?",
           }
+          required_phrases = {
+              "ar": ["24 مهمة تجريبية", "Ollama 0.40.18", "38044be4f923", "−1.04", "−2.08", "+20.66", "+19.97", "198", "final_success", "أرشيفاً مكملاً"],
+              "en": ["24 pilot tasks", "Ollama 0.40.18", "38044be4f923", "−1.04", "−2.08", "+20.66", "+19.97", "198", "final_success", "companion archive"],
+              "fr": ["24 tâches pilotes", "Ollama 0.40.18", "38044be4f923", "−1,04", "−2,08", "+20,66", "+19,97", "198", "final_success", "archive complémentaire"],
+          }
+          reference_urls = [
+              "https://doi.org/10.5281/zenodo.24488951",
+              "https://doi.org/10.5281/zenodo.24549236",
+              "https://deepmind.google/models/gemma/gemma-4/",
+              "https://ollama.com/library/gemma4:12b-it-qat",
+              "https://doi.org/10.6028/NIST.AI.600-1",
+              "https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/",
+              "https://arxiv.org/abs/2210.03629",
+              "https://arxiv.org/abs/2303.11366",
+              "https://arxiv.org/abs/2308.03688",
+              "https://arxiv.org/abs/2406.12045",
+              "https://arxiv.org/abs/2406.13352",
+          ]
 
           for lang, title in expected_titles.items():
               path = root / lang / article_path
@@ -49,6 +67,11 @@ jobs:
               assert "20.83" in html or "20,83" in html, f"Missing primary estimate: {lang}"
               assert "8,064" in html or "8 064" in html, f"Missing episode count: {lang}"
               assert "not been peer reviewed" in html.lower() or "غير محكّمة" in html or "non évaluée par les pairs" in html.lower(), f"Missing preprint status: {lang}"
+              for phrase in required_phrases[lang]:
+                  assert phrase in html, f"Missing scientific audit detail {phrase!r}: {lang}"
+              for url in reference_urls:
+                  assert url in html, f"Missing reference URL {url}: {lang}"
+              assert html.count('property="og:image"') == 1, f"Expected one article Open Graph image: {lang}"
               assert "rel=\"canonical\"" in html, f"Missing canonical: {lang}"
               for alternate in ("hreflang=\"ar\"", "hreflang=\"en\"", "hreflang=\"fr\"", "hreflang=\"x-default\""):
                   assert alternate in html, f"Missing {alternate}: {lang}"
@@ -59,6 +82,11 @@ jobs:
               assert "Person" in types, f"Missing Person schema: {lang}"
               assert "BlogPosting" in types, f"Missing BlogPosting schema: {lang}"
               assert "BreadcrumbList" in types, f"Missing BreadcrumbList schema: {lang}"
+              article_schema = next(json.loads(script) for script in scripts if json.loads(script).get("@type") == "BlogPosting")
+              assert len(article_schema.get("citation", [])) == 11, f"Expected 11 structured citations: {lang}"
+              toc_ids = set(re.findall(r'href="#(section-[0-9]+)"', html))
+              heading_ids = set(re.findall(r'id="(section-[0-9]+)"', html))
+              assert toc_ids and toc_ids == heading_ids, f"Broken article table of contents: {lang}"
               assert "noindex" not in html.lower(), f"Unexpected noindex in public build: {lang}"
 
           hero = root / "assets/local-ai-agent-reliability-hero.webp"
@@ -77,5 +105,12 @@ jobs:
               assert "local-ai-agent-reliability" in protocol
               assert "local-ai-agent-reliability" in results
 
-          print("Validated: three localized article pages, structured data, canonicals, hreflang, sitemap, cross-links and WebP hero image.")
+          print("Validated: three localized article pages, all six arms, primary and secondary estimates, false-claim limits, 11 references, structured data, TOC, canonicals, hreflang, sitemap, cross-links and WebP hero image.")
           PY
+      - name: Upload static preview for review (not deployed)
+        uses: actions/upload-artifact@v4
+        with:
+          name: local-ai-agent-reliability-preview
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7
