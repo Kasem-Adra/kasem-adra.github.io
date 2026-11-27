@@ -56,8 +56,8 @@ UI = {
         "about_archive": "About this archive",
         "about_archive_text": "The multilingual site connects the author profile with research publications, projects and writing.",
         "lang_gateway": "Choose a language",
-        "gateway_label": "Official multilingual profile and research archive",
-        "gateway_desc": "Research, projects and writing by Kasem Adra.",
+        "gateway_label": "Independent AI Researcher · Official Website",
+        "gateway_desc": "Research on local language models, AI agents, task verification and ACO-LLM.",
         "language_en": "English", "language_ar": "العربية", "language_fr": "Français",
         "footer": "Official website of Kasem Adra",
     },
@@ -77,8 +77,8 @@ UI = {
         "about_archive": "حول هذا الأرشيف",
         "about_archive_text": "يربط الموقع متعدد اللغات الملف التعريفي بالمؤلفات البحثية والمشاريع والكتابات.",
         "lang_gateway": "اختر اللغة",
-        "gateway_label": "الملف التعريفي والأرشيف البحثي الرسمي",
-        "gateway_desc": "أبحاث ومشاريع وكتابات قاسم عدرا.",
+        "gateway_label": "باحث مستقل في الذكاء الاصطناعي · الموقع الرسمي",
+        "gateway_desc": "أبحاث حول النماذج اللغوية المحلية والوكلاء الأذكياء والتحقق من المهام وبروتوكول ACO-LLM.",
         "language_en": "English", "language_ar": "العربية", "language_fr": "Français",
         "footer": "الموقع الرسمي لقاسم عدرا",
     },
@@ -98,8 +98,8 @@ UI = {
         "about_archive": "À propos de ces archives",
         "about_archive_text": "Le site multilingue relie le profil de l’auteur à ses publications de recherche, ses projets et ses écrits.",
         "lang_gateway": "Choisir une langue",
-        "gateway_label": "Profil multilingue officiel et archives de recherche",
-        "gateway_desc": "Recherches, projets et écrits de Kasem Adra.",
+        "gateway_label": "Chercheur indépendant en IA · Site officiel",
+        "gateway_desc": "Recherche sur les modèles de langage locaux, les agents IA, la vérification des tâches et ACO-LLM.",
         "language_en": "English", "language_ar": "العربية", "language_fr": "Français",
         "footer": "Site officiel de Kasem Adra",
     }
@@ -546,8 +546,8 @@ def enrich_existing_pages(dist, public_build):
         file.write_text(doc,encoding="utf-8")
 
 def write_root_gateway(dist, public_build):
-    title = "Kasem Adra | Official multilingual profile and research archive"
-    desc = "Official multilingual website of Kasem Adra: independent AI research, ACO-LLM publications, projects and writing."
+    title = "Kasem Adra | Independent AI Researcher"
+    desc = "Official website of Kasem Adra (قاسم عدرا), independent AI researcher studying local language models, AI agents, task verification and ACO-LLM."
     person = dict(PERSON)
     website = {
         "@type":"WebSite","@id":WEBSITE_ID,"url":ORIGIN+"/","name":"Kasem Adra",
@@ -576,7 +576,7 @@ def write_root_gateway(dist, public_build):
 <meta property="og:site_name" content="Kasem Adra"><meta property="og:type" content="website">
 <meta property="og:title" content="{escape(title,quote=True)}"><meta property="og:description" content="{escape(desc,quote=True)}">
 <meta property="og:url" content="{ORIGIN}/"><meta property="og:image" content="{ORIGIN}/assets/kasem-adra-portrait.jpg">
-<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{escape(title,quote=True)}"><meta name="twitter:description" content="{escape(desc,quote=True)}"><meta name="twitter:image" content="{ORIGIN}/assets/kasem-adra-portrait.jpg">
 <script type="application/ld+json">{dumps(graph,ensure_ascii=False,separators=(",",":"))}</script>
 <link rel="stylesheet" href="/style.css"></head>
 <body><div class="shell"><header><a class="wordmark" href="/">Kasem Adra</a><span>قاسم عدرا</span></header>
