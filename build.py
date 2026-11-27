@@ -79,13 +79,38 @@ person = {
     '@id': f'{origin}/#person',
     'image': f'{origin}/assets/kasem-adra-portrait.jpg',
     'name': 'Kasem Adra',
-    'alternateName': 'قاسم عدرا',
-    'url': 'https://kasemadra.com/',
+    'alternateName': ['قاسم عدرا', 'Qassem Adra'],
+    'url': f'{origin}/en/about/',
     'jobTitle': 'Independent AI Researcher',
-    'description': 'Independent AI researcher based in France studying task verification and error recovery in local AI assistants through ACO-LLM.',
+    'description': 'Kasem Adra (قاسم عدرا) is an independent AI researcher based in France. His work examines how local AI assistants verify task completion and recover from errors, including the ACO-LLM research protocol and evaluation.',
+    'identifier': {
+        '@type': 'PropertyValue',
+        'propertyID': 'ORCID',
+        'value': '0009-0004-7615-4978',
+        'url': 'https://orcid.org/0009-0004-7615-4978',
+    },
     'sameAs': [
-        'https://github.com/Kasem-Adra',
         'https://orcid.org/0009-0004-7615-4978',
+        'https://github.com/Kasem-Adra',
+        'https://github.com/Qassemai',
+        'https://www.linkedin.com/in/kasem-adra/',
+        'https://qassem.net/',
+        'https://x.com/QassemAdra',
+        'https://www.instagram.com/qassemadra/',
+    ],
+    'subjectOf': [
+        {
+            '@type': 'ScholarlyArticle',
+            '@id': 'https://doi.org/10.5281/zenodo.24488951',
+            'name': 'Adaptive Cognitive Orchestration for Resource-Constrained Local Language Models (ACO-LLM): A Contract-Driven Research Protocol with Formal Guarantees and Reference Implementation',
+            'url': 'https://doi.org/10.5281/zenodo.24488951',
+        },
+        {
+            '@type': 'ScholarlyArticle',
+            '@id': 'https://doi.org/10.5281/zenodo.24549236',
+            'name': 'Adaptive Cognitive Orchestration for Local Language Models: A Held-Out Evaluation of Structural Verification and Repair',
+            'url': 'https://doi.org/10.5281/zenodo.24549236',
+        },
     ],
 }
 
@@ -114,7 +139,7 @@ def row(category, title, description, url, lang='en'):
 projects = row('PROJECT', 'A local AI assistant for Arabic', 'An on-device assistant for text, speech, and tool use.', project)
 research = row('RESEARCH', 'ACO‑LLM', 'A protocol for testing how local models check and repair their work.', paper)
 blog = row('FEATURED ARTICLE', 'Can We Trust a Local AI Assistant?', 'An evidence-based guide to local AI, agent reliability, verification, and ACO-LLM.', article) + row('RESEARCH NOTE', 'How do we verify an assistant’s work?', 'A small example of checking outcomes independently of the model.', note) + row('ART & DESIGN', 'حين تصبح الحروف رسمة', 'ملاحظة عن تصميم التوقيع الحروفي للموقع.', arabic, lang='ar')
-profile = '<div class="profiles"><a href="https://github.com/Kasem-Adra">GitHub</a><a href="https://orcid.org/0009-0004-7615-4978">ORCID</a><a href="https://zenodo.org/records/24488951">Zenodo</a></div>'
+profile = '<div class="profiles"><a href="https://github.com/Kasem-Adra">GitHub</a><a href="https://github.com/Qassemai">Qassem projects</a><a href="https://orcid.org/0009-0004-7615-4978">ORCID</a><a href="https://www.linkedin.com/in/kasem-adra/">LinkedIn</a><a href="https://x.com/QassemAdra">X</a><a href="https://www.instagram.com/qassemadra/">Instagram</a><a href="https://qassem.net/">Qassem.net</a><a href="https://zenodo.org/records/24488951">Zenodo</a></div>'
 
 def page(route, title, section, main):
     navigation = ''.join(f'<a href="{url}"'+(' aria-current="page"' if tab==section else '')+f'>{tab}</a>' for tab,url in nav.items())
@@ -483,7 +508,7 @@ def localize_pages():
                 head = head.replace('</head>', '<script type="application/ld+json">' + dumps(profile_page, ensure_ascii=False) + '</script></head>')
                 research_label = {'en': 'ACO-LLM research', 'ar': 'أبحاث ACO-LLM', 'fr': 'Recherche ACO-LLM'}[lang]
                 research_links = f'<p><a href="{locale_path(lang, paper)}">{research_label}</a></p>'
-                identity_links = '<div class="profiles">' + ''.join(f'<a href="{url}">{label}</a>' for label, url in [('ORCID', 'https://orcid.org/0009-0004-7615-4978'), ('GitHub', 'https://github.com/Kasem-Adra')]) + '</div>'
+                identity_links = ''
                 body = body.replace('<main></main>', f'<main><div class="subpage"><h1>{about_title} · {identity["name"]}</h1><p>{identity["alternateName"]}</p>{portrait}{paragraphs}<p>{membership}</p>{identity_links}{research_links}</div></main>')
                 head = sub(r'<title>[^<]*</title>', lambda _: '<title>قاسم عدرا | نبذة عني</title>' if lang == 'ar' else f'<title>{about_title} · Kasem Adra</title>', head)
             theme_label = {'en': 'Dark mode', 'ar': 'الوضع الداكن', 'fr': 'Mode sombre'}[lang]
