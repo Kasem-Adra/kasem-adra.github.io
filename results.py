@@ -27,7 +27,7 @@ T = {
  h1='ACO‑LLM: evaluation results', badge='RESULTS PREPRINT · NOT PEER REVIEWED',
  lead='Summary of the evaluation designed in the <a href="../aco-llm/">protocol</a>. The authoritative source is the <a href="{rec}">results preprint on Zenodo</a> (<a href="{pdf}">PDF</a>).',
  hmain='Main estimate',
- main='ACO‑LLM (arm D) raised task success, as judged by the independent evaluator, by <b>{dpp} percentage points</b> over the fixed-path reference arm with tool support (arm B). 95% confidence interval: {lo} to {hi}.',
+ main='Arm D, which combined task-contract routing, structural verification, and bounded repair, raised task success, as judged by the independent evaluator, by <b>{dpp} percentage points</b> over the fixed-path reference arm with tool support (arm B). 95% confidence interval: {lo} to {hi}.',
  method='Method: paired differences were averaged within each of the {bt} base tasks, and the base tasks were weighted equally. The interval comes from {nres} resamples of base tasks within their strata.',
  hraw='Raw rates and cost', pp='pp', s='s',
  rawnote='Raw rates count every episode, so tool tasks (run in three conditions) weigh more than reasoning tasks; the main estimate weights every base task equally. Raw gap: {gap} pp.',
@@ -46,7 +46,7 @@ T = {
  h1='ACO‑LLM: نتائج التقييم', badge='ورقة نتائج أولية · غير محكّمة',
  lead='ملخّص للتقييم الذي صُمّم في <a href="../aco-llm/">البروتوكول</a>. المصدر المعتمد هو <a href="{rec}">ورقة النتائج الأولية على Zenodo</a> (<a href="{pdf}">PDF</a>).',
  hmain='التقدير الرئيسي',
- main='رفع ACO‑LLM (الذراع D) معدل نجاح المهام، وفق المقيّم المستقل، بمقدار <b>{dpp} نقطة مئوية</b> مقارنة بالذراع المرجعية ذات المسار الثابت الداعم للأدوات (الذراع B). فاصل الثقة 95%: من {lo} إلى {hi}.',
+ main='رفعت الذراع D، التي جمعت التوجيه المستند إلى عقد المهمة والتحقق البنيوي والإصلاح المحدود، معدل نجاح المهام، وفق المقيّم المستقل، بمقدار <b>{dpp} نقطة مئوية</b> مقارنة بالذراع المرجعية ذات المسار الثابت الداعم للأدوات (الذراع B). فاصل الثقة 95%: من {lo} إلى {hi}.',
  method='الطريقة: حُسب متوسط الفروق المقترنة داخل كل مهمة من المهام الأساسية الـ{bt}، ثم أُعطيت المهام أوزانًا متساوية. وحُسب الفاصل بإعادة معاينة {nres} مجموعة من المهام الأساسية داخل طبقاتها.',
  hraw='المعدلات الخام والتكلفة', pp='نقطة', s='ث',
  rawnote='تحسب المعدلات الخام كل حلقة، فتزن مهام الأدوات (وتُشغَّل في ثلاث حالات) أكثر من مهام الاستدلال، بينما يعطي التقدير الرئيسي كل مهمة أساسية وزنًا متساويًا. الفرق الخام: {gap} نقطة.',
@@ -65,7 +65,7 @@ T = {
  h1='ACO‑LLM : résultats de l’évaluation', badge='PRÉPUBLICATION DES RÉSULTATS · NON ÉVALUÉE PAR LES PAIRS',
  lead='Résumé de l’évaluation conçue dans le <a href="../aco-llm/">protocole</a>. La source de référence est la <a href="{rec}">prépublication des résultats sur Zenodo</a> (<a href="{pdf}">PDF</a>).',
  hmain='Estimation principale',
- main='ACO‑LLM (bras D) a augmenté le taux de réussite des tâches, selon l’évaluateur indépendant, de <b>{dpp} points de pourcentage</b> par rapport au bras de référence utilisant un routage fixe avec accès aux outils (bras B). Intervalle de confiance à 95 % : de {lo} à {hi}.',
+ main='Le bras D, qui associait routage fondé sur le contrat de tâche, vérification structurelle et correction limitée, a augmenté le taux de réussite des tâches, selon l’évaluateur indépendant, de <b>{dpp} points de pourcentage</b> par rapport au bras de référence utilisant un routage fixe avec accès aux outils (bras B). Intervalle de confiance à 95 % : de {lo} à {hi}.',
  method='Méthode : les différences appariées ont été moyennées pour chacune des {bt} tâches de base, puis les tâches de base ont reçu un poids égal. L’intervalle provient de {nres} rééchantillonnages des tâches de base au sein de leurs strates.',
  hraw='Taux bruts et coût', pp='pts', s='s',
  rawnote='Les taux bruts comptent chaque épisode : les tâches avec outils (exécutées dans trois conditions) pèsent donc plus que les tâches de raisonnement, alors que l’estimation principale donne le même poids à chaque tâche de base. Écart brut : {gap} pts.',
@@ -96,6 +96,12 @@ def description(lang):
     return T[lang]['desc'].format(delta=num(M['delta_pp'], lang, sign=True))
 
 
+VERIFICATION_EXAMPLE = {
+    'ar': ('مثال من مهمة عربية', 'بعد تصحيح إخفاق في كتابة الناتج، احتوى ملف المجموع على 89 وملف حاصل الضرب على 1938. اجتاز الملفان الفحص البنيوي لأنهما احتويا على أعداد، لكن المقيّم المستقل سجّل إخفاقًا لأن حاصل الضرب الصحيح هو 1908. يقيس فرق النجاح المقارنة بين الذراعين كاملتين.'),
+    'en': ('Example from an Arabic task', 'After a silent write failure was repaired, the sum file contained 89 and the product file contained 1938. Both files passed the structural check because they contained integers. The independent evaluator recorded a failure because the correct product was 1908. The success-rate difference compares the two arms as a whole.'),
+    'fr': ('Exemple tiré d’une tâche en arabe', 'Après la correction d’un échec silencieux d’écriture, le fichier de la somme contenait 89 et celui du produit 1938. Les deux fichiers ont passé la vérification structurelle car ils contenaient des entiers. L’évaluateur indépendant a relevé un échec car le produit correct était 1908. L’écart de réussite compare les deux bras dans leur ensemble.'),
+}
+
 def render(lang):
     t = T[lang]
     values = vals(lang)
@@ -115,6 +121,7 @@ def render(lang):
     return (
         f'<div class="subpage"><h1>{t["h1"]}</h1><p class="label">{t["badge"]}</p><p>{fmt("lead")}</p>'
         f'<h2>{t["hmain"]}</h2><p>{fmt("main")}</p><p>{fmt("method")}</p>'
+        f'<h2>{VERIFICATION_EXAMPLE[lang][0]}</h2><p>{VERIFICATION_EXAMPLE[lang][1]}</p>'
         f'<h2>{t["hraw"]}</h2><div class="results-table" tabindex="0" role="region" aria-label="{t["hraw"]}">'
         f'<table><thead><tr>{headers}</tr></thead><tbody>{rows}</tbody></table></div><p>{fmt("rawnote")}</p>'
         f'<h2>{t["hsil"]}</h2><p>{fmt("sil")}</p><h2>{t["hdes"]}</h2><p>{fmt("des")}</p><p>{fmt("arms")}</p>'
