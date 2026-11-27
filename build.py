@@ -1,4 +1,5 @@
 from pathlib import Path
+from base64 import b64decode
 from os import environ
 from xml.etree.ElementTree import Element, SubElement, ElementTree
 from html import escape
@@ -71,6 +72,12 @@ person = {
 }
 
 
+results_pdf = '/files/aco-llm-results.pdf'
+results_pdf_target = Path('dist' + results_pdf)
+results_pdf_target.parent.mkdir(parents=True, exist_ok=True)
+results_pdf_target.write_bytes(b64decode(Path('_publications/aco-llm-results.pdf.b64').read_text(encoding='ascii')))
+
+
 def row(category, title, description, url, lang='en'):
     attrs = ' lang="ar" dir="rtl"' if lang == 'ar' else ''
     return f'<article><span>{category}</span><div{attrs}><h3><a href="{url}">{title}</a></h3><p>{description}</p></div></article>'
@@ -92,6 +99,18 @@ def page(route, title, section, main):
             'publication_date': publication['publication_date'],
             'doi': publication['doi'],
             'pdf_url': (origin if public_build else 'https://qassem-adra-demo.jerizsdbp9.chatgpt.site') + publication['pdf'],
+        }
+        metadata = ''.join(
+            f'<meta name="citation_{key}" content="{escape(value, quote=True)}">'
+            for key, value in citations.items()
+        )
+    if route == results.PATH:
+        citations = {
+            'title': 'Adaptive Cognitive Orchestration for Local Language Models: A Held-Out Evaluation of Structural Verification and Repair',
+            'author': 'Kasem Adra',
+            'publication_date': '2026/11/26',
+            'doi': '10.5281/zenodo.24549236',
+            'pdf_url': origin + results_pdf,
         }
         metadata = ''.join(
             f'<meta name="citation_{key}" content="{escape(value, quote=True)}">'
@@ -312,7 +331,7 @@ def localize_pages():
             contact_link = f'<a href="mailto:hello@kasemadra.com">{contact_label}</a>'
             body = body.replace('>Zenodo</a></div>', '>Zenodo</a>' + contact_link + '</div>')
             if path == results.PATH:
-                body = body.replace('<main></main>', '<main>' + results.render(lang) + '</main>')
+                body = body.replace('<main></main>', '<main>' + results.render(lang).replace(results.J['pdf'], results_pdf) + '</main>')
             if path == '/':
                 body = sub(r'(<section><h2>[^<]+</h2>.*?)(</section>)', lambda match: match[1] + results.homepage_summary(lang) + match[2], body, count=1)
             if path == paper:
