@@ -35,7 +35,7 @@ This article examines local AI assistant reliability from a systems-engineering 
 | Subject | Reliability of local AI assistants and tool-using agents |
 | Author | Kasem Adra |
 | Research case study | ACO-LLM |
-| Model used in the evaluation | Gemma 4 12B IT QAT, identifier gemma4:12b-it-qat [4] |
+| Model used in the evaluation | Gemma 4 12B IT QAT, identifier gemma4:12b-it-qat [4](https://ollama.com/library/gemma4:12b-it-qat) |
 | Task set | 96 base tasks, each with Arabic and English variants |
 | Evaluation size | 8,064 episodes across six experimental arms |
 | Primary comparison | Arm D versus arm B |
