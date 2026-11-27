@@ -317,22 +317,6 @@ def localize_pages():
                     head = head.replace('</head>', article_meta + '</head>')
                 else:
                     head = sub(r'<title>[^<]*</title>', lambda _: f'<title>{escape(fields["title"])} · Kasem Adra</title>', head)
-            elif path in (paper, results.PATH):
-                related_labels = {
-                    'ar': 'قراءة تحليلية مرتبطة',
-                    'en': 'Related analysis',
-                    'fr': 'Analyse associée',
-                }
-                related_titles = {
-                    'ar': 'هل يمكن الوثوق بمساعد ذكاء اصطناعي محلي؟',
-                    'en': 'Can We Trust a Local AI Assistant?',
-                    'fr': 'Peut-on faire confiance à un assistant IA local ?',
-                }
-                related = (
-                    f'<p class="related-article"><span>{related_labels[lang]}:</span> '
-                    f'<a href="{locale_path(lang, article)}">{related_titles[lang]}</a></p>'
-                )
-                body = body.replace('</main>', related + '</main>')
             elif path in ('/', '/blog/'):
                 body = render_post_cards(body, lang)
             body = body.replace(f'<p>{paper_title}</p>', f'<p lang="en" dir="ltr">{paper_title}</p>')
@@ -378,11 +362,32 @@ def localize_pages():
             body = body.replace('>Zenodo</a></div>', '>Zenodo</a>' + contact_link + '</div>')
             if path == results.PATH:
                 body = body.replace('<main></main>', '<main>' + results.render(lang).replace(results.J['pdf'], results_pdf) + '</main>')
+                related_labels = {'ar': 'قراءة تحليلية مرتبطة', 'en': 'Related analysis', 'fr': 'Analyse associée'}
+                related_titles = {
+                    'ar': 'هل يمكن الوثوق بمساعد ذكاء اصطناعي محلي؟',
+                    'en': 'Can We Trust a Local AI Assistant?',
+                    'fr': 'Peut-on faire confiance à un assistant IA local ?',
+                }
+                related = (
+                    f'<p class="related-article"><span>{related_labels[lang]}:</span> '
+                    f'<a href="{locale_path(lang, article)}">{related_titles[lang]}</a></p>'
+                )
+                body = body.replace('</main>', related + '</main>')
             if path == '/':
                 body = sub(r'(<section><h2>[^<]+</h2>.*?)(</section>)', lambda match: match[1] + results.homepage_summary(lang) + match[2], body, count=1)
             if path == paper:
                 label = {'en':'View evaluation results','ar':'اطّلع على نتائج التقييم','fr':'Voir les résultats de l’évaluation'}[lang]
-                body = body.replace('</div></main>', f'<p><a href="{locale_path(lang, results.PATH)}">{label}</a></p></div></main>', 1)
+                related_labels = {'ar': 'قراءة تحليلية مرتبطة', 'en': 'Related analysis', 'fr': 'Analyse associée'}
+                related_titles = {
+                    'ar': 'هل يمكن الوثوق بمساعد ذكاء اصطناعي محلي؟',
+                    'en': 'Can We Trust a Local AI Assistant?',
+                    'fr': 'Peut-on faire confiance à un assistant IA local ?',
+                }
+                related = (
+                    f'<p class="related-article"><span>{related_labels[lang]}:</span> '
+                    f'<a href="{locale_path(lang, article)}">{related_titles[lang]}</a></p>'
+                )
+                body = body.replace('</div></main>', f'<p><a href="{locale_path(lang, results.PATH)}">{label}</a></p>' + related + '</div></main>', 1)
             if path == '/projects/':
                 project_cards = {
                     'ar': (('توقّع هبوط المرحلة الأولى من Falcon 9', 'مشروع تدريبي في علم البيانات يجمع بيانات الإطلاق ويحللها باستخدام SQL والرسوم والخرائط، ثم يختبر نماذج لتصنيف نتيجة الهبوط.'), ('استخراج بيانات الأسهم وعرضها', 'ستة دفاتر Jupyter من تدريب IBM في علم البيانات لاستخراج بيانات أسهم Tesla وGameStop وإيراداتهما وعرضها بيانيًا.')),
