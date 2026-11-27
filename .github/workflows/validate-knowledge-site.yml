@@ -67,6 +67,9 @@ jobs:
               about_graph = schemas(about)
               assert any(x.get("@type") == "ProfilePage" and x.get("mainEntity", {}).get("@id") == person["@id"] for x in about_graph), f"Missing ProfilePage schema: {lang}"
               assert "profile-identifiers" in about and "LinkedIn" in about
+              obsolete_archive_labels = ("historical archive", "الأرشيف البحثي والتاريخي", "archives de recherche et historiques")
+              assert not any(label in about.lower() for label in obsolete_archive_labels), f"Obsolete historical-archive label remains: {lang}"
+              assert f'href="/{lang}/archive/"' in about, f"Profile archive link missing: {lang}"
               for section_id in ("profile-facts", "biography", "research-profile", "projects-profile", "writing-profile", "identifiers"):
                   assert f'id="{section_id}"' in about, f"Missing encyclopedic profile section {section_id}: {lang}"
               assert 'class="profile-toc"' in about and 'class="profile-infobox"' in about
