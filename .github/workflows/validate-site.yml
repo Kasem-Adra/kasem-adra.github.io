@@ -41,9 +41,9 @@ jobs:
               "fr": "Peut-on faire confiance à un assistant IA local ?",
           }
           required_phrases = {
-              "ar": ["24 مهمة تجريبية", "Ollama 0.40.18", "38044be4f923", "−1.04", "−2.08", "+20.66", "+19.97", "198", "final_success", "أرشيفاً مكملاً"],
-              "en": ["24 pilot tasks", "Ollama 0.40.18", "38044be4f923", "−1.04", "−2.08", "+20.66", "+19.97", "198", "final_success", "companion archive"],
-              "fr": ["24 tâches pilotes", "Ollama 0.40.18", "38044be4f923", "−1,04", "−2,08", "+20,66", "+19,97", "198", "final_success", "archive complémentaire"],
+              "ar": ["24 مهمة تجريبية", "ثلاث عائلات مهام مترابطة", "مفتاح الإجابات المخفي غير مرفق", "لم تُنشر بعد", "Ollama 0.40.18", "38044be4f923", "−1.04", "−2.08", "+20.66", "+19.97", "198", "final_success", "أرشيف مكمّل"],
+              "en": ["24 pilot tasks", "three generated, related families", "hidden answer key is not included", "not yet been released", "Ollama 0.40.18", "38044be4f923", "−1.04", "−2.08", "+20.66", "+19.97", "198", "final_success", "companion archive"],
+              "fr": ["24 tâches pilotes", "trois familles générées et apparentées", "clé de réponses cachée n’est pas incluse", "pas encore été publiés", "Ollama 0.40.18", "38044be4f923", "−1,04", "−2,08", "+20,66", "+19,97", "198", "final_success", "archive complémentaire"],
           }
           reference_urls = [
               "https://doi.org/10.5281/zenodo.24488951",
