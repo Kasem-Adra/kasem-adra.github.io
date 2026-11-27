@@ -262,6 +262,26 @@ def main():
     if root_path.is_file():
         _, root_parser = parse_page(root_path)
         check_common_metadata(root_path, root_parser)
+
+        # The root language selector is also the primary branded search result.
+        expected_root_title = "Kasem Adra | Independent AI Researcher"
+        expected_root_description = (
+            "Official website of Kasem Adra (قاسم عدرا), independent AI researcher "
+            "studying local language models, AI agents, task verification and ACO-LLM."
+        )
+        if "".join(root_parser.title_text).strip() != expected_root_title:
+            fail(f"Root page title should be {expected_root_title!r}")
+        for key, expected in (
+            ("description", expected_root_description),
+            ("og:title", expected_root_title),
+            ("og:description", expected_root_description),
+            ("twitter:title", expected_root_title),
+            ("twitter:description", expected_root_description),
+            ("twitter:image", ORIGIN + "/assets/kasem-adra-portrait.jpg"),
+        ):
+            if root_parser.meta.get(key) != [expected]:
+                fail(f"Root page {key} metadata is inconsistent: {root_parser.meta.get(key)}")
+
         if root_parser.canonicals != [ORIGIN + "/"]:
             fail("Root language selector must canonicalize to https://kasemadra.com/")
         expected_root_alternates = {
@@ -273,8 +293,18 @@ def main():
         if root_parser.alternates != expected_root_alternates:
             fail(f"Root language selector has incorrect hreflang links: {root_parser.alternates}")
         root_nodes = flatten_schemas(root_parser)
-        if not any(x.get("@type") == "WebSite" and x.get("name") == "Kasem Adra" for x in root_nodes):
+        website = next((x for x in root_nodes if x.get("@type") == "WebSite" and x.get("name") == "Kasem Adra"), None)
+        if website is None:
             fail("Root page is missing the WebSite entity")
+        elif website.get("description") != expected_root_description:
+            fail("Root WebSite description does not match the search snippet")
+
+        webpage = next((x for x in root_nodes if x.get("@type") == "WebPage" and x.get("@id") == ORIGIN + "/#webpage"), None)
+        if webpage is None:
+            fail("Root page is missing its connected WebPage entity")
+        elif webpage.get("name") != expected_root_title or webpage.get("description") != expected_root_description:
+            fail("Root WebPage name/description do not match the search metadata")
+
         person = next((x for x in root_nodes if x.get("@type") == "Person" and x.get("@id") == ORIGIN + "/#person"), None)
         if person is None:
             fail("Root page is missing the connected Person entity")
