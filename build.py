@@ -337,6 +337,18 @@ def localize_pages():
             if path == paper:
                 label = {'en':'View evaluation results','ar':'اطّلع على نتائج التقييم','fr':'Voir les résultats de l’évaluation'}[lang]
                 body = body.replace('</div></main>', f'<p><a href="{locale_path(lang, results.PATH)}">{label}</a></p></div></main>', 1)
+            if path == '/projects/':
+                project_cards = {
+                    'ar': (('توقّع هبوط المرحلة الأولى من Falcon 9', 'مشروع تدريبي في علم البيانات يجمع بيانات الإطلاق ويحللها باستخدام SQL والرسوم والخرائط، ثم يختبر نماذج لتصنيف نتيجة الهبوط.'), ('استخراج بيانات الأسهم وعرضها', 'ستة دفاتر Jupyter من تدريب IBM في علم البيانات لاستخراج بيانات أسهم Tesla وGameStop وإيراداتهما وعرضها بيانيًا.')),
+                    'en': (('Falcon 9 landing prediction', 'A data science coursework project that collects and explores launch data with SQL, charts, and maps, then tests classifiers for first-stage landing outcomes.'), ('Extracting and visualizing stock data', 'Six Jupyter notebooks from IBM Data Science coursework that collect and chart stock and revenue data for Tesla and GameStop.')),
+                    'fr': (('Prédiction de l’atterrissage de Falcon 9', 'Un projet de formation en science des données qui collecte et explore les données de lancement avec SQL, des graphiques et des cartes, puis teste des modèles de classification des atterrissages.'), ('Extraction et visualisation de données boursières', 'Six notebooks Jupyter du cursus IBM Data Science pour collecter et visualiser les cours et les revenus de Tesla et GameStop.')),
+                }[lang]
+                project_repos = ('SpaceX-Falcon9-Landing-Prediction', 'Extracting-Visualizing-Stock-Data')
+                cards = ''.join(
+                    row('GitHub', escape(name), escape(description), f'https://github.com/Kasem-Adra/{repo}')
+                    for (name, description), repo in zip(project_cards, project_repos, strict=True)
+                )
+                body = body.replace('</div></main>', cards + '</div></main>', 1)
             if path == '/publications/':
                 category, card_title, card_description = {
                     'en': ('PREPRINT', 'ACO‑LLM evaluation results', 'Results from the held-out evaluation of structural verification and repair.'),
