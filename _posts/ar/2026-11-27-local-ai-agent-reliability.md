@@ -235,7 +235,7 @@ citations: [{"name":"ACO-LLM research protocol, version 1.7","url":"https://doi.
 
 ### 7.2 ادعاءات إتمام المهمة
 
-يسجل التقرير عدم صدور أي ادعاء نجاح منظّم عن النموذج عبر الإجراء المخصص لذلك. وبذلك كان مقام حساب معدل الادعاءات الكاذبة المشروط صفراً، فلم يكن من الممكن تقدير هذا المعدل. كما نُسب الإتمام التلقائي الذي نفّذه مشغّل التجربة إلى المشغّل، لا إلى النموذج. لذلك لا تقيس هذه التجربة معدل ادعاءات الإتمام الكاذبة باللغة الطبيعية.
+يسجل التقرير عدم صدور أي ادعاء نجاح منظّم عن النموذج عبر الإجراء المنظّم المسمّى final_success. وبذلك كان مقام حساب معدل الادعاءات الكاذبة المشروط صفراً، فلم يكن من الممكن تقدير هذا المعدل. كما نُسب الإتمام التلقائي الذي نفّذه مشغّل التجربة إلى المشغّل، لا إلى النموذج. لذلك لا تقيس هذه التجربة معدل ادعاءات الإتمام الكاذبة باللغة الطبيعية.
 
 ## 8. حدود النتائج وما لا تثبته
 
@@ -337,7 +337,7 @@ citations: [{"name":"ACO-LLM research protocol, version 1.7","url":"https://doi.
 3. Google DeepMind. *Gemma 4.* Official model overview. [Model page](https://deepmind.google/models/gemma/gemma-4/).
 4. Ollama. *gemma4:12b-it-qat* [Model listing]. [Ollama Library](https://ollama.com/library/gemma4:12b-it-qat).
 5. Autio, C. et al. (2024). *Artificial Intelligence Risk Management Framework: Generative Artificial Intelligence Profile.* NIST AI 600-1. [DOI](https://doi.org/10.6028/NIST.AI.600-1).
-6. OWASP GenAI Security Project. *Top 10 for Agentic Applications 2026.* [Source](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/).
+6. OWASP GenAI Security Project. (2025). *OWASP Top 10 for Agentic Applications for 2026.* [Source](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/).
 7. Yao, S. et al. (2022). *ReAct: Synergizing Reasoning and Acting in Language Models.* [arXiv:2210.03629](https://arxiv.org/abs/2210.03629).
 8. Shinn, N. et al. (2023). *Reflexion: Language Agents with Verbal Reinforcement Learning.* [arXiv:2303.11366](https://arxiv.org/abs/2303.11366).
 9. Liu, X. et al. (2023). *AgentBench: Evaluating LLMs as Agents.* [arXiv:2308.03688](https://arxiv.org/abs/2308.03688).
