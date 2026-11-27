@@ -235,7 +235,7 @@ Dans les bras dotés d’une porte de vérification, le vérificateur structurel
 
 ### 7.2 Déclarations d’achèvement
 
-La prépublication ne recense aucune déclaration de réussite structurée émise par le modèle via l’action prévue à cet effet. Le dénominateur du taux conditionnel de fausses déclarations était donc nul, et ce taux n’a pas pu être estimé. Les achèvements automatiques effectués par le moteur d’exécution lui ont été attribués, et non au modèle. L’expérience ne quantifie donc pas les fausses déclarations d’achèvement dans les réponses en langage naturel.
+La prépublication ne recense aucune déclaration de réussite structurée émise par le modèle via l’action structurée final_success prévue à cet effet. Le dénominateur du taux conditionnel de fausses déclarations était donc nul, et ce taux n’a pas pu être estimé. Les achèvements automatiques effectués par le moteur d’exécution lui ont été attribués, et non au modèle. L’expérience ne quantifie donc pas les fausses déclarations d’achèvement dans les réponses en langage naturel.
 
 ## 8. Limites des résultats et conclusions non établies
 
@@ -337,7 +337,7 @@ L’évaluation ACO-LLM indique que l’orientation selon les exigences de la t�
 3. Google DeepMind. *Gemma 4.* Présentation officielle du modèle. [Page du modèle](https://deepmind.google/models/gemma/gemma-4/).
 4. Ollama. *gemma4:12b-it-qat* [Fiche du modèle]. [Bibliothèque Ollama](https://ollama.com/library/gemma4:12b-it-qat).
 5. Autio, C. et al. (2024). *Artificial Intelligence Risk Management Framework: Generative Artificial Intelligence Profile.* NIST AI 600-1. [DOI](https://doi.org/10.6028/NIST.AI.600-1).
-6. OWASP GenAI Security Project. *Top 10 for Agentic Applications 2026.* [Source](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/).
+6. OWASP GenAI Security Project. (2025). *OWASP Top 10 for Agentic Applications for 2026.* [Source](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/).
 7. Yao, S. et al. (2022). *ReAct: Synergizing Reasoning and Acting in Language Models.* [arXiv:2210.03629](https://arxiv.org/abs/2210.03629).
 8. Shinn, N. et al. (2023). *Reflexion: Language Agents with Verbal Reinforcement Learning.* [arXiv:2303.11366](https://arxiv.org/abs/2303.11366).
 9. Liu, X. et al. (2023). *AgentBench: Evaluating LLMs as Agents.* [arXiv:2308.03688](https://arxiv.org/abs/2308.03688).
