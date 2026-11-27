@@ -352,7 +352,9 @@ def main():
                 "https://www.linkedin.com/in/kasem-adra/",
                 "https://qassem.net/",
                 "https://x.com/QassemAdra",
+                "https://www.facebook.com/Qassem",
                 "https://www.instagram.com/qassemadra/",
+                "https://www.threads.com/@qassemadra",
             ):
                 if identifier not in same_as:
                     fail(f"Person entity is missing sameAs identifier: {identifier}")
@@ -372,9 +374,9 @@ def main():
             if person.get("name") != "Kasem Adra":
                 fail("Person entity must use Kasem Adra as the canonical name")
         for lang, expected_links in {
-            "en": ("https://github.com/QassemAi", "https://www.instagram.com/qassemadra/"),
-            "ar": ("https://github.com/QassemAi", "https://www.instagram.com/qassemadra/"),
-            "fr": ("https://github.com/QassemAi", "https://www.instagram.com/qassemadra/"),
+            "en": ("https://github.com/QassemAi", "https://www.facebook.com/Qassem", "https://www.instagram.com/qassemadra/", "https://www.threads.com/@qassemadra"),
+            "ar": ("https://github.com/QassemAi", "https://www.facebook.com/Qassem", "https://www.instagram.com/qassemadra/", "https://www.threads.com/@qassemadra"),
+            "fr": ("https://github.com/QassemAi", "https://www.facebook.com/Qassem", "https://www.instagram.com/qassemadra/", "https://www.threads.com/@qassemadra"),
         }.items():
             profile = page_path(lang, "/about/").read_text(encoding="utf-8")
             for link in expected_links:
@@ -402,7 +404,9 @@ def main():
                 "https://www.linkedin.com/in/kasem-adra/",
                 "https://qassem.net/",
                 "https://x.com/QassemAdra",
+                "https://www.facebook.com/Qassem",
                 "https://www.instagram.com/qassemadra/",
+                "https://www.threads.com/@qassemadra",
             ):
                 if identifier not in profile_person.get("sameAs", []):
                     fail(f"{lang}: Person entity in ProfilePage graph is missing sameAs identifier {identifier}")
