@@ -251,8 +251,8 @@ def build_article_head(fields, lang, page_url, origin, person, word_count, readi
             "height": 450,
             "caption": fields.get("image_caption", ""),
         },
-        "author": {"@type": "Person", "@id": person["@id"], "name": person["name"]},
-        "publisher": {"@type": "Person", "@id": person["@id"], "name": person["name"]},
+        "author": {"@id": person["@id"]},
+        "publisher": {"@id": person["@id"]},
         "datePublished": fields["date_published"],
         "dateModified": fields.get("date_modified", fields["date_published"]),
         "inLanguage": lang,
@@ -285,6 +285,7 @@ def build_article_head(fields, lang, page_url, origin, person, word_count, readi
             for i, name in enumerate(breadcrumb_names)
         ],
     }
+    person_schema = dict(person)
     tags = [
         f'<meta name="author" content="{escape(fields.get("author_display", person["name"]), quote=True)}">',
         '<meta property="og:type" content="article">',
@@ -299,11 +300,13 @@ def build_article_head(fields, lang, page_url, origin, person, word_count, readi
         f'<meta property="article:modified_time" content="{escape(fields.get("date_modified", fields["date_published"]), quote=True)}">',
         f'<meta property="article:author" content="{escape(person["name"], quote=True)}">',
         f'<meta property="article:section" content="{escape(fields.get("article_section", "Artificial intelligence"), quote=True)}">',
+        *[f'<meta property="article:tag" content="{escape(str(keyword), quote=True)}">' for keyword in keywords],
         '<meta name="twitter:card" content="summary_large_image">',
         f'<meta name="twitter:title" content="{escape(title, quote=True)}">',
         f'<meta name="twitter:description" content="{escape(description, quote=True)}">',
         f'<meta name="twitter:image" content="{escape(image_url, quote=True)}">',
         f'<meta name="twitter:image:alt" content="{escape(fields.get("image_alt", fields["title"]), quote=True)}">',
+        '<script type="application/ld+json">' + json.dumps(person_schema, ensure_ascii=False) + '</script>',
         '<script type="application/ld+json">' + json.dumps(article, ensure_ascii=False) + '</script>',
         '<script type="application/ld+json">' + json.dumps(breadcrumb, ensure_ascii=False) + '</script>',
     ]
