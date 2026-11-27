@@ -95,7 +95,9 @@ person = {
         'https://www.linkedin.com/in/kasem-adra/',
         'https://qassem.net/',
         'https://x.com/QassemAdra',
+        'https://www.facebook.com/Qassem',
         'https://www.instagram.com/qassemadra/',
+        'https://www.threads.com/@qassemadra',
     ],
     'affiliation': {
         '@type': 'Organization',
