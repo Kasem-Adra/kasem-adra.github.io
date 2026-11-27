@@ -549,6 +549,7 @@ def page_schema(lang, route, title, description):
             {"@id": ORIGIN + f"/{lang}/publications/aco-llm-results/#article"}
         ]
     elif route == BANIYAS_ROUTE:
+        webpage["about"] = [{"@id": PERSON_ID}, {"@id": ORIGIN + "/#place-baniyas"}]
         article = {
             "@type": "Article",
             "@id": canonical + "#article",
