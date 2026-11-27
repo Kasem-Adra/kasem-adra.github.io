@@ -155,7 +155,7 @@ Il s’agit des paramètres d’exécution indiqués dans la prépublication des
 
 L’estimation principale indique que le bras D a augmenté le taux de réussite des tâches, selon l’évaluateur indépendant, de **20,83 points de pourcentage** par rapport au bras B. L’intervalle de confiance à 95 % s’étend de 18,23 à 23,44 points de pourcentage.
 
-Cette estimation a été calculée à partir des différences appariées au sein de chacune des 96 tâches de base, chaque tâche recevant le même poids. Un bootstrap en grappes comprenant 10 000 rééchantillonnages des tâches de base au sein de leurs strates a servi à estimer l’intervalle de confiance.
+Cette estimation a été calculée à partir des différences appariées au sein de chacune des 96 tâches de base, chaque tâche recevant le même poids. Un bootstrap en grappes comprenant 10 000 rééchantillonnages des tâches de base au sein de leurs strates a servi à estimer l’intervalle de confiance. [2](https://doi.org/10.5281/zenodo.24549236)
 
 ### 6.2 Taux bruts de réussite
 
@@ -170,7 +170,7 @@ Le tableau suivant présente les épisodes réussis et les taux bruts de réussi
 | E | 1 203 sur 1 344 | 89,51 % |
 | F | 1 191 sur 1 344 | 88,62 % |
 
-L’écart brut entre B et D était de **26,64 points de pourcentage**. Il ne correspond pas à l’estimation principale de 20,83 points, car le taux brut compte chaque épisode, tandis que l’estimation principale donne le même poids à chaque tâche de base. Les tâches avec outils ont été exécutées dans trois conditions et contribuent donc davantage d’épisodes au taux brut.
+L’écart brut entre B et D était de **26,64 points de pourcentage**. Il ne correspond pas à l’estimation principale de 20,83 points, car le taux brut compte chaque épisode, tandis que l’estimation principale donne le même poids à chaque tâche de base. Les tâches avec outils ont été exécutées dans trois conditions et contribuent donc davantage d’épisodes au taux brut. [2](https://doi.org/10.5281/zenodo.24549236)
 
 ### 6.3 Condition de défaillance silencieuse
 
@@ -185,7 +185,7 @@ Pour les épisodes affectés à la condition de défaillance silencieuse, les r�
 | E | 363 sur 384 | 94,53 % |
 | F | 363 sur 384 | 94,53 % |
 
-Ces résultats montrent une amélioration importante pour les bras comportant une vérification et une correction limitée dans la condition précise testée. Ils ne signifient pas que toutes les défaillances silencieuses ont été résolues : 21 des 384 épisodes sont restés en échec dans chacun des bras D, E et F.
+Ces résultats montrent une amélioration importante pour les bras comportant une vérification et une correction limitée dans la condition précise testée. Ils ne signifient pas que toutes les défaillances silencieuses ont été résolues : 21 des 384 épisodes sont restés en échec dans chacun des bras D, E et F. [2](https://doi.org/10.5281/zenodo.24549236)
 
 ### 6.4 Coût d’exécution
 
@@ -200,7 +200,7 @@ Les durées moyennes et les jetons générés dans les six bras étaient les sui
 | E | 2,286 s | 49,83 |
 | F | 2,287 s | 49,81 |
 
-Par rapport à B, le bras D a consommé en moyenne 0,183 seconde supplémentaire par épisode (+8,73 %) et généré 5,26 jetons supplémentaires (+11,80 %). La vérification et la correction ne doivent donc pas être présentées comme gratuites.
+Par rapport à B, le bras D a consommé en moyenne 0,183 seconde supplémentaire par épisode (+8,73 %) et généré 5,26 jetons supplémentaires (+11,80 %). La vérification et la correction ne doivent donc pas être présentées comme gratuites. [2](https://doi.org/10.5281/zenodo.24549236)
 
 ### 6.5 Contrastes secondaires et interprétation des composantes
 
@@ -217,13 +217,13 @@ Le tableau suivant présente les contrastes secondaires prévus, y compris l’i
 
 Sur les seules tâches de raisonnement déterministe, la différence médiane appariée de latence entre D et B était de −47 millisecondes (de −78 à −31). Dans l’analyse des pannes attribuées, la différence de réussite entre D et C était de +46,48 points de pourcentage (de +43,36 à +48,83), que l’exécution ait ou non atteint le déclencheur de panne.
 
-Ces contrastes sont secondaires et exploratoires, et leurs intervalles ne sont pas ajustés pour les comparaisons multiples. Les intervalles de C−B et D−F incluent zéro : l’étude n’a donc pas établi d’effet positif distinct de l’orientation dans ces deux comparaisons, sans pour autant démontrer l’absence d’effet ou l’équivalence. En revanche, F−B et D−C sont positifs ; ils comparent tous deux l’ajout du bloc vérification-correction sous des politiques d’orientation différentes. Comme la vérification et la correction ont été testées ensemble, leurs effets respectifs ne peuvent pas être isolés. L’intervalle de l’interaction inclut également zéro et ne fournit pas de preuve claire d’une interaction.
+Ces contrastes sont secondaires et exploratoires, et leurs intervalles ne sont pas ajustés pour les comparaisons multiples. Les intervalles de C−B et D−F incluent zéro : l’étude n’a donc pas établi d’effet positif distinct de l’orientation dans ces deux comparaisons, sans pour autant démontrer l’absence d’effet ou l’équivalence. En revanche, F−B et D−C sont positifs ; ils comparent tous deux l’ajout du bloc vérification-correction sous des politiques d’orientation différentes. Comme la vérification et la correction ont été testées ensemble, leurs effets respectifs ne peuvent pas être isolés. L’intervalle de l’interaction inclut également zéro et ne fournit pas de preuve claire d’une interaction. [2](https://doi.org/10.5281/zenodo.24549236)
 
 ## 7. Que signifie le terme « vérification » dans cette évaluation ?
 
 Tous les contrôles n’apportent pas le même niveau de preuve. Un contrôle d’exécution que l’agent peut utiliser pendant le traitement est différent d’un évaluateur indépendant chargé de déterminer si le résultat final est correct.
 
-Dans un exemple de l’évaluation, un résultat a passé un contrôle structurel parce qu’il contenait des nombres entiers, mais il ne correspondait pas à la valeur correcte vérifiée par l’évaluateur indépendant : le produit attendu était 1908, tandis que le résultat contenait 1938. Cet exemple montre pourquoi la validité structurelle n’est pas équivalente à l’exactitude du contenu.
+Dans un exemple de l’évaluation, un résultat a passé un contrôle structurel parce qu’il contenait des nombres entiers, mais il ne correspondait pas à la valeur correcte vérifiée par l’évaluateur indépendant : le produit attendu était 1908, tandis que le résultat contenait 1938. Cet exemple montre pourquoi la validité structurelle n’est pas équivalente à l’exactitude du contenu. [2](https://doi.org/10.5281/zenodo.24549236)
 
 Les critères d’acceptation doivent donc correspondre à la tâche. L’existence d’un fichier ne suffit pas lorsque son contenu doit également être contrôlé. Un schéma CSV valide ne prouve pas que toutes les valeurs sont correctes, et l’achèvement d’une étape intermédiaire ne prouve pas la réussite de l’ensemble du processus.
 
@@ -231,11 +231,11 @@ La qualité de l’évaluation dépend également de celle de l’évaluateur et
 
 ### 7.1 Limites du vérificateur structurel
 
-Dans les bras dotés d’une porte de vérification, le vérificateur structurel a accepté 69 épisodes dans D, 60 dans E et 69 dans F alors que l’évaluateur indépendant les avait classés comme des échecs, soit 198 cas au total. Cela montre que vérifier la présence ou la structure d’un fichier ne revient pas à vérifier l’exactitude de son contenu.
+Dans les bras dotés d’une porte de vérification, le vérificateur structurel a accepté 69 épisodes dans D, 60 dans E et 69 dans F alors que l’évaluateur indépendant les avait classés comme des échecs, soit 198 cas au total. Cela montre que vérifier la présence ou la structure d’un fichier ne revient pas à vérifier l’exactitude de son contenu. [2](https://doi.org/10.5281/zenodo.24549236)
 
 ### 7.2 Déclarations d’achèvement
 
-La prépublication ne recense aucune déclaration de réussite structurée émise par le modèle via l’action structurée final_success prévue à cet effet. Le dénominateur du taux conditionnel de fausses déclarations était donc nul, et ce taux n’a pas pu être estimé. Les achèvements automatiques effectués par le moteur d’exécution lui ont été attribués, et non au modèle. L’expérience ne quantifie donc pas les fausses déclarations d’achèvement dans les réponses en langage naturel.
+La prépublication ne recense aucune déclaration de réussite structurée émise par le modèle via l’action structurée final_success prévue à cet effet. Le dénominateur du taux conditionnel de fausses déclarations était donc nul, et ce taux n’a pas pu être estimé. Les achèvements automatiques effectués par le moteur d’exécution lui ont été attribués, et non au modèle. L’expérience ne quantifie donc pas les fausses déclarations d’achèvement dans les réponses en langage naturel. [2](https://doi.org/10.5281/zenodo.24549236)
 
 ## 8. Limites des résultats et conclusions non établies
 
