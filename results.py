@@ -26,6 +26,8 @@ T = {
  desc='ACO‑LLM evaluation: {delta} percentage points in task success over a fixed-path reference arm, with simulated tools and one local model. Preprint.',
  h1='ACO‑LLM: evaluation results', badge='RESULTS PREPRINT · NOT PEER REVIEWED',
  lead='Summary of the evaluation designed in the <a href="../aco-llm/">protocol</a>. The authoritative source is the <a href="{rec}">results preprint on Zenodo</a> (<a href="{pdf}">PDF</a>).',
+ summary_title='In plain terms',
+ summary='This evaluation tested whether explicit checks and bounded repair could improve task completion. In this benchmark, arm D exceeded arm B by {dpp} percentage points according to an independent evaluator. The test used one local model and simulated tools; it does not establish the same gain for other models or real services.',
  hmain='Main estimate',
  main='Arm D, which combined task-contract routing, structural verification, and bounded repair, raised task success, as judged by the independent evaluator, by <b>{dpp} percentage points</b> over the fixed-path reference arm with tool support (arm B). 95% confidence interval: {lo} to {hi}.',
  method='Method: paired differences were averaged within each of the {bt} base tasks, and the base tasks were weighted equally. The interval comes from {nres} resamples of base tasks within their strata.',
@@ -45,6 +47,8 @@ T = {
  desc='تقييم ACO‑LLM: رفع معدل نجاح المهام بمقدار {delta} نقطة مئوية مقارنة بذراع مرجعية ذات مسار ثابت، باستخدام أدوات محاكاة ونموذج محلي واحد. ورقة أولية.',
  h1='ACO‑LLM: نتائج التقييم', badge='ورقة نتائج أولية · غير محكّمة',
  lead='ملخّص للتقييم الذي صُمّم في <a href="../aco-llm/">البروتوكول</a>. المصدر المعتمد هو <a href="{rec}">ورقة النتائج الأولية على Zenodo</a> (<a href="{pdf}">PDF</a>).',
+ summary_title='بعبارة مبسطة',
+ summary='اختبر التقييم ما إذا كانت إضافة فحوص صريحة وإصلاح محدود تحسّن إنجاز المهام. في هذا المعيار التجريبي، تفوقت الذراع D على الذراع B بمقدار {dpp} نقطة مئوية وفق مقيّم مستقل. استخدم الاختبار نموذجاً محلياً واحداً وأدوات محاكاة؛ ولا يثبت تحقق التحسن نفسه مع نماذج أخرى أو خدمات حقيقية.',
  hmain='التقدير الرئيسي',
  main='رفعت الذراع D، التي جمعت التوجيه المستند إلى عقد المهمة والتحقق البنيوي والإصلاح المحدود، معدل نجاح المهام، وفق المقيّم المستقل، بمقدار <b>{dpp} نقطة مئوية</b> مقارنة بالذراع المرجعية ذات المسار الثابت الداعم للأدوات (الذراع B). فاصل الثقة 95%: من {lo} إلى {hi}.',
  method='الطريقة: حُسب متوسط الفروق المقترنة داخل كل مهمة من المهام الأساسية الـ{bt}، ثم أُعطيت المهام أوزانًا متساوية. وحُسب الفاصل بإعادة معاينة {nres} مجموعة من المهام الأساسية داخل طبقاتها.',
@@ -64,6 +68,8 @@ T = {
  desc='Évaluation d’ACO‑LLM : {delta} points de pourcentage de réussite par rapport à un bras de référence utilisant un routage fixe avec accès aux outils, avec des outils simulés et un seul modèle local. Prépublication.',
  h1='ACO‑LLM : résultats de l’évaluation', badge='PRÉPUBLICATION DES RÉSULTATS · NON ÉVALUÉE PAR LES PAIRS',
  lead='Résumé de l’évaluation conçue dans le <a href="../aco-llm/">protocole</a>. La source de référence est la <a href="{rec}">prépublication des résultats sur Zenodo</a> (<a href="{pdf}">PDF</a>).',
+ summary_title='En termes simples',
+ summary='Cette évaluation a testé si des contrôles explicites et une correction limitée pouvaient améliorer l’exécution des tâches. Dans ce benchmark, le bras D a dépassé le bras B de {dpp} points de pourcentage selon un évaluateur indépendant. Le test a utilisé un seul modèle local et des outils simulés ; il ne démontre pas le même gain avec d’autres modèles ou des services réels.',
  hmain='Estimation principale',
  main='Le bras D, qui associait routage fondé sur le contrat de tâche, vérification structurelle et correction limitée, a augmenté le taux de réussite des tâches, selon l’évaluateur indépendant, de <b>{dpp} points de pourcentage</b> par rapport au bras de référence utilisant un routage fixe avec accès aux outils (bras B). Intervalle de confiance à 95 % : de {lo} à {hi}.',
  method='Méthode : les différences appariées ont été moyennées pour chacune des {bt} tâches de base, puis les tâches de base ont reçu un poids égal. L’intervalle provient de {nres} rééchantillonnages des tâches de base au sein de leurs strates.',
@@ -120,6 +126,7 @@ def render(lang):
     limits = ''.join(f'<li>{item.format(**values)}</li>' for item in t['lim'])
     return (
         f'<div class="subpage"><h1>{t["h1"]}</h1><p class="label">{t["badge"]}</p><p>{fmt("lead")}</p>'
+        f'<h2>{t["summary_title"]}</h2><p>{fmt("summary")}</p>'
         f'<h2>{t["hmain"]}</h2><p>{fmt("main")}</p><p>{fmt("method")}</p>'
         f'<h2>{VERIFICATION_EXAMPLE[lang][0]}</h2><p>{VERIFICATION_EXAMPLE[lang][1]}</p>'
         f'<h2>{t["hraw"]}</h2><div class="results-table" tabindex="0" role="region" aria-label="{t["hraw"]}">'

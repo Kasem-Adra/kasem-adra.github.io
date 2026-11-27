@@ -11,6 +11,8 @@ LANGS = ("en", "ar", "fr")
 LINKEDIN = "https://www.linkedin.com/in/kasem-adra/"
 GITHUB = "https://github.com/Kasem-Adra"
 ORCID = "https://orcid.org/0009-0004-7615-4978"
+QASSEM_SITE = "https://qassem.net/"
+X_PROFILE = "https://x.com/qassemadra"
 PROTOCOL_DOI = "https://doi.org/10.5281/zenodo.24488951"
 RESULTS_DOI = "https://doi.org/10.5281/zenodo.24549236"
 ARCHIVE_ROUTE = "/archive/"
@@ -27,9 +29,24 @@ PERSON = {
     "identifier": {
         "@type": "PropertyValue",
         "propertyID": "ORCID",
-        "value": "0009-0004-7615-4978"
+        "value": "0009-0004-7615-4978",
+        "url": ORCID
     },
-    "sameAs": [GITHUB, ORCID, LINKEDIN],
+    "sameAs": [ORCID, GITHUB, LINKEDIN, QASSEM_SITE, X_PROFILE],
+    "subjectOf": [
+        {
+            "@type": "ScholarlyArticle",
+            "@id": PROTOCOL_DOI,
+            "name": "Adaptive Cognitive Orchestration for Resource-Constrained Local Language Models (ACO-LLM): A Contract-Driven Research Protocol with Formal Guarantees and Reference Implementation",
+            "url": PROTOCOL_DOI
+        },
+        {
+            "@type": "ScholarlyArticle",
+            "@id": RESULTS_DOI,
+            "name": "Adaptive Cognitive Orchestration for Local Language Models: A Held-Out Evaluation of Structural Verification and Repair",
+            "url": RESULTS_DOI
+        }
+    ],
     "knowsAbout": [
         "Local artificial intelligence assistants",
         "Large language model evaluation",
@@ -159,7 +176,7 @@ def shell_page(dist, lang, route, title, description, main, public_build):
 <div class="shell">
 <header><a class="wordmark" href="/{lang}/">Kasem Adra</a><nav aria-label="Main navigation">{nav(lang)}</nav><div class="header-controls">{language_switcher(lang, route)}</div></header>
 <main><div class="subpage" dir="{direction}">{main}</div></main>
-<footer><span>{escape(u["footer"])}</span><div class="profiles"><a href="{GITHUB}">GitHub</a><a href="{ORCID}">ORCID</a><a href="{LINKEDIN}">LinkedIn</a></div></footer>
+<footer><span>{escape(u["footer"])}</span><div class="profiles"><a href="{GITHUB}">GitHub</a><a href="{ORCID}">ORCID</a><a href="{LINKEDIN}">LinkedIn</a><a href="{X_PROFILE}">X</a><a href="{QASSEM_SITE}">Qassem.net</a></div></footer>
 </div>
 </body>
 </html>'''
@@ -250,7 +267,7 @@ def page_schema(lang, route, title, description):
     elif route.startswith("/blog/") and route != "/blog/":
         slug = route.strip("/").split("/")[-1]
         post_titles = {
-            "checking-work": {"en":"How do we verify an assistant’s work?","ar":"كيف نتحقّق من عمل المساعد؟","fr":"Comment vérifier le travail d’un assistant ?"},
+            "checking-work": {"en":"How to Verify an AI Assistant’s Work: A Practical Guide","ar":"كيف نتحقّق من عمل المساعد الذكي؟ دليل عملي","fr":"Comment vérifier le travail d’un assistant IA ? Guide pratique"},
             "arabic-calligraphy": {"en":"When Letters Become a Drawing","ar":"حين تصبح الحروف رسمة","fr":"Quand les lettres deviennent un dessin"},
             "local-ai-agent-reliability": {"en":"Can We Trust a Local AI Assistant?","ar":"هل يمكن الوثوق بمساعد ذكاء اصطناعي محلي؟","fr":"Peut-on faire confiance à un assistant IA local ?"}
         }
@@ -262,12 +279,22 @@ def page_schema(lang, route, title, description):
             "author":{"@id":PERSON_ID},
             "publisher":{"@id":PERSON_ID},
             "datePublished":"2026-11-27" if slug == "local-ai-agent-reliability" else "2026-11-26",
-            "dateModified":"2026-11-27" if slug == "local-ai-agent-reliability" else "2026-11-26",
+            "dateModified":"2026-11-27" if slug in ("local-ai-agent-reliability", "checking-work") else "2026-11-26",
             "inLanguage":lang,
             "url":canonical,
             "mainEntityOfPage":{"@id":canonical+"#webpage"},
             "isPartOf":{"@id":ORIGIN+f"/{lang}/blog/#collection"}
         }
+        if slug == "checking-work":
+            post["articleSection"] = "AI agent reliability; task verification"
+            post["keywords"] = ["AI assistant verification", "task completion", "silent tool failure", "structural validation", "semantic correctness", "ACO-LLM"]
+            post["about"] = [
+                {"@type":"Thing","name":"AI agent reliability"},
+                {"@type":"Thing","name":"Task completion verification"},
+                {"@type":"Thing","name":"Data validation"}
+            ]
+            post["citation"] = [PROTOCOL_DOI, RESULTS_DOI]
+            post["isAccessibleForFree"] = True
         if slug == "arabic-calligraphy":
             post["image"] = ORIGIN + "/assets/kasem-calligraphy-transparent.png"
         if slug == "local-ai-agent-reliability":
@@ -302,10 +329,17 @@ def page_schema(lang, route, title, description):
         graph.append({
             "@type":"CreativeWork",
             "@id":canonical+"#project",
-            "name":"A local AI assistant for Arabic",
             "author":{"@id":PERSON_ID},
-            "inLanguage":["ar","en"],
-            "about":["Local AI assistants","Arabic language technology","On-device AI"]
+            "name": {
+                "en": "A local AI assistant for Arabic",
+                "ar": "مساعد ذكاء اصطناعي محلي بالعربية",
+                "fr": "Un assistant IA local en arabe"
+            }[lang],
+            "description": description,
+            "url": canonical,
+            "inLanguage": ["ar","en","fr"],
+            "about": ["Local AI assistants","Arabic language technology","On-device AI","Speech recognition","Task verification"],
+            "keywords": ["local AI", "Gemma 4", "Arabic", "Whisper", "Edge TTS", "task verification"]
         })
         webpage["mainEntity"]={"@id":canonical+"#project"}
     if route == "/blog/":
@@ -400,9 +434,9 @@ def enrich_existing_pages(dist, public_build):
             "fr":("Projets de Kasem Adra","Projets sélectionnés de Kasem Adra, dont un assistant IA local prenant en charge l’arabe et des travaux en science des données.")
         },
         "/projects/local-assistant/":{
-            "en":("Local Arabic AI Assistant | Kasem Adra","A local, on-device AI assistant project by Kasem Adra for Arabic text, speech and tool-assisted tasks."),
-            "ar":("مساعد ذكاء اصطناعي محلي بالعربية | قاسم عدرا","مشروع مساعد ذكاء اصطناعي يعمل محليًا ويدعم النص والصوت العربيين وتنفيذ المهام بالأدوات."),
-            "fr":("Assistant IA local en arabe | Kasem Adra","Projet d’assistant IA exécuté localement, prenant en charge le texte, la voix et les outils en arabe.")
+            "en":("Local Arabic AI Assistant | Kasem Adra","A local Arabic AI assistant using Gemma 4, local Whisper speech recognition, Edge TTS speech output and independently checked tool actions."),
+            "ar":("مساعد ذكاء اصطناعي محلي بالعربية | قاسم عدرا","مشروع مساعد محلي يستخدم Gemma 4 والتعرّف الصوتي المحلي عبر Whisper وتوليد الصوت عبر Edge TTS مع التحقق من نتائج الأدوات."),
+            "fr":("Assistant IA local en arabe | Kasem Adra","Assistant IA local en arabe utilisant Gemma 4, la reconnaissance vocale locale Whisper, la synthèse Edge TTS et la vérification des actions des outils.")
         },
         "/publications/":{
             "en":("Research by Kasem Adra | ACO-LLM Publications","Research publications by Kasem Adra, including the ACO-LLM protocol and its separate held-out evaluation preprint."),
@@ -425,9 +459,9 @@ def enrich_existing_pages(dist, public_build):
             "fr":("Écrits de Kasem Adra | Articles et notes de recherche","Articles, notes techniques et textes de Kasem Adra sur l’IA locale, la vérification des tâches et le design.")
         },
         "/blog/checking-work/":{
-            "en":("How to Verify an AI Assistant’s Work | Kasem Adra","A practical explanation of checking task outcomes independently of an AI assistant’s own completion claim."),
-            "ar":("كيف نتحقق من عمل مساعد الذكاء الاصطناعي؟ | قاسم عدرا","شرح عملي للتحقق من نتائج المهمة بصورة مستقلة عن ادعاء المساعد الذكي أنه أتم العمل."),
-            "fr":("Comment vérifier le travail d’un assistant IA ? | Kasem Adra","Explication pratique de la vérification des résultats indépendamment de l’affirmation de réussite de l’assistant.")
+            "en":("How to Verify an AI Assistant’s Work: A Practical Guide | Kasem Adra","A practical guide to checking files, values and tool outcomes independently of an AI assistant’s completion claim, including silent failures and validation limits."),
+            "ar":("كيف نتحقّق من عمل المساعد الذكي؟ دليل عملي | قاسم عدرا","دليل عملي للتحقق من الملفات والقيم ونتائج الأدوات بصورة مستقلة، مع شرح الأعطال الصامتة وحدود الفحص البنيوي."),
+            "fr":("Comment vérifier le travail d’un assistant IA ? Guide pratique | Kasem Adra","Guide pratique pour vérifier les fichiers, les valeurs et les résultats des outils indépendamment de l’assistant, avec les pannes silencieuses et les limites des contrôles.")
         },
         "/blog/local-ai-agent-reliability/":{
             "en":("Can We Trust a Local AI Assistant? | Kasem Adra","An evidence-based guide to local AI, agent reliability, silent tool failures, independent verification and the ACO-LLM evaluation."),
@@ -498,9 +532,9 @@ def enrich_existing_pages(dist, public_build):
                 if 'id="research-profile"' not in doc:
                     doc = doc.replace("</div></main>", extras + "</div></main>", 1)
             profile_section = {
-                "en": '<section class="profile-identifiers" id="identifiers"><h2>Public identity and research records</h2><p>Public identifiers and author-controlled records help distinguish this profile from people with similar names. They do not replace independent coverage or peer review.</p><ul><li><a href="' + ORCID + '">ORCID iD: 0009-0004-7615-4978</a></li><li><a href="' + LINKEDIN + '">LinkedIn profile</a></li><li><a href="' + GITHUB + '">GitHub profile</a></li><li><a href="' + PROTOCOL_DOI + '">ACO-LLM research protocol (DOI)</a></li><li><a href="' + RESULTS_DOI + '">ACO-LLM evaluation results (preprint DOI)</a></li><li><a href="/en/archive/">Research archive</a></li></ul></section>',
-                "ar": '<section class="profile-identifiers" id="identifiers"><h2>الهوية العامة والسجلات البحثية</h2><p>تساعد المعرّفات والسجلات التي يديرها المؤلف على تمييز هذا الملف عن الأشخاص المتشابهة أسماؤهم، لكنها لا تحل محل التغطية المستقلة أو التحكيم العلمي.</p><ul><li><a href="' + ORCID + '">معرّف ORCID: 0009-0004-7615-4978</a></li><li><a href="' + LINKEDIN + '">الملف المهني على LinkedIn</a></li><li><a href="' + GITHUB + '">ملف GitHub</a></li><li><a href="' + PROTOCOL_DOI + '">بروتوكول ACO-LLM البحثي (DOI)</a></li><li><a href="' + RESULTS_DOI + '">نتائج تقييم ACO-LLM (DOI الورقة الأولية)</a></li><li><a href="/ar/archive/">الأرشيف البحثي</a></li></ul></section>',
-                "fr": '<section class="profile-identifiers" id="identifiers"><h2>Identité publique et références de recherche</h2><p>Les identifiants publics et les références contrôlées par l’auteur aident à distinguer ce profil des personnes portant un nom similaire. Ils ne remplacent ni la couverture indépendante ni l’évaluation par les pairs.</p><ul><li><a href="' + ORCID + '">Identifiant ORCID : 0009-0004-7615-4978</a></li><li><a href="' + LINKEDIN + '">Profil LinkedIn</a></li><li><a href="' + GITHUB + '">Profil GitHub</a></li><li><a href="' + PROTOCOL_DOI + '">Protocole de recherche ACO-LLM (DOI)</a></li><li><a href="' + RESULTS_DOI + '">Résultats de l’évaluation ACO-LLM (DOI de la prépublication)</a></li><li><a href="/fr/archive/">Archives de recherche</a></li></ul></section>'
+                "en": '<section class="profile-identifiers" id="identifiers"><h2>Public identity and research records</h2><p>Public identifiers and author-controlled records help distinguish this profile from people with similar names. They do not replace independent coverage or peer review.</p><ul><li><a href="' + ORCID + '">ORCID iD: 0009-0004-7615-4978</a></li><li><a href="' + LINKEDIN + '">LinkedIn profile</a></li><li><a href="' + GITHUB + '">Primary GitHub profile</a></li><li><a href="' + X_PROFILE + '">X profile</a></li><li><a href="' + QASSEM_SITE + '">Qassem.net · related personal domain</a></li><li><a href="' + PROTOCOL_DOI + '">ACO-LLM research protocol (DOI)</a></li><li><a href="' + RESULTS_DOI + '">ACO-LLM evaluation results (preprint DOI)</a></li><li><a href="/en/archive/">Research archive</a></li></ul></section>',
+                "ar": '<section class="profile-identifiers" id="identifiers"><h2>الهوية العامة والسجلات البحثية</h2><p>تساعد المعرّفات والسجلات التي يديرها المؤلف على تمييز هذا الملف عن الأشخاص المتشابهة أسماؤهم، لكنها لا تحل محل التغطية المستقلة أو التحكيم العلمي.</p><ul><li><a href="' + ORCID + '">معرّف ORCID: 0009-0004-7615-4978</a></li><li><a href="' + LINKEDIN + '">الملف المهني على LinkedIn</a></li><li><a href="' + GITHUB + '">ملف GitHub الأساسي</a></li><li><a href="' + X_PROFILE + '">حساب X</a></li><li><a href="' + QASSEM_SITE + '">Qassem.net · النطاق الشخصي المرتبط</a></li><li><a href="' + PROTOCOL_DOI + '">بروتوكول ACO-LLM البحثي (DOI)</a></li><li><a href="' + RESULTS_DOI + '">نتائج تقييم ACO-LLM (DOI الورقة الأولية)</a></li><li><a href="/ar/archive/">الأرشيف البحثي</a></li></ul></section>',
+                "fr": '<section class="profile-identifiers" id="identifiers"><h2>Identité publique et références de recherche</h2><p>Les identifiants publics et les références contrôlées par l’auteur aident à distinguer ce profil des personnes portant un nom similaire. Ils ne remplacent ni la couverture indépendante ni l’évaluation par les pairs.</p><ul><li><a href="' + ORCID + '">Identifiant ORCID : 0009-0004-7615-4978</a></li><li><a href="' + LINKEDIN + '">Profil LinkedIn</a></li><li><a href="' + GITHUB + '">Profil GitHub principal</a></li><li><a href="' + X_PROFILE + '">Profil X</a></li><li><a href="' + QASSEM_SITE + '">Qassem.net · domaine personnel associé</a></li><li><a href="' + PROTOCOL_DOI + '">Protocole de recherche ACO-LLM (DOI)</a></li><li><a href="' + RESULTS_DOI + '">Résultats de l’évaluation ACO-LLM (DOI de la prépublication)</a></li><li><a href="/fr/archive/">Archives de recherche</a></li></ul></section>'
             }[lang]
             if "profile-identifiers" not in doc:
                 doc = doc.replace("</div></main>", profile_section + "</div></main>", 1)
@@ -515,11 +549,23 @@ def enrich_existing_pages(dist, public_build):
         if archive_href not in doc:
             doc = doc.replace("</nav>", f'<a href="{archive_href}">{escape(archive_label)}</a></nav>',1)
         # Add social metadata without duplicating existing properties.
+        og_type = (
+            "profile" if route == "/about/" else
+            "article" if (route.startswith("/blog/") and route != "/blog/") or route in ("/publications/aco-llm/", "/publications/aco-llm-results/") else
+            "website"
+        )
+        image_match = re.search(r'<meta property="og:image" content="([^"]+)"', doc, flags=re.I)
+        social_image = image_match.group(1) if image_match else ORIGIN + "/assets/kasem-adra-portrait.jpg"
+        image_alt_match = re.search(r'<meta property="og:image:alt" content="([^"]*)"', doc, flags=re.I)
+        social_image_alt = image_alt_match.group(1) if image_alt_match else "Portrait of Kasem Adra"
         social = [
             ("og:site_name","Kasem Adra"),("og:title",title),("og:description",desc),
-            ("og:type","profile" if route=="/about/" else "article" if route.startswith("/blog/") or route.startswith("/archive/") or route.startswith("/publications/") else "website"),
+            ("og:type",og_type),
             ("og:url",ORIGIN+f"/{lang}"+route),("og:locale",{"ar":"ar_SY","fr":"fr_FR","en":"en_US"}[lang]),
-            ("twitter:card","summary_large_image")
+            ("og:image:alt",social_image_alt),
+            ("twitter:card","summary_large_image"),("twitter:title",title),
+            ("twitter:description",desc),("twitter:image",social_image),
+            ("twitter:image:alt",social_image_alt)
         ]
         for prop,value in social:
             attr = "name" if prop.startswith("twitter:") else "property"
@@ -551,7 +597,7 @@ def write_root_gateway(dist, public_build):
     person = dict(PERSON)
     website = {
         "@type":"WebSite","@id":WEBSITE_ID,"url":ORIGIN+"/","name":"Kasem Adra",
-        "alternateName":["قاسم عدرا","Qassem Adra"],
+        "alternateName":["قاسم عدرا"],
         "description":desc,"inLanguage":["en","ar","fr"],
         "publisher":{"@id":PERSON_ID}
     }
@@ -575,14 +621,14 @@ def write_root_gateway(dist, public_build):
 <link rel="icon" type="image/png" href="/assets/kasem-calligraphy-transparent.png">
 <meta property="og:site_name" content="Kasem Adra"><meta property="og:type" content="website">
 <meta property="og:title" content="{escape(title,quote=True)}"><meta property="og:description" content="{escape(desc,quote=True)}">
-<meta property="og:url" content="{ORIGIN}/"><meta property="og:image" content="{ORIGIN}/assets/kasem-adra-portrait.jpg">
-<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{escape(title,quote=True)}"><meta name="twitter:description" content="{escape(desc,quote=True)}"><meta name="twitter:image" content="{ORIGIN}/assets/kasem-adra-portrait.jpg">
+<meta property="og:url" content="{ORIGIN}/"><meta property="og:locale" content="en_US"><meta property="og:image" content="{ORIGIN}/assets/kasem-adra-portrait.jpg"><meta property="og:image:alt" content="Portrait of Kasem Adra">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{escape(title,quote=True)}"><meta name="twitter:description" content="{escape(desc,quote=True)}"><meta name="twitter:image" content="{ORIGIN}/assets/kasem-adra-portrait.jpg"><meta name="twitter:image:alt" content="Portrait of Kasem Adra">
 <script type="application/ld+json">{dumps(graph,ensure_ascii=False,separators=(",",":"))}</script>
 <link rel="stylesheet" href="/style.css"></head>
 <body><div class="shell"><header><a class="wordmark" href="/">Kasem Adra</a><span>قاسم عدرا</span></header>
 <main class="gateway"><figure><img src="/assets/kasem-adra-portrait.jpg" alt="Portrait of Kasem Adra" width="782" height="1024"></figure>
 <div><p class="label">{escape(UI["en"]["gateway_label"])}</p><h1>Kasem Adra</h1><p class="gateway-desc">{escape(UI["en"]["gateway_desc"])}</p><h2>{escape(UI["en"]["lang_gateway"])}</h2><div class="language-choices">{buttons}</div></div>
-</main><footer><span>Kasem Adra · قاسم عدرا</span><div class="profiles"><a href="{GITHUB}">GitHub</a><a href="{ORCID}">ORCID</a><a href="{LINKEDIN}">LinkedIn</a></div></footer></div></body></html>'''
+</main><footer><span>Kasem Adra · قاسم عدرا</span><div class="profiles"><a href="{GITHUB}">GitHub</a><a href="{ORCID}">ORCID</a><a href="{LINKEDIN}">LinkedIn</a><a href="{X_PROFILE}">X</a><a href="{QASSEM_SITE}">Qassem.net</a></div></footer></div></body></html>'''
     (dist/"index.html").write_text(doc,encoding="utf-8")
 
 def build_site(dist, origin, public_build):
