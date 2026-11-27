@@ -5,7 +5,7 @@ description: "Analyse de la fiabilité des assistants IA locaux : défaillances 
 subtitle: "De l’exécution locale des modèles de langage aux agents capables d’agir et de vérifier leurs résultats"
 summary: "Un message de réussite ne prouve pas qu’un agent IA a accompli une tâche. Cet article explique les défaillances silencieuses des outils, l’orientation des tâches, la vérification et la correction limitée, puis présente l’évaluation ACO-LLM, ses résultats publiés et les limites de leur interprétation."
 lang: "fr"
-permalink: "/blog/local-ai-agent-reliability/"
+permalink: "/fr/blog/local-ai-agent-reliability/"
 date_published: "2026-11-27"
 date_modified: "2026-11-27"
 published_label: "27 novembre 2026"
