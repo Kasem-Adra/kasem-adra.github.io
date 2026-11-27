@@ -427,6 +427,9 @@ def localize_pages():
 
 localize_pages()
 
+import knowledge
+knowledge.build_site(Path('dist'), origin, public_build)
+
 sitemap_path = Path('dist/sitemap.xml')
 if public_build:
     root = Element('urlset', xmlns='http://www.sitemaps.org/schemas/sitemap/0.9')
@@ -439,3 +442,7 @@ if public_build:
 else:
     sitemap_path.unlink(missing_ok=True)
     Path('dist/robots.txt').write_text('User-agent: *\nDisallow: /\n')
+
+if public_build:
+    knowledge.write_sitemap(Path('dist'), origin)
+
