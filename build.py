@@ -92,12 +92,17 @@ person = {
     'sameAs': [
         'https://orcid.org/0009-0004-7615-4978',
         'https://github.com/Kasem-Adra',
-        'https://github.com/Qassemai',
         'https://www.linkedin.com/in/kasem-adra/',
         'https://qassem.net/',
         'https://x.com/QassemAdra',
         'https://www.instagram.com/qassemadra/',
     ],
+    'affiliation': {
+        '@type': 'Organization',
+        '@id': f'{origin}/#qassem-ai',
+        'name': 'QassemAi',
+        'url': 'https://github.com/QassemAi',
+    },
     'subjectOf': [
         {
             '@type': 'ScholarlyArticle',
