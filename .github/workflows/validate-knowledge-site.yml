@@ -66,6 +66,9 @@ jobs:
               about_graph = schemas(about)
               assert any(x.get("@type") == "ProfilePage" and x.get("mainEntity", {}).get("@id") == person["@id"] for x in about_graph), f"Missing ProfilePage schema: {lang}"
               assert "profile-identifiers" in about and "LinkedIn" in about
+              for section_id in ("profile-facts", "biography", "research-profile", "projects-profile", "archive-profile", "identifiers"):
+                  assert f'id="{section_id}"' in about, f"Missing encyclopedic profile section {section_id}: {lang}"
+              assert 'class="profile-toc"' in about and 'class="profile-infobox"' in about
               assert 'rel="canonical"' in about and f'hreflang="{lang}"' in about
               assert 'name="robots" content="noindex"' not in about
 
@@ -76,8 +79,15 @@ jobs:
 
               banyias = page(lang, "/archive/baniyas-revolution-2010-2025/").read_text(encoding="utf-8")
               b_graph = schemas(banyias)
-              assert any(x.get("@type") == "Article" and x.get("author", {}).get("@id") == person["@id"] for x in b_graph), f"Missing authored archive Article: {lang}"
+              article_node = next(x for x in b_graph if x.get("@type") == "Article")
+              assert article_node.get("author", {}).get("@id") == person["@id"], f"Missing archive author: {lang}"
+              assert article_node.get("about", {}).get("@id") == "https://kasemadra.com/#place-baniyas", f"Missing Baniyas place entity: {lang}"
+              assert len(article_node.get("citation", [])) == 26, f"Expected 26 structured citations: {lang}"
+              assert any(x.get("@type") == "City" and x.get("@id") == "https://kasemadra.com/#place-baniyas" for x in b_graph), f"Missing Baniyas City entity: {lang}"
               assert banyias.count('class="timeline-entry"') == 20, f"Expected 20 chronology entries: {lang}"
+              toc_targets = set(re.findall(r'href="#(overview|method|timeline|references|related)"', banyias))
+              section_ids = set(re.findall(r'<section id="(overview|method|timeline|references|related)"', banyias))
+              assert toc_targets == section_ids == {"overview","method","timeline","references","related"}, f"Broken archive table of contents: {lang}"
               assert len(re.findall(r'<li id="ref-\d+">', banyias)) == 26, f"Expected 26 references including local source: {lang}"
               assert banyias.count('class="citation"') >= 20, f"Missing inline source citations: {lang}"
               event_7 = re.search(r'<article class="timeline-entry" id="event-7">(.*?)</article>', banyias, re.S).group(1)
