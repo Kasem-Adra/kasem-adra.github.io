@@ -614,15 +614,18 @@ def page_schema(lang, route, title, description):
         slug = route.strip("/").split("/")[-1]
         post_titles = {
             "checking-work": {"en":"How do we verify an assistant’s work?","ar":"كيف نتحقّق من عمل المساعد؟","fr":"Comment vérifier le travail d’un assistant ?"},
-            "arabic-calligraphy": {"en":"When Letters Become a Drawing","ar":"حين تصبح الحروف رسمة","fr":"Quand les lettres deviennent un dessin"}
+            "arabic-calligraphy": {"en":"When Letters Become a Drawing","ar":"حين تصبح الحروف رسمة","fr":"Quand les lettres deviennent un dessin"},
+            "local-ai-agent-reliability": {"en":"Can We Trust a Local AI Assistant?","ar":"هل يمكن الوثوق بمساعد ذكاء اصطناعي محلي؟","fr":"Peut-on faire confiance à un assistant IA local ?"}
         }
         post = {
             "@type":"BlogPosting",
             "@id":canonical+"#article",
             "headline":post_titles.get(slug,{}).get(lang,title),
+            "description":description,
             "author":{"@id":PERSON_ID},
-            "datePublished":"2026-11-26",
-            "dateModified":"2026-11-26",
+            "publisher":{"@id":PERSON_ID},
+            "datePublished":"2026-11-27" if slug == "local-ai-agent-reliability" else "2026-11-26",
+            "dateModified":"2026-11-27" if slug == "local-ai-agent-reliability" else "2026-11-26",
             "inLanguage":lang,
             "url":canonical,
             "mainEntityOfPage":{"@id":canonical+"#webpage"},
@@ -630,6 +633,30 @@ def page_schema(lang, route, title, description):
         }
         if slug == "arabic-calligraphy":
             post["image"] = ORIGIN + "/assets/kasem-calligraphy-transparent.png"
+        if slug == "local-ai-agent-reliability":
+            post["image"] = ORIGIN + "/assets/local-ai-agent-reliability-hero.webp"
+            post["articleSection"] = "Local AI; AI agents; reliability engineering"
+            post["keywords"] = ["local AI", "AI agent reliability", "silent failure", "independent verification", "ACO-LLM", "Gemma 4"]
+            post["about"] = [
+                {"@type":"Thing","name":"Local artificial intelligence"},
+                {"@type":"Thing","name":"AI agents"},
+                {"@type":"Thing","name":"Task completion verification"},
+                {"@type":"Thing","name":"Reliability engineering"}
+            ]
+            post["citation"] = [
+                "https://doi.org/10.5281/zenodo.24488951",
+                "https://doi.org/10.5281/zenodo.24549236",
+                "https://deepmind.google/models/gemma/gemma-4/",
+                "https://ollama.com/library/gemma4:12b-it-qat",
+                "https://doi.org/10.6028/NIST.AI.600-1",
+                "https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/",
+                "https://arxiv.org/abs/2210.03629",
+                "https://arxiv.org/abs/2303.11366",
+                "https://arxiv.org/abs/2308.03688",
+                "https://arxiv.org/abs/2406.12045",
+                "https://arxiv.org/abs/2406.13352"
+            ]
+            post["isAccessibleForFree"] = True
         graph.append(post)
         webpage["mainEntity"] = {"@id":canonical+"#article"}
     elif route in ("/blog/","/projects/"):
@@ -644,6 +671,19 @@ def page_schema(lang, route, title, description):
             "about":["Local AI assistants","Arabic language technology","On-device AI"]
         })
         webpage["mainEntity"]={"@id":canonical+"#project"}
+    if route == "/blog/":
+        graph.append({
+            "@type":"CollectionPage",
+            "@id":ORIGIN+f"/{lang}/blog/#collection",
+            "url":canonical,
+            "name":UI[lang]["writing_archive"],
+            "about":{"@id":PERSON_ID},
+            "hasPart":[
+                {"@id":ORIGIN+f"/{lang}/blog/local-ai-agent-reliability/#article"},
+                {"@id":ORIGIN+f"/{lang}/blog/checking-work/#article"},
+                {"@id":ORIGIN+f"/{lang}/blog/arabic-calligraphy/#article"}
+            ]
+        })
     if route == "/publications/":
         graph.append({
             "@type":"CollectionPage",
@@ -752,6 +792,11 @@ def enrich_existing_pages(dist, public_build):
             "en":("How to Verify an AI Assistant’s Work | Kasem Adra","A practical explanation of checking task outcomes independently of an AI assistant’s own completion claim."),
             "ar":("كيف نتحقق من عمل مساعد الذكاء الاصطناعي؟ | قاسم عدرا","شرح عملي للتحقق من نتائج المهمة بصورة مستقلة عن ادعاء المساعد الذكي أنه أتم العمل."),
             "fr":("Comment vérifier le travail d’un assistant IA ? | Kasem Adra","Explication pratique de la vérification des résultats indépendamment de l’affirmation de réussite de l’assistant.")
+        },
+        "/blog/local-ai-agent-reliability/":{
+            "en":("Can We Trust a Local AI Assistant? | Kasem Adra","An evidence-based guide to local AI, agent reliability, silent tool failures, independent verification and the ACO-LLM evaluation."),
+            "ar":("هل يمكن الوثوق بمساعد ذكاء اصطناعي محلي؟ | قاسم عدرا","دليل موثق عن الذكاء الاصطناعي المحلي وموثوقية الوكلاء وفشل الأدوات الصامت والتحقق المستقل ونتائج ACO-LLM."),
+            "fr":("Peut-on faire confiance à un assistant IA local ? | Kasem Adra","Guide documenté sur l’IA locale, la fiabilité des agents, les défaillances silencieuses des outils, la vérification indépendante et l’évaluation ACO-LLM.")
         },
         "/blog/arabic-calligraphy/":{
             "en":("Arabic Calligraphy and the Kasem Adra Signature","A short design note about the Arabic calligraphic signature used on Kasem Adra’s website."),
