@@ -414,6 +414,7 @@ def shell_page(dist, lang, route, title, description, main, public_build):
         f'<link rel="alternate" hreflang="{other}" href="{ORIGIN}/{other}{route}">'
         for other in LANGS
     ) + f'<link rel="alternate" hreflang="x-default" href="{ORIGIN}/">'
+    og_image = "" if route == BANIYAS_ROUTE else f'<meta property="og:image" content="{ORIGIN}/assets/kasem-adra-portrait.jpg>'
     head = f'''<!doctype html>
 <html lang="{lang}" dir="{direction}">
 <head>
@@ -432,7 +433,7 @@ def shell_page(dist, lang, route, title, description, main, public_build):
 <meta property="og:description" content="{escape(description, quote=True)}">
 <meta property="og:url" content="{canonical}">
 <meta property="og:locale" content="{'ar_SY' if lang == 'ar' else 'fr_FR' if lang == 'fr' else 'en_US'}">
-<meta property="og:image" content="{ORIGIN}/assets/kasem-adra-portrait.jpg">
+{og_image}
 <meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="/style.css">
 </head>
@@ -493,7 +494,7 @@ def baniyas_html(lang):
 <dt>{escape(u["period"])}</dt><dd>2010–2025</dd>
 <dt>{escape(u["place"])}</dt><dd>{'Baniyas, Tartus Governorate, Syria' if lang == 'en' else 'بانياس، محافظة طرطوس، سوريا' if lang == 'ar' else 'Baniyas, gouvernorat de Tartous, Syrie'}</dd>
 <dt>{escape(u["compiler"])}</dt><dd><a href="/{lang}/about/">Kasem Adra / قاسم عدرا</a></dd>
-<dt>{escape(u["source_edition"])}</dt><dd>v27-audited · 37-page source chronology</dd>
+<dt>{escape(u["source_edition"])}</dt><dd>{ "v27-audited · 37-page source chronology" if lang == "en" else "v27-audited · تسلسل زمني من 37 صفحة" if lang == "ar" else "v27-audited · chronologie source de 37 pages" }</dd>
 <dt>{escape(u["coverage"])}</dt><dd>{'20 chronological sections; local testimony and 25 external references' if lang == 'en' else '20 محطة زمنية؛ شهادات محلية و25 مرجعًا خارجيًا' if lang == 'ar' else '20 étapes chronologiques ; témoignages locaux et 25 références externes'}</dd>
 </dl></aside>'''
     main = f'''<p class="label">{escape(u["archive"])}</p>
@@ -893,6 +894,12 @@ def build_site(dist, origin, public_build):
 .language-choice{border:1px solid var(--line);padding:1rem;text-decoration:none;display:flex;flex-direction:column;gap:.35rem;border-radius:.45rem}
 .language-choice:hover{border-color:var(--red);color:var(--red)}
 .language-choice span{font-size:.9rem;color:var(--muted)}
+.toc{border:1px solid var(--line);padding:1rem 1.25rem;margin:1.5rem 0;max-width:32rem;background:var(--surface)}
+.toc h2{font-size:1.35rem;margin:0 0 .45rem}
+.toc ol{margin:.25rem 0;padding-inline-start:1.4rem}
+.toc li{padding:.15rem 0}
+.profile-identifiers{border-top:1px solid var(--line);margin-top:2rem;padding-top:1rem}
+.profile-identifiers ul{padding-inline-start:1.4rem}
 @media(max-width:680px){.timeline-entry{grid-template-columns:1fr;gap:.25rem}.archive-infobox dl{grid-template-columns:1fr;gap:.1rem}.archive-infobox dd{margin-bottom:.55rem}.gateway{grid-template-columns:1fr;gap:1rem}.gateway figure{width:min(100%,12rem);margin-inline:auto}.language-choices{grid-template-columns:1fr}}
 """
     current = css.read_text(encoding="utf-8")
