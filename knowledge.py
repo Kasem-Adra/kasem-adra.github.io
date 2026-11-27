@@ -895,16 +895,19 @@ def write_sitemap(dist, origin):
             paths.add(route)
     paths.add("/")
     for route in sorted(paths):
-        loc = origin + route if route == "/" else origin + "/en" + route
-        url_node = ET.SubElement(root,f"{{{ns}}}url")
-        ET.SubElement(url_node,f"{{{ns}}}loc").text = loc
-        for lang in LANGS:
-            href = origin + f"/{lang}" + route
-            link = ET.SubElement(url_node,f"{{{xns}}}link",{
-                "rel":"alternate","hreflang":lang,"href":href
+        # The root language selector is its own URL; each translated page also gets a URL entry.
+        urls_for_route = [origin + "/"] if route == "/" else []
+        urls_for_route.extend(origin + f"/{lang}" + route for lang in LANGS)
+        for loc in urls_for_route:
+            url_node = ET.SubElement(root,f"{{{ns}}}url")
+            ET.SubElement(url_node,f"{{{ns}}}loc").text = loc
+            for lang in LANGS:
+                href = origin + f"/{lang}" + route
+                ET.SubElement(url_node,f"{{{xns}}}link",{
+                    "rel":"alternate","hreflang":lang,"href":href
+                })
+            ET.SubElement(url_node,f"{{{xns}}}link",{
+                "rel":"alternate","hreflang":"x-default","href":origin+"/"
             })
-        ET.SubElement(url_node,f"{{{xns}}}link",{
-            "rel":"alternate","hreflang":"x-default","href":origin+"/"
-        })
     ET.ElementTree(root).write(dist/"sitemap.xml",encoding="utf-8",xml_declaration=True)
 
