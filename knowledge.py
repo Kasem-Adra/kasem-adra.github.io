@@ -56,7 +56,7 @@ UI = {
         "baniyas_desc": "A source-linked documentary chronology of Baniyas from the early local protests of 2010–2011 through the events of 2013, displacement, the return of 2024 and the community events of 2025.",
         "baniyas_intro": "This chronology documents key events in Baniyas and nearby communities from late 2010 to November 2025. It was prepared by Kasem Adra from local testimony and archival material, alongside human-rights, press and institutional reporting.",
         "infobox": "Archive record",
-        "period": "Period", "place": "Place", "compiler": "Prepared and documented by",
+        "period": "Period", "place": "Place", "compiler": "Prepared and documented by", "source_edition": "Source edition", "contents": "Contents", "overview": "Overview",
         "coverage": "Coverage", "sources": "Sources and references", "method": "Method and source policy",
         "method_text": "This is an authored documentary chronology, not an independent investigation or a neutral third-party biography. It combines local testimony, the author’s photographic and video archive, and independently published human-rights, journalistic and institutional sources. Each entry identifies its evidentiary basis. Where reports give different victim counts, their figures are kept attributed to their respective sources rather than merged. Events supported only by local testimony are labelled as such.",
         "timeline": "Chronology", "related": "Related pages", "references": "References",
@@ -94,7 +94,7 @@ UI = {
         "baniyas_desc": "خط زمني وثائقي موثق بالمصادر لأحداث بانياس من إرهاصات الحراك في 2010–2011 إلى أحداث 2013 والتهجير والعودة في 2024 ومحطات 2025.",
         "baniyas_intro": "يوثق هذا الخط الزمني أبرز محطات بانياس وقراها من أواخر عام 2010 حتى تشرين الثاني 2025. أعدّه ووثّقه قاسم عدرا بالاستناد إلى الشهادات المحلية والأرشيف، إلى جانب التقارير الحقوقية والصحفية والمؤسسية المنشورة.",
         "infobox": "بطاقة الأرشيف",
-        "period": "الفترة", "place": "المكان", "compiler": "الإعداد والتوثيق",
+        "period": "الفترة", "place": "المكان", "compiler": "الإعداد والتوثيق", "source_edition": "نسخة المصدر", "contents": "المحتويات", "overview": "نظرة عامة",
         "coverage": "نطاق التوثيق", "sources": "المصادر والمراجع", "method": "المنهجية وسياسة المصادر",
         "method_text": "هذا خط زمني وثائقي أعدّه مؤلفه، وليس تحقيقًا مستقلاً أو سيرة محايدة كتبها طرف ثالث. يجمع بين الشهادة المحلية والأرشيف الفوتوغرافي والمرئي للمؤلف والتقارير الحقوقية والصحفية والمؤسسية المنشورة. ويُبيّن كل مدخل أساسه التوثيقي. وعندما تختلف التقارير في أعداد الضحايا، تُحفظ الأرقام منسوبة إلى مصادرها ولا تُدمج في حصيلة واحدة. أما الوقائع التي لا يسندها سوى التوثيق المحلي فتُوسم بوضوح على هذا الأساس.",
         "timeline": "التسلسل الزمني", "related": "صفحات ذات صلة", "references": "المراجع",
@@ -132,7 +132,7 @@ UI = {
         "baniyas_desc": "Une chronologie documentaire référencée de Baniyas, des premiers mouvements locaux de 2010–2011 aux événements de 2013, au déplacement, au retour de 2024 et aux événements communautaires de 2025.",
         "baniyas_intro": "Cette chronologie documente les principaux événements de Baniyas et des localités voisines de la fin de 2010 à novembre 2025. Elle a été préparée par Kasem Adra à partir de témoignages locaux et d’archives, ainsi que de rapports publiés par des organisations de défense des droits humains, des médias et des institutions.",
         "infobox": "Fiche d’archive",
-        "period": "Période", "place": "Lieu", "compiler": "Préparation et documentation",
+        "period": "Période", "place": "Lieu", "compiler": "Préparation et documentation", "source_edition": "Version source", "contents": "Sommaire", "overview": "Présentation",
         "coverage": "Périmètre", "sources": "Sources et références", "method": "Méthode et politique des sources",
         "method_text": "Il s’agit d’une chronologie documentaire rédigée par son auteur, et non d’une enquête indépendante ni d’une biographie neutre produite par un tiers. Elle combine des témoignages locaux, les archives photographiques et vidéo de l’auteur, ainsi que des rapports publiés par des organisations de défense des droits humains, des médias et des institutions. Chaque entrée précise sa base documentaire. Lorsque les rapports divergent sur le nombre de victimes, les chiffres restent attribués à leurs sources respectives et ne sont pas fusionnés. Les événements reposant uniquement sur des témoignages locaux sont signalés comme tels.",
         "timeline": "Chronologie", "related": "Pages connexes", "references": "Références",
@@ -493,19 +493,27 @@ def baniyas_html(lang):
 <dt>{escape(u["period"])}</dt><dd>2010–2025</dd>
 <dt>{escape(u["place"])}</dt><dd>{'Baniyas, Tartus Governorate, Syria' if lang == 'en' else 'بانياس، محافظة طرطوس، سوريا' if lang == 'ar' else 'Baniyas, gouvernorat de Tartous, Syrie'}</dd>
 <dt>{escape(u["compiler"])}</dt><dd><a href="/{lang}/about/">Kasem Adra / قاسم عدرا</a></dd>
+<dt>{escape(u["source_edition"])}</dt><dd>v27-audited · 37-page source chronology</dd>
 <dt>{escape(u["coverage"])}</dt><dd>{'20 chronological sections; local testimony and 25 external references' if lang == 'en' else '20 محطة زمنية؛ شهادات محلية و25 مرجعًا خارجيًا' if lang == 'ar' else '20 étapes chronologiques ; témoignages locaux et 25 références externes'}</dd>
 </dl></aside>'''
     main = f'''<p class="label">{escape(u["archive"])}</p>
 <h1>{escape(u["baniyas_title"])}</h1>
 <p class="archive-lead">{escape(u["baniyas_intro"])}</p>
 {infobox}
-<section><h2>{escape(u["method"])}</h2><p>{escape(u["method_text"])}</p></section>
-<section><h2>{escape(u["timeline"])}</h2><div class="timeline">{''.join(event_html)}</div></section>
-<section><h2>{escape(u["references"])}</h2>
-<p>{escape(u["note_text"])}</p>
+<nav class="toc" aria-label="{escape(u["contents"])}"><h2>{escape(u["contents"])}</h2><ol>
+<li><a href="#overview">{escape(u["overview"])}</a></li>
+<li><a href="#method">{escape(u["method"])}</a></li>
+<li><a href="#timeline">{escape(u["timeline"])}</a></li>
+<li><a href="#references">{escape(u["references"])}</a></li>
+<li><a href="#related">{escape(u["related"])}</a></li>
+</ol></nav>
+<section id="overview"><h2>{escape(u["overview"])}</h2><p>{escape(u["note_text"])}</p></section>
+<section id="method"><h2>{escape(u["method"])}</h2><p>{escape(u["method_text"])}</p></section>
+<section id="timeline"><h2>{escape(u["timeline"])}</h2><div class="timeline">{''.join(event_html)}</div></section>
+<section id="references"><h2>{escape(u["references"])}</h2>
 {source_list(lang)}
 </section>
-<section><h2>{escape(u["related"])}</h2>
+<section id="related"><h2>{escape(u["related"])}</h2>
 <ul>
 <li><a href="/{lang}/about/">Kasem Adra / قاسم عدرا — {escape(u["profile_archive"])}</a></li>
 <li><a href="/{lang}/publications/aco-llm/">ACO-LLM</a></li>
@@ -551,11 +559,22 @@ def page_schema(lang, route, title, description):
             "dateModified": "2026-11-27",
             "inLanguage": lang,
             "articleSection": "Historical archive",
-            "about": {"@type": "Place", "@id": ORIGIN + "/archive/baniyas-revolution-2010-2025/#place", "name": "Baniyas", "containedInPlace": {"@type":"AdministrativeArea","name":"Tartus Governorate, Syria"}},
-            "citation": [url for _, _, url in SOURCES if url],
+            "about": {"@id": ORIGIN + "/#place-baniyas"},
+            "citation": ["Kasem Adra, وردة الدم: حكاية ثورة بانياس (local testimony; bibliographic details incomplete in the cited copy)."] + [url for _, _, url in SOURCES if url],
+            "keywords": ["Baniyas", "Banias", "Banyas", "Syrian revolution", "Syria 2011", "Baniyas 2013", "historical archive", "oral history"],
+            "genre": "Historical documentary chronology",
+            "version": "v27-audited",
+            "isAccessibleForFree": True,
             "isPartOf": {"@id": ORIGIN + f"/{lang}{ARCHIVE_ROUTE}#collection"},
             "mainEntityOfPage": {"@id": canonical + "#webpage"}
         }
+        graph.append({
+            "@type":"City",
+            "@id":ORIGIN + "/#place-baniyas",
+            "name":"Baniyas",
+            "alternateName":["Banias","Banyas"],
+            "containedInPlace":{"@type":"AdministrativeArea","name":"Tartus Governorate","containedInPlace":{"@type":"Country","name":"Syria"}}
+        })
         graph.append(article)
         webpage["mainEntity"] = {"@id": canonical + "#article"}
     elif route == "/publications/":
