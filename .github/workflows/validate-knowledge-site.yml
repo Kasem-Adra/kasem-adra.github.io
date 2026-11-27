@@ -1,0 +1,111 @@
+name: Validate knowledge archive and Google entity structure
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "build.py"
+      - "knowledge.py"
+      - "results.py"
+      - "results.json"
+      - "_posts/**"
+      - "_publications/**"
+      - "dist/style.css"
+      - ".github/workflows/validate-knowledge-site.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build indexable multilingual site
+        env:
+          SITE_PUBLIC: "1"
+        run: python3 build.py
+      - name: Validate archive, identity graph, metadata and sitemap
+        run: |
+          python3 - <<'PY'
+          import json
+          import re
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+
+          root = Path("dist")
+          langs = ("en", "ar", "fr")
+          ns = {
+              "sm": "http://www.sitemaps.org/schemas/sitemap/0.9",
+              "xhtml": "http://www.w3.org/1999/xhtml"
+          }
+
+          def page(lang, route):
+              return (root / lang / route.strip("/") / "index.html") if route != "/" else (root / lang / "index.html")
+
+          def schemas(html):
+              scripts = re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.S)
+              values = [json.loads(s) for s in scripts]
+              return [node for value in values for node in value.get("@graph", [])]
+
+          home = (root / "index.html").read_text(encoding="utf-8")
+          home_graph = schemas(home)
+          assert any(x.get("@type") == "WebSite" and x.get("name") == "Kasem Adra" for x in home_graph), "Missing root WebSite entity"
+          person = next(x for x in home_graph if x.get("@type") == "Person" and x.get("@id") == "https://kasemadra.com/#person")
+          assert "https://orcid.org/0009-0004-7615-4978" in person["sameAs"]
+          assert "https://github.com/Kasem-Adra" in person["sameAs"]
+          assert "https://www.linkedin.com/in/kasem-adra/" in person["sameAs"]
+          assert "قاسم عدرا" in person["alternateName"]
+
+          for lang in langs:
+              about = page(lang, "/about/").read_text(encoding="utf-8")
+              about_graph = schemas(about)
+              assert any(x.get("@type") == "ProfilePage" and x.get("mainEntity", {}).get("@id") == person["@id"] for x in about_graph), f"Missing ProfilePage schema: {lang}"
+              assert "profile-identifiers" in about and "LinkedIn" in about
+              assert 'rel="canonical"' in about and f'hreflang="{lang}"' in about
+              assert 'name="robots" content="noindex"' not in about
+
+              archive = page(lang, "/archive/").read_text(encoding="utf-8")
+              archive_graph = schemas(archive)
+              assert any(x.get("@type") == "CollectionPage" for x in archive_graph), f"Missing archive CollectionPage: {lang}"
+              assert f"/{lang}/archive/baniyas-revolution-2010-2025/" in archive
+
+              banyias = page(lang, "/archive/baniyas-revolution-2010-2025/").read_text(encoding="utf-8")
+              b_graph = schemas(banyias)
+              assert any(x.get("@type") == "Article" and x.get("author", {}).get("@id") == person["@id"] for x in b_graph), f"Missing authored archive Article: {lang}"
+              assert banyias.count('class="timeline-entry"') == 20, f"Expected 20 chronology entries: {lang}"
+              assert len(re.findall(r'<li id="ref-\d+">', banyias)) == 26, f"Expected 26 references including local source: {lang}"
+              assert banyias.count('class="citation"') >= 20, f"Missing inline source citations: {lang}"
+              assert "not been released" not in banyias.lower()
+              assert 'name="robots" content="noindex"' not in banyias
+              for source_id in range(1, 27):
+                  assert f'id="ref-{source_id}"' in banyias, f"Missing source {source_id}: {lang}"
+
+              for route in ("/", "/projects/", "/publications/", "/blog/"):
+                  html = page(lang, route).read_text(encoding="utf-8")
+                  assert "application/ld+json" in html, f"Missing JSON-LD: {lang} {route}"
+                  assert 'rel="canonical"' in html, f"Missing canonical: {lang} {route}"
+                  assert f'hreflang="{lang}"' in html, f"Missing hreflang: {lang} {route}"
+                  assert f'href="/{lang}/archive/"' in html, f"Archive not internally linked: {lang} {route}"
+
+          robots = (root / "robots.txt").read_text(encoding="utf-8")
+          assert "Allow: /" in robots and "sitemap.xml" in robots
+          sitemap = ET.parse(root / "sitemap.xml").getroot()
+          urls = sitemap.findall("sm:url", ns)
+          assert len(urls) == 37, f"Expected 37 sitemap URLs, found {len(urls)}"
+          assert all(url.find("sm:loc", ns) is not None for url in urls)
+          assert all(url.findall("xhtml:link", ns) for url in urls), "Missing hreflang alternates in sitemap"
+          assert (root / "index.html").exists()
+          print("PASS: root WebSite entity, Person graph, ProfilePage, 20-event Baniyas archive, 26 references, three languages, crawlable canonicals, hreflang and 37 sitemap URLs.")
+          PY
+      - name: Upload static review preview (not deployed)
+        uses: actions/upload-artifact@v4
+        with:
+          name: kasem-adra-knowledge-archive-preview
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7
