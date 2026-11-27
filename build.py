@@ -317,6 +317,22 @@ def localize_pages():
                     head = head.replace('</head>', article_meta + '</head>')
                 else:
                     head = sub(r'<title>[^<]*</title>', lambda _: f'<title>{escape(fields["title"])} · Kasem Adra</title>', head)
+            elif path in (paper, results.PATH):
+                related_labels = {
+                    'ar': 'قراءة تحليلية مرتبطة',
+                    'en': 'Related analysis',
+                    'fr': 'Analyse associée',
+                }
+                related_titles = {
+                    'ar': 'هل يمكن الوثوق بمساعد ذكاء اصطناعي محلي؟',
+                    'en': 'Can We Trust a Local AI Assistant?',
+                    'fr': 'Peut-on faire confiance à un assistant IA local ?',
+                }
+                related = (
+                    f'<p class="related-article"><span>{related_labels[lang]}:</span> '
+                    f'<a href="{locale_path(lang, article)}">{related_titles[lang]}</a></p>'
+                )
+                body = body.replace('</main>', related + '</main>')
             elif path in ('/', '/blog/'):
                 body = render_post_cards(body, lang)
             body = body.replace(f'<p>{paper_title}</p>', f'<p lang="en" dir="ltr">{paper_title}</p>')
