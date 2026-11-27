@@ -349,9 +349,11 @@ def main():
             for identifier in (
                 "https://orcid.org/0009-0004-7615-4978",
                 "https://github.com/Kasem-Adra",
+                "https://github.com/Qassemai",
                 "https://www.linkedin.com/in/kasem-adra/",
                 "https://qassem.net/",
-                "https://x.com/qassemadra",
+                "https://x.com/QassemAdra",
+                "https://www.instagram.com/qassemadra/",
             ):
                 if identifier not in same_as:
                     fail(f"Person entity is missing sameAs identifier: {identifier}")
@@ -361,6 +363,15 @@ def main():
                 fail("Person entity is missing the documented alternate Latin transliteration")
             if person.get("name") != "Kasem Adra":
                 fail("Person entity must use Kasem Adra as the canonical name")
+        for lang, expected_links in {
+            "en": ("https://github.com/Qassemai", "https://www.instagram.com/qassemadra/"),
+            "ar": ("https://github.com/Qassemai", "https://www.instagram.com/qassemadra/"),
+            "fr": ("https://github.com/Qassemai", "https://www.instagram.com/qassemadra/"),
+        }.items():
+            profile = page_path(lang, "/about/").read_text(encoding="utf-8")
+            for link in expected_links:
+                if f'href="{link}"' not in profile:
+                    fail(f"{lang}: author profile is missing verified identity link {link}")
         if website is not None and website.get("alternateName") != ["قاسم عدرا"]:
             fail("WebSite entity must use the canonical site name and Arabic alternate name only")
 
