@@ -46,8 +46,8 @@ def render_post(body, lang, path):
     image = ''
     if 'image' in fields:
         image = f'<img class="article-logo" src="{escape(fields["image"])}" alt="{escape(fields["image_alt"])}" width="1254" height="1254">'
-    article = f'<h1>{escape(fields["title"])}</h1>{paragraphs}{image}'
-    return sub(r'(<div class="subpage"[^>]*>).*?(</div>)', lambda m: m[1] + article + m[2], body, count=1, flags=16)
+    post_html = f'<h1>{escape(fields["title"])}</h1>{paragraphs}{image}'
+    return sub(r'(<div class="subpage"[^>]*>).*?(</div>)', lambda m: m[1] + post_html + m[2], body, count=1, flags=16)
 
 
 def render_post_cards(body, lang):
