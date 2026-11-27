@@ -6,6 +6,7 @@ from html import escape
 from json import dumps, loads
 from re import sub
 import results
+import article_render as article_renderer
 
 public_build = environ.get('SITE_PUBLIC') == '1'
 origin = 'https://kasemadra.com'
@@ -27,6 +28,7 @@ project = '/projects/local-assistant/'
 paper = '/publications/aco-llm/'
 note = '/blog/checking-work/'
 arabic = '/blog/arabic-calligraphy/'
+article = '/blog/local-ai-agent-reliability/'
 logo = '/assets/kasem-calligraphy-transparent.png'
 paper_title = publication['title']
 posts = {}
@@ -37,12 +39,15 @@ for path in sorted(Path('_posts').rglob('*.md')):
 
 def render_post(body, lang, path):
     fields, content = posts[locale_path(lang, path)]
+    if path == article:
+        article_html, _, _ = article_renderer.render_article(fields, content, lang)
+        return sub(r'<main>.*?</main>', lambda _: f'<main>{article_html}</main>', body, count=1, flags=16)
     paragraphs = ''.join(f'<p>{escape(part)}</p>' for part in content.split('\n\n'))
     image = ''
     if 'image' in fields:
         image = f'<img class="article-logo" src="{escape(fields["image"])}" alt="{escape(fields["image_alt"])}" width="1254" height="1254">'
-    article = f'<h1>{escape(fields["title"])}</h1>{paragraphs}{image}'
-    return sub(r'(<div class="subpage"[^>]*>).*?(</div>)', lambda m: m[1] + article + m[2], body, count=1, flags=16)
+    article_html = f'<h1>{escape(fields["title"])}</h1>{paragraphs}{image}'
+    return sub(r'(<div class="subpage"[^>]*>).*?(</div>)', lambda m: m[1] + article_html + m[2], body, count=1, flags=16)
 
 
 def render_post_cards(body, lang):
@@ -76,6 +81,11 @@ results_pdf = '/files/aco-llm-results.pdf'
 results_pdf_target = Path('dist' + results_pdf)
 results_pdf_target.parent.mkdir(parents=True, exist_ok=True)
 results_pdf_target.write_bytes(b64decode(Path('_publications/aco-llm-results.pdf.b64').read_text(encoding='ascii')))
+hero_b64 = Path('_posts/assets/local-ai-agent-reliability-hero.webp.b64')
+if hero_b64.exists():
+    hero_target = Path('dist/assets/local-ai-agent-reliability-hero.webp')
+    hero_target.parent.mkdir(parents=True, exist_ok=True)
+    hero_target.write_bytes(b64decode(hero_b64.read_text(encoding='ascii')))
 
 
 def row(category, title, description, url, lang='en'):
@@ -84,7 +94,7 @@ def row(category, title, description, url, lang='en'):
 
 projects = row('PROJECT', 'A local AI assistant for Arabic', 'An on-device assistant for text, speech, and tool use.', project)
 research = row('RESEARCH', 'ACO‑LLM', 'A protocol for testing how local models check and repair their work.', paper)
-blog = row('RESEARCH NOTE', 'How do we verify an assistant’s work?', 'A small example of checking outcomes independently of the model.', note) + row('ART & DESIGN', 'حين تصبح الحروف رسمة', 'ملاحظة عن تصميم التوقيع الحروفي للموقع.', arabic, lang='ar')
+blog = row('FEATURED ARTICLE', 'Can We Trust a Local AI Assistant?', 'An evidence-based guide to local AI, agent reliability, verification, and ACO-LLM.', article) + row('RESEARCH NOTE', 'How do we verify an assistant’s work?', 'A small example of checking outcomes independently of the model.', note) + row('ART & DESIGN', 'حين تصبح الحروف رسمة', 'ملاحظة عن تصميم التوقيع الحروفي للموقع.', arabic, lang='ar')
 profile = '<div class="profiles"><a href="https://github.com/Kasem-Adra">GitHub</a><a href="https://orcid.org/0009-0004-7615-4978">ORCID</a><a href="https://zenodo.org/records/24488951">Zenodo</a></div>'
 
 def page(route, title, section, main):
@@ -176,6 +186,7 @@ translations = {
         'عندما يُطلب من المساعد إنشاء ملف، يمكن فحص الملف ومحتواه مباشرة للتحقق من النتيجة. هذه إحدى طرق تقييم المهمة بصورة مستقلة عن حكم النموذج على عمله.',
         'قاسم عدرا بالخط العربي الأسود مع امتدادات حمراء',
         'أبحاث قاسم عدرا ومشاريعه وكتاباته.', 'التنقّل الرئيسي',
+        'مقالة رئيسية', 'هل يمكن الوثوق بمساعد ذكاء اصطناعي محلي؟', 'دليل بحثي عن الذكاء الاصطناعي المحلي وموثوقية الوكلاء والتحقق من النتائج وتجربة ACO-LLM.',
     ],
     'fr': [
         'Accueil', 'Projets', 'Recherche', 'Blog', 'Kasem Adra',
@@ -191,6 +202,7 @@ translations = {
         'Si l’on demande à un assistant de créer un fichier, on peut vérifier directement le fichier et son contenu. C’est une façon d’évaluer la tâche indépendamment du jugement du modèle.',
         'Calligraphie arabe de Kasem Adra en noir et rouge',
         'Recherches, projets et articles de Kasem Adra.', 'Navigation principale',
+        'À LA UNE', 'Peut-on faire confiance à un assistant IA local ?', 'Un guide documenté sur l’IA locale, la fiabilité des agents, la vérification et l’évaluation ACO-LLM.',
     ],
 }
 source_strings = [
@@ -207,6 +219,7 @@ source_strings = [
     'If an assistant is asked to create a file, we can test the result by inspecting the file and its contents directly. This is one way to evaluate a task independently of the model’s own judgment.',
     'قاسم عدرا — Arabic calligraphy in black with red flourishes',
     'Kasem Adra’s portfolio, research, and writing.', 'Main navigation',
+    'FEATURED ARTICLE', 'Can We Trust a Local AI Assistant?', 'An evidence-based guide to local AI, agent reliability, verification, and ACO-LLM.',
 ]
 
 def locale_path(lang, path):
@@ -237,6 +250,7 @@ biographies = {
 about = '/about/'
 page(about, 'About', 'Home', '')
 page(results.PATH, 'ACO‑LLM results', 'Research', '')
+page(article, 'Can We Trust a Local AI Assistant?', 'Blog', '')
 
 
 def localize_pages():
@@ -247,7 +261,7 @@ def localize_pages():
         'ar': {'en': 'الإنجليزية', 'ar': 'العربية', 'fr': 'الفرنسية'},
         'fr': {'en': 'Anglais', 'ar': 'Arabe', 'fr': 'Français'},
     }
-    paths = ('/', *tuple(nav.values())[1:], project, paper, results.PATH, about, note, arabic)
+    paths = ('/', *tuple(nav.values())[1:], project, paper, results.PATH, about, note, arabic, article)
     for path in paths:
         base = Path(f'dist{path}index.html').read_text(encoding='utf-8')
         for lang in labels:
@@ -283,10 +297,21 @@ def localize_pages():
                 }.items():
                     body = body.replace(original, translated)
                     head = head.replace(original, translated)
-            if path in (note, arabic):
+            if path in (note, arabic, article):
                 body = render_post(body, lang, path)
-                fields, _ = posts[locale_path(lang, path)]
-                head = sub(r'<title>[^<]*</title>', lambda _: f'<title>{escape(fields["title"])} · Kasem Adra</title>', head)
+                fields, content = posts[locale_path(lang, path)]
+                if path == article:
+                    seo_title = fields.get('seo_title', fields['title'] + ' · Kasem Adra')
+                    head = sub(r'<title>[^<]*</title>', lambda _: f'<title>{escape(seo_title)}</title>', head)
+                    head = sub(r'<meta name="description" content="[^"]*">', lambda _: f'<meta name="description" content="{escape(fields["description"], quote=True)}">', head)
+                    head = re.sub(r'<meta property="og:image"[^>]*>', '', head)
+                    _, word_count, reading_time = article_renderer.render_article(fields, content, lang)
+                    article_meta = article_renderer.build_article_head(
+                        fields, lang, origin + locale_path(lang, path), origin, person, word_count, reading_time
+                    )
+                    head = head.replace('</head>', article_meta + '</head>')
+                else:
+                    head = sub(r'<title>[^<]*</title>', lambda _: f'<title>{escape(fields["title"])} · Kasem Adra</title>', head)
             elif path in ('/', '/blog/'):
                 body = render_post_cards(body, lang)
             body = body.replace(f'<p>{paper_title}</p>', f'<p lang="en" dir="ltr">{paper_title}</p>')
