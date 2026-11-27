@@ -6,6 +6,7 @@ on:
     paths:
       - "build.py"
       - "knowledge.py"
+      - "article_render.py"
       - "results.py"
       - "results.json"
       - "_posts/**"
