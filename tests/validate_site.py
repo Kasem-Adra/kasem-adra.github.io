@@ -184,6 +184,25 @@ def check_common_metadata(path, parser):
     if len(twitter_cards) != 1 or twitter_cards[0] != "summary_large_image":
         fail(f"{source}: expected one valid Twitter summary_large_image card")
 
+    required_social = (
+        "og:title", "og:description", "og:url", "og:type", "og:locale",
+        "og:image:alt", "twitter:title", "twitter:description",
+        "twitter:image", "twitter:image:alt",
+    )
+    for key in required_social:
+        values = parser.meta.get(key, [])
+        if len(values) != 1 or not (values[0] or "").strip():
+            fail(f"{source}: expected exactly one non-empty {key} metadata value")
+
+    if parser.meta.get("og:url") != parser.canonicals:
+        fail(f"{source}: og:url must match the canonical URL")
+    if parser.meta.get("twitter:title") != parser.meta.get("og:title"):
+        fail(f"{source}: Twitter and Open Graph titles must match")
+    if parser.meta.get("twitter:description") != parser.meta.get("og:description"):
+        fail(f"{source}: Twitter and Open Graph descriptions must match")
+    if parser.meta.get("twitter:image") != parser.meta.get("og:image"):
+        fail(f"{source}: Twitter and Open Graph images must match")
+
     if not parser.title_text or not "".join(parser.title_text).strip():
         fail(f"{source}: missing page title")
 
@@ -229,6 +248,23 @@ def check_localized_page(lang, route):
 
     if re.search(r'<meta\s+name=["\']robots["\']\s+content=["\'][^"\']*noindex', source, re.I):
         fail(f"{path}: indexable page contains noindex")
+
+    expected_og_type = (
+        "profile" if route == "/about/" else
+        "article" if (route.startswith("/blog/") and route != "/blog/") or route in (
+            "/publications/aco-llm/", "/publications/aco-llm-results/"
+        ) else
+        "website"
+    )
+    if parser.meta.get("og:type") != [expected_og_type]:
+        fail(f"{path}: expected og:type={expected_og_type}")
+
+    nodes = flatten_schemas(parser)
+    breadcrumb = next((node for node in nodes if node.get("@type") == "BreadcrumbList"), None)
+    if breadcrumb is None or not breadcrumb.get("itemListElement"):
+        fail(f"{path}: missing BreadcrumbList structured data")
+    elif [item.get("position") for item in breadcrumb["itemListElement"]] != list(range(1, len(breadcrumb["itemListElement"]) + 1)):
+        fail(f"{path}: BreadcrumbList positions are not sequential")
 
     return source, parser
 
@@ -314,11 +350,19 @@ def main():
                 "https://orcid.org/0009-0004-7615-4978",
                 "https://github.com/Kasem-Adra",
                 "https://www.linkedin.com/in/kasem-adra/",
+                "https://qassem.net/",
+                "https://x.com/qassemadra",
             ):
                 if identifier not in same_as:
                     fail(f"Person entity is missing sameAs identifier: {identifier}")
             if "قاسم عدرا" not in person.get("alternateName", []):
                 fail("Person entity is missing the Arabic alternate name")
+            if "Qassem Adra" not in person.get("alternateName", []):
+                fail("Person entity is missing the documented alternate Latin transliteration")
+            if person.get("name") != "Kasem Adra":
+                fail("Person entity must use Kasem Adra as the canonical name")
+        if website is not None and website.get("alternateName") != ["قاسم عدرا"]:
+            fail("WebSite entity must use the canonical site name and Arabic alternate name only")
 
     # Encyclopedic profile, research archive and featured article.
     for lang in LANGS:
@@ -353,6 +397,42 @@ def main():
             html = path.read_text(encoding="utf-8")
             if f'href="/{lang}/archive/"' not in html:
                 fail(f"{lang} {route}: research archive is not internally linked")
+
+        note_path = page_path(lang, "/blog/checking-work/")
+        note = note_path.read_text(encoding="utf-8")
+        note_text = re.sub(r"<[^>]+>", " ", note)
+        if len(note_text.split()) < 300:
+            fail(f"{lang}: verification guide is too short to serve as a substantive article")
+        note_nodes = flatten_schemas(parse_page(note_path)[1])
+        note_schema = next((node for node in note_nodes if node.get("@type") == "BlogPosting"), None)
+        if note_schema is None:
+            fail(f"{lang}: verification guide is missing BlogPosting structured data")
+        else:
+            if note_schema.get("dateModified") != "2026-11-27":
+                fail(f"{lang}: verification guide has an incorrect modification date")
+            if len(note_schema.get("citation", [])) != 2:
+                fail(f"{lang}: verification guide must cite the ACO-LLM protocol and results")
+
+        project_page = page_path(lang, "/projects/local-assistant/").read_text(encoding="utf-8")
+        for term in ("gemma4:12b-it-qat", "Whisper", "Edge TTS"):
+            if term not in project_page:
+                fail(f"{lang}: local assistant page is missing the documented component {term}")
+        if not any(term in project_page.lower() for term in ("not be described as fully offline", "لا يصح وصف مسار الصوت بالكامل", "ne faut pas décrire l’ensemble du parcours vocal")):
+            fail(f"{lang}: local assistant page must disclose the external speech-synthesis path")
+
+        protocol_page = page_path(lang, "/publications/aco-llm/").read_text(encoding="utf-8")
+        plain_language_labels = {
+            "en": "In plain language", "ar": "بعبارة مبسطة", "fr": "En termes simples"
+        }
+        if plain_language_labels[lang] not in protocol_page:
+            fail(f"{lang}: protocol page is missing a plain-language summary")
+
+        results_page = page_path(lang, "/publications/aco-llm-results/").read_text(encoding="utf-8")
+        results_summary_labels = {
+            "en": "In plain terms", "ar": "بعبارة مبسطة", "fr": "En termes simples"
+        }
+        if results_summary_labels[lang] not in results_page:
+            fail(f"{lang}: results page is missing a plain-language summary")
 
         featured_path = page_path(lang, "/blog/local-ai-agent-reliability/")
         featured = featured_path.read_text(encoding="utf-8")
