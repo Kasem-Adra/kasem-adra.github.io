@@ -100,6 +100,8 @@ Routing uses this information to select an execution path. The intention is to a
 
 An important qualification concerns routing: the model was not asked to infer from an unrestricted natural-language request whether tool use was necessary. Each benchmark scenario supplied a public route flag in its task contract. The experiment therefore evaluates routing from known contract metadata, not the accuracy of a general router that must infer the path from arbitrary user requests. [1](https://doi.org/10.5281/zenodo.24488951)
 
+In the protocol, “adaptive” refers to evidence-triggered repair during execution; it does not mean that the model autonomously infers an execution route from unrestricted natural-language input. [1](https://doi.org/10.5281/zenodo.24488951)
+
 ### 4.2 Outcome verification
 
 A task is not considered successful simply because the model or a tool reports completion. The resulting state must be compared with defined acceptance criteria, ideally by an evaluator independent of the model's success claim.
@@ -122,6 +124,8 @@ The evaluation was designed to compare six arms with different routing, verifica
 | D | Task-contract routing with mandatory verification and bounded repair on tool tasks |
 | E | Arm D plus structured, episode-local failure memory |
 | F | Fixed-path tool-capable loop with mandatory verification and bounded repair |
+
+Fixed-path means each task enters a tool-capable loop; it does not force a tool call on every task, and the model may still answer directly. Ordinary recovery from tool errors remained available within the shared limits in the reference arm, so B was not a no-retry baseline. [1](https://doi.org/10.5281/zenodo.24488951)
 
 These comparisons help examine different parts of the policy. The primary comparison, **D versus B**, estimates the effect of the combined policy; it does not isolate routing from verification and repair on its own. Other planned contrasts, including C versus B, D versus F, F versus B and D versus C, help interpret the components. [1](https://doi.org/10.5281/zenodo.24488951)
 
@@ -248,6 +252,7 @@ Key limitations include:
 - **Simulated tools:** Simulated tools do not reproduce every issue involving real services, networks or permissions.
 - **A defined task set:** The held-out analysis used 96 base tasks after excluding 24 pilot tasks; this set does not necessarily represent all long-horizon tasks or professional workflows.
 - **Public routing metadata:** The route flag was supplied in the task contract; the experiment did not test natural-language route inference.
+- **Optional reads in reasoning tasks:** None of the reasoning episodes used the optional read tool available in fixed-path arms, limiting what the routing contrasts say about settings where reasoning tasks actively use tools.
 - **Specific fault types:** The evaluation included controlled explicit failures and silent no-op failures; it does not establish robustness to every attack or persistent fault.
 - **Limits of verification:** A structural check alone cannot prove semantic correctness or open-ended factual accuracy, and some structurally accepted outputs were rejected by the independent evaluator.
 - **Additional cost:** Arm D used more time and generated tokens per episode on average than arm B.
