@@ -342,7 +342,7 @@ def localize_pages():
                 research_links = f'<p><a href="{locale_path(lang, paper)}">{research_label}</a></p>'
                 identity_links = '<div class="profiles">' + ''.join(f'<a href="{url}">{label}</a>' for label, url in [('ORCID', 'https://orcid.org/0009-0004-7615-4978'), ('GitHub', 'https://github.com/Kasem-Adra')]) + '</div>'
                 body = body.replace('<main></main>', f'<main><div class="subpage"><h1>{about_title} · {identity["name"]}</h1><p>{identity["alternateName"]}</p>{portrait}{paragraphs}<p>{membership}</p>{identity_links}{research_links}</div></main>')
-                head = sub(r'<title>[^<]*</title>', lambda _: f'<title>{about_title} · Kasem Adra</title>', head)
+                head = sub(r'<title>[^<]*</title>', lambda _: '<title>قاسم عدرا | نبذة عني</title>' if lang == 'ar' else f'<title>{about_title} · Kasem Adra</title>', head)
             theme_label = {'en': 'Dark mode', 'ar': 'الوضع الداكن', 'fr': 'Mode sombre'}[lang]
             theme_button = f'<button class="theme-toggle" type="button" aria-label="{theme_label}" aria-pressed="false" hidden><span aria-hidden="true"></span></button>'
             body = body.replace('</nav></header>', f'</nav><div class="header-controls">{switcher}{theme_button}</div></header>')
@@ -356,7 +356,7 @@ def localize_pages():
             output.parent.mkdir(parents=True, exist_ok=True)
             if path == '/':
                 title, description = {
-                    'en': ('Kasem Adra', 'Kasem Adra is an independent AI researcher in France. Explore his work on local AI assistants, the ACO‑LLM protocol, and Arabic calligraphy.'),
+                    'en': ('Kasem Adra | Independent AI Researcher', 'Kasem Adra is an independent AI researcher in France. Explore his work on local AI assistants, the ACO‑LLM protocol, and Arabic calligraphy.'),
                     'ar': ('قاسم عدرا', 'قاسم عدرا، باحث مستقل في الذكاء الاصطناعي من بانياس ويعيش في فرنسا. تعرّف على مشاريعه في الذكاء الاصطناعي المحلي وبروتوكول ACO‑LLM وكتاباته عن الخط العربي.'),
                     'fr': ('Kasem Adra', 'Kasem Adra est chercheur indépendant en IA en France. Découvrez ses projets sur les assistants IA locaux, le protocole ACO‑LLM et ses articles sur la calligraphie arabe.'),
                 }[lang]
