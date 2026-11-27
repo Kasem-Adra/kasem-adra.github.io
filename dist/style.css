@@ -24,3 +24,59 @@ body{background:var(--surface)}
 .results-table :is(th,td){text-align:start;border-bottom:1px solid var(--line);padding:.55rem}
 .results-table td{white-space:nowrap}
 .subpage h2{margin-block:1.5rem .5rem}
+
+
+/* Long-form research article */
+article.longform{display:block;grid-template-columns:none;gap:0;border:0;padding:2.8rem 0;max-width:52rem}
+.longform>.label{margin:0 0 .65rem;color:var(--red);font-size:.82rem;font-weight:700;letter-spacing:.06em}
+.longform h1{max-width:18ch;margin:.35rem 0 1rem;font-size:clamp(2.45rem,6vw,4.15rem);line-height:1.08;letter-spacing:-.045em}
+.article-deck{max-width:48rem;font:1.25rem/1.55 var(--serif);color:var(--muted);margin:0 0 1rem!important}
+.article-meta{display:flex;flex-wrap:wrap;gap:.45rem 1rem;padding:.75rem 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);font-size:.86rem;color:var(--muted)}
+.article-meta span:first-child{font-weight:650;color:var(--ink)}
+.article-hero{margin:1.5rem 0 1.25rem}
+.article-hero img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:.65rem}
+.article-hero figcaption{margin-top:.45rem;color:var(--muted);font-size:.82rem}
+.article-summary{margin:1.4rem 0;padding:1rem 1.15rem;border:1px solid var(--line);border-inline-start:3px solid var(--red);border-radius:.35rem}
+.article-summary h2{font-size:1.45rem;margin:0 0 .35rem}
+.article-summary p{margin:.2rem 0;color:var(--ink)}
+.article-toc{display:block;margin:1.5rem 0 2rem;padding:1rem 1.2rem;border:1px solid var(--line);border-radius:.45rem}
+.article-toc h2{font-size:1.45rem;margin:0 0 .55rem}
+.article-toc ol{margin:0;padding-inline-start:1.35rem}
+.article-toc li{padding:.12rem 0;color:var(--muted)}
+.article-toc li.toc-subsection{margin-inline-start:1rem;font-size:.94rem}
+.article-toc a{text-decoration:none}
+.article-toc a:hover{text-decoration:underline}
+.article-content{font-size:1.025rem;line-height:1.82}
+.article-content h2{font-size:1.8rem;line-height:1.25;margin:2.1rem 0 .65rem;scroll-margin-top:1.5rem}
+.article-content h3{font:600 1.28rem/1.4 var(--serif);margin:1.45rem 0 .4rem;scroll-margin-top:1.5rem}
+.article-content p{margin:.8rem 0;color:var(--ink)}
+.article-content ul,.article-content ol{padding-inline-start:1.55rem;margin:.75rem 0 1rem}
+.article-content li{padding:.16rem 0}
+.article-content a{color:var(--red);text-decoration-thickness:1px}
+.article-content blockquote{margin:1rem 0;padding:.2rem 1rem;border-inline-start:3px solid var(--line);color:var(--muted)}
+.article-content blockquote p{color:var(--muted)}
+.article-table{max-width:100%;overflow-x:auto;margin:1rem 0;border:1px solid var(--line);border-radius:.35rem}
+.article-table table{width:100%;min-width:34rem;border-collapse:collapse;font-size:.93rem}
+.article-table th,.article-table td{padding:.62rem .7rem;text-align:start;vertical-align:top;border-bottom:1px solid var(--line)}
+.article-table th{font-weight:700;background:color-mix(in srgb,var(--line) 38%,var(--surface))}
+.article-table tr:last-child td{border-bottom:0}
+.article-content code{font-size:.9em;padding:.08rem .25rem;border:1px solid var(--line);border-radius:.2rem;overflow-wrap:anywhere}
+.article-content pre{padding:1rem;overflow-x:auto;background:var(--line);border-radius:.4rem}
+.article-content pre code{padding:0;border:0}
+.article-editorial-note{margin-top:2rem!important;padding-top:1rem;border-top:1px solid var(--line);font-size:.88rem;color:var(--muted)!important}
+html[dir=rtl] .longform h1{letter-spacing:0;line-height:1.35}
+html[dir=rtl] .longform>.label{letter-spacing:0}
+html[dir=rtl] .article-content{line-height:1.95}
+@media(max-width:640px){
+  article.longform{padding:1.6rem 0}
+  .longform h1{font-size:clamp(2.15rem,10vw,3.1rem)}
+  .article-deck{font-size:1.08rem}
+  .article-meta{gap:.35rem .75rem}
+  .article-content{font-size:1rem}
+  .article-content h2{font-size:1.55rem}
+  .article-table table{min-width:31rem}
+}
+
+.related-article{margin:1.2rem 0 0!important;padding:1rem 0;border-top:1px solid var(--line);font-size:.94rem}
+.related-article span{font-weight:650;color:var(--muted)}
+.related-article a{color:var(--red);font-weight:650}
