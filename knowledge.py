@@ -935,13 +935,18 @@ def build_site(dist, origin, public_build):
 .language-choice{border:1px solid var(--line);padding:1rem;text-decoration:none;display:flex;flex-direction:column;gap:.35rem;border-radius:.45rem}
 .language-choice:hover{border-color:var(--red);color:var(--red)}
 .language-choice span{font-size:.9rem;color:var(--muted)}
-.toc{border:1px solid var(--line);padding:1rem 1.25rem;margin:1.5rem 0;max-width:32rem;background:var(--surface)}
-.toc h2{font-size:1.35rem;margin:0 0 .45rem}
-.toc ol{margin:.25rem 0;padding-inline-start:1.4rem}
-.toc li{padding:.15rem 0}
+.toc,.profile-toc{border:1px solid var(--line);padding:1rem 1.25rem;margin:1.5rem 0;max-width:32rem;background:var(--surface)}
+.toc h2,.profile-toc h2{font-size:1.35rem;margin:0 0 .45rem}
+.toc ol,.profile-toc ol{margin:.25rem 0;padding-inline-start:1.4rem}
+.toc li,.profile-toc li{padding:.15rem 0}
+.profile-infobox{border:1px solid var(--line);padding:1rem 1.2rem;margin:1.5rem 0;max-width:36rem;background:var(--surface)}
+.profile-infobox h2{font-size:1.35rem}
+.profile-infobox dl{display:grid;grid-template-columns:minmax(7rem,9rem) 1fr;gap:.35rem .8rem;margin:.5rem 0 0}
+.profile-infobox dt{font-weight:650;color:var(--muted)}
+.profile-infobox dd{margin:0}
 .profile-identifiers{border-top:1px solid var(--line);margin-top:2rem;padding-top:1rem}
 .profile-identifiers ul{padding-inline-start:1.4rem}
-@media(max-width:680px){.timeline-entry{grid-template-columns:1fr;gap:.25rem}.archive-infobox dl{grid-template-columns:1fr;gap:.1rem}.archive-infobox dd{margin-bottom:.55rem}.gateway{grid-template-columns:1fr;gap:1rem}.gateway figure{width:min(100%,12rem);margin-inline:auto}.language-choices{grid-template-columns:1fr}}
+@media(max-width:680px){.timeline-entry{grid-template-columns:1fr;gap:.25rem}.archive-infobox dl,.profile-infobox dl{grid-template-columns:1fr;gap:.1rem}.archive-infobox dd,.profile-infobox dd{margin-bottom:.55rem}.gateway{grid-template-columns:1fr;gap:1rem}.gateway figure{width:min(100%,12rem);margin-inline:auto}.language-choices{grid-template-columns:1fr}}
 """
     current = css.read_text(encoding="utf-8")
     if "Knowledge archive and encyclopedic record layout" not in current:
