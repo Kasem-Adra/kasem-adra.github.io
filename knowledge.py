@@ -253,7 +253,7 @@ EVENTS = [
             "ar":"تتناول الشهادة المحلية إطلاق النار والضحايا عند جسر رأس النبع ومحيطه. وتورد التغطية الصحفية المعاصرة روايات متباينة عن تسلسل الأحداث والحصيلة؛ لذلك لا تُقدَّم هنا حصيلة موحدة تتجاوز ما يثبته كل مصدر.",
             "en":"Local testimony describes gunfire and casualties at and around Ras al-Nabaa Bridge. Contemporary press reports contain differing accounts of the sequence of events and the toll; this chronology therefore does not present a single consolidated count beyond what each source supports.",
             "fr":"Le témoignage local décrit des tirs et des victimes au pont de Ras al-Nabaa et dans ses environs. Les articles de presse contemporains présentent des récits différents de la séquence des événements et du bilan ; cette chronologie ne propose donc pas de chiffre unique au-delà de ce que chaque source étaye."
-        }, "sources":[2,4,21,22,23,26], "basis":"mixed"
+        }, "sources":[2,4], "basis":"mixed"
     },
     {
         "date":{"ar":"11–13 نيسان 2011","en":"11–13 April 2011","fr":"11–13 avril 2011"},
@@ -307,7 +307,7 @@ EVENTS = [
             "ar":"تجمع الرواية المحلية بين مظاهرة 6 أيار والاقتحام الواسع لبانياس وقراها في 7 أيار. وتوفر سجلات الذاكرة السورية والتغطية الصحفية المعاصرة مراجع مستقلة لأحداث الاقتحام والضحايا، مع ضرورة إبقاء الأسماء والأعداد وفق كل سجل.",
             "en":"The local account connects the 6 May demonstration with the large-scale incursion into Baniyas and nearby villages on 7 May. Syrian Memory records and contemporary press coverage provide independent references for the incursion and reported casualties; names and counts should remain specific to each record.",
             "fr":"Le récit local relie la manifestation du 6 mai à l’incursion de grande ampleur dans Baniyas et les villages voisins le 7 mai. Les archives de Syrian Memory et la presse contemporaine fournissent des références indépendantes sur l’incursion et les victimes signalées ; les noms et les chiffres doivent rester propres à chaque source."
-        }, "sources":[2,7,8,21,23,26], "basis":"mixed"
+        }, "sources":[2,7,8,21,22,23,26], "basis":"mixed"
     },
     {
         "date":{"ar":"20 أيار 2011","en":"20 May 2011","fr":"20 mai 2011"},
