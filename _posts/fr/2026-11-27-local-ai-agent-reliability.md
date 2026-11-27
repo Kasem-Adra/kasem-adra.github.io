@@ -20,7 +20,7 @@ editorial_note: "Cet article est une présentation analytique. Il ne remplace ni
 article_section: "Intelligence artificielle ; modèles locaux ; agents IA ; ingénierie de la fiabilité"
 keywords: ["IA locale", "fiabilité des assistants IA locaux", "fiabilité des agents IA", "défaillance silencieuse", "vérification indépendante", "ACO-LLM", "Gemma 4", "modèles de langage locaux"]
 about: ["Intelligence artificielle locale", "agents d’intelligence artificielle", "vérification de l’exécution des tâches", "ingénierie de la fiabilité"]
-citations: [{"name":"ACO-LLM Research Protocol","url":"https://doi.org/10.5281/zenodo.24488951"},{"name":"ACO-LLM Evaluation Results preprint","url":"https://doi.org/10.5281/zenodo.24549236"},{"name":"Gemma 4 model overview","url":"https://deepmind.google/models/gemma/gemma-4/"},{"name":"NIST AI 600-1 Generative AI Profile","url":"https://doi.org/10.6028/NIST.AI.600-1"},{"name":"OWASP Top 10 for Agentic Applications 2026","url":"https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/"}]
+citations: [{"name":"ACO-LLM research protocol, version 1.7","url":"https://doi.org/10.5281/zenodo.24488951"},{"name":"ACO-LLM held-out evaluation preprint, version 1","url":"https://doi.org/10.5281/zenodo.24549236"},{"name":"Google DeepMind Gemma 4 model overview","url":"https://deepmind.google/models/gemma/gemma-4/"},{"name":"Ollama gemma4:12b-it-qat model listing","url":"https://ollama.com/library/gemma4:12b-it-qat"},{"name":"NIST AI 600-1 Generative AI Profile","url":"https://doi.org/10.6028/NIST.AI.600-1"},{"name":"OWASP Top 10 for Agentic Applications 2026","url":"https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/"},{"name":"ReAct: Synergizing Reasoning and Acting in Language Models","url":"https://arxiv.org/abs/2210.03629"},{"name":"Reflexion: Language Agents with Verbal Reinforcement Learning","url":"https://arxiv.org/abs/2303.11366"},{"name":"AgentBench: Evaluating LLMs as Agents","url":"https://arxiv.org/abs/2308.03688"},{"name":"Tau-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains","url":"https://arxiv.org/abs/2406.12045"},{"name":"AgentDojo: A Dynamic Environment to Evaluate Prompt Injection Attacks and Defenses for LLM Agents","url":"https://arxiv.org/abs/2406.13352"}]
 ---
 ## Vue d’ensemble
 
@@ -35,7 +35,7 @@ Cet article examine la fiabilité des assistants IA locaux sous l’angle de l�
 | Sujet | Fiabilité des assistants IA locaux et des agents utilisant des outils |
 | Auteur | Kasem Adra |
 | Étude de cas | ACO-LLM |
-| Modèle utilisé dans l’évaluation | Gemma 4 12B IT QAT, identifiant gemma4:12b-it-qat |
+| Modèle utilisé dans l’évaluation | Gemma 4 12B IT QAT, identifiant gemma4:12b-it-qat [4] |
 | Corpus de tâches | 96 tâches de base, chacune en versions arabe et anglaise |
 | Taille de l’évaluation | 8 064 épisodes répartis sur six bras expérimentaux |
 | Comparaison principale | Bras D par rapport au bras B |
@@ -97,6 +97,8 @@ Un **contrat de tâche** décrit le résultat attendu, la nécessité ou non d�
 
 L’orientation utilise ces informations pour sélectionner un parcours d’exécution. L’objectif est d’éviter un traitement inutile pour les tâches simples tout en appliquant des contrôles supplémentaires lorsque la tâche exige une action externe.
 
+Une précision est essentielle pour interpréter l’orientation : dans cette expérience, le modèle ne devait pas déduire à partir d’une demande libre en langage naturel si un outil était nécessaire. Chaque scénario de test comportait un indicateur de routage public dans son contrat de tâche. L’étude évalue donc l’orientation à partir de métadonnées connues, et non la capacité d’un routeur général à choisir un parcours à partir de demandes utilisateur non contraintes. [1](https://doi.org/10.5281/zenodo.24488951)
+
 ### 4.2 Vérification du résultat
 
 Une tâche n’est pas considérée comme réussie simplement parce que le modèle ou un outil annonce son achèvement. L’état obtenu doit être comparé à des critères d’acceptation définis, idéalement par un évaluateur indépendant de l’affirmation de réussite du modèle.
@@ -124,12 +126,28 @@ Ces comparaisons permettent d’examiner différentes composantes de la politiqu
 
 ## 5. Conception de l’évaluation expérimentale
 
-L’évaluation a utilisé un seul modèle local : **Gemma 4 12B IT QAT**, avec l’identifiant gemma4:12b-it-qat. Le corpus de test comprenait 96 tâches de base, chacune disposant d’une variante arabe et d’une variante anglaise :
+La prépublication des résultats décrit un ensemble de test réservé (held-out) de 96 tâches de base, après exclusion des 24 tâches pilotes et de tous leurs résultats. Les 96 tâches réservées étaient réparties à parts égales entre trois strates, soit 32 tâches chacune : raisonnement déterministe, transformation de données dans un fichier unique et flux de travail à sorties multiples. Chaque tâche disposait d’une variante arabe et d’une variante anglaise :
 
-- 32 tâches de raisonnement déterministe, évaluées dans la condition propre.
-- 64 tâches nécessitant des outils, évaluées dans trois conditions : exécution propre, échec explicite contrôlé et no-op silencieux dans lequel l’outil accuse réception de l’action sans modifier l’état.
+- 32 tâches de raisonnement déterministe, évaluées uniquement dans la condition propre.
+- 32 tâches de transformation de données dans un fichier unique et 32 flux de travail à sorties multiples, chacun évalué dans trois conditions : exécution propre, échec explicite contrôlé et no-op silencieux dans lequel l’outil accuse réception de l’action sans modifier l’état.
 
-Chaque cas planifié a été répété trois fois dans les six bras expérimentaux. Cela représente 1 344 épisodes par bras et **8 064 épisodes au total**. L’évaluation a utilisé des outils simulés dans un environnement contrôlé ; elle ne constituait pas un test de services réels ou d’API de production. [2](https://doi.org/10.5281/zenodo.24549236)
+Chaque cas planifié a été répété trois fois dans les six bras expérimentaux, avec des épisodes appariés selon la tâche de base, la langue, la panne attribuée et la répétition. Cela représente 1 344 épisodes par bras et **8 064 épisodes au total**. L’évaluation a utilisé des outils simulés dans un environnement contrôlé ; elle ne constituait pas un test de services réels ou d’API de production. [2](https://doi.org/10.5281/zenodo.24549236)
+
+La prépublication des résultats indique les paramètres d’exécution suivants :
+
+| Paramètre | Valeur |
+|---|---|
+| Modèle | gemma4:12b-it-qat ; préfixe d’identifiant 38044be4f923 |
+| Environnement d’exécution | Ollama 0.40.18 |
+| Longueur du contexte | 2 048 jetons |
+| Température | 0 |
+| Limite de génération par réponse | 512 jetons |
+| Budget du contrôleur par épisode | 4 096 unités de jetons du contrôleur |
+| Appels d’outils et de vérification | 8 au maximum par épisode |
+| Tentatives de correction | 2 au maximum |
+| Délai maximal du processus | 180 secondes par épisode |
+
+Il s’agit des paramètres d’exécution indiqués dans la prépublication des résultats ; ils ne doivent pas être confondus avec les paramètres prospectifs décrits dans le protocole. [2](https://doi.org/10.5281/zenodo.24549236)
 
 ## 6. Principaux résultats
 
@@ -141,36 +159,65 @@ Cette estimation a été calculée à partir des différences appariées au sein
 
 ### 6.2 Taux bruts de réussite
 
-| Indicateur | Bras B | Bras D |
-|---|---:|---:|
-| Épisodes réussis | 834 sur 1 344 | 1 192 sur 1 344 |
-| Taux brut de réussite | 62,05 % | 88,69 % |
-| Différence brute | — | +26,64 points de pourcentage |
+Le tableau suivant présente les épisodes réussis et les taux bruts de réussite pour les six bras :
 
-La différence brute de 26,64 points n’est pas identique à l’estimation principale de 20,83 points, car les deux calculs utilisent des pondérations différentes. Le taux brut compte chaque épisode, tandis que l’estimation principale donne le même poids à chaque tâche de base. Les tâches avec outils ont été exécutées dans trois conditions et contribuent donc davantage d’épisodes au taux brut.
+| Bras | Épisodes réussis | Taux brut de réussite |
+|---|---:|---:|
+| A | 111 sur 1 344 | 8,26 % |
+| B | 834 sur 1 344 | 62,05 % |
+| C | 839 sur 1 344 | 62,43 % |
+| D | 1 192 sur 1 344 | 88,69 % |
+| E | 1 203 sur 1 344 | 89,51 % |
+| F | 1 191 sur 1 344 | 88,62 % |
+
+L’écart brut entre B et D était de **26,64 points de pourcentage**. Il ne correspond pas à l’estimation principale de 20,83 points, car le taux brut compte chaque épisode, tandis que l’estimation principale donne le même poids à chaque tâche de base. Les tâches avec outils ont été exécutées dans trois conditions et contribuent donc davantage d’épisodes au taux brut.
 
 ### 6.3 Condition de défaillance silencieuse
 
-Pour les épisodes affectés à la condition de défaillance silencieuse, les résultats étaient les suivants :
+Pour les épisodes affectés à la condition de défaillance silencieuse, les résultats des six bras étaient les suivants :
 
-| Indicateur | Bras B | Bras D |
+| Bras | Épisodes réussis | Taux de réussite |
 |---|---:|---:|
-| Épisodes réussis | 0 sur 384 | 363 sur 384 |
-| Taux de réussite | 0,00 % | 94,53 % |
-| Épisodes non réussis | 384 | 21 |
+| A | 0 sur 384 | 0,00 % |
+| B | 0 sur 384 | 0,00 % |
+| C | 0 sur 384 | 0,00 % |
+| D | 363 sur 384 | 94,53 % |
+| E | 363 sur 384 | 94,53 % |
+| F | 363 sur 384 | 94,53 % |
 
-Il s’agit d’une amélioration importante du bras D dans la condition précise testée. Cela ne signifie pas que toutes les défaillances silencieuses ont été résolues : 21 des 384 épisodes du bras D sont restés en échec.
+Ces résultats montrent une amélioration importante pour les bras comportant une vérification et une correction limitée dans la condition précise testée. Ils ne signifient pas que toutes les défaillances silencieuses ont été résolues : 21 des 384 épisodes sont restés en échec dans chacun des bras D, E et F.
 
 ### 6.4 Coût d’exécution
 
-L’amélioration s’est accompagnée d’une consommation supplémentaire de ressources pour le bras D par rapport au bras B :
+Les durées moyennes et les jetons générés dans les six bras étaient les suivants :
 
-| Indicateur | Bras B | Bras D | Hausse pour D |
-|---|---:|---:|---:|
-| Durée moyenne par épisode | 2,096 s | 2,279 s | 0,183 s (+8,73 %) |
-| Jetons générés en moyenne | 44,57 | 49,83 | 5,26 (+11,80 %) |
+| Bras | Durée moyenne par épisode | Moyenne des jetons générés |
+|---|---:|---:|
+| A | 1,547 s | 43,69 |
+| B | 2,096 s | 44,57 |
+| C | 2,055 s | 44,59 |
+| D | 2,279 s | 49,83 |
+| E | 2,286 s | 49,83 |
+| F | 2,287 s | 49,81 |
 
-Ces chiffres montrent que la vérification et la correction peuvent augmenter la durée et la consommation de jetons. Il ne faut donc pas les présenter comme gratuites ou comme améliorant simultanément tous les indicateurs.
+Par rapport à B, le bras D a consommé en moyenne 0,183 seconde supplémentaire par épisode (+8,73 %) et généré 5,26 jetons supplémentaires (+11,80 %). La vérification et la correction ne doivent donc pas être présentées comme gratuites.
+
+### 6.5 Contrastes secondaires et interprétation des composantes
+
+Le tableau suivant présente les contrastes secondaires prévus, y compris l’interaction globale entre l’orientation et le bloc vérification-correction :
+
+| Contraste | Différence (points de pourcentage) | Intervalle de confiance à 95 % |
+|---|---:|---:|
+| C − B | +0,87 | −1,04 à +2,95 |
+| D − F | +0,17 | −2,08 à +2,60 |
+| F − B | +20,66 | +19,27 à +21,88 |
+| D − C | +19,97 | +18,23 à +21,35 |
+| E − D | +0,87 | +0,17 à +1,91 |
+| (D − F) − (C − B) | −0,69 | −1,91 à +0,35 |
+
+Sur les seules tâches de raisonnement déterministe, la différence médiane appariée de latence entre D et B était de −47 millisecondes (de −78 à −31). Dans l’analyse des pannes attribuées, la différence de réussite entre D et C était de +46,48 points de pourcentage (de +43,36 à +48,83), que l’exécution ait ou non atteint le déclencheur de panne.
+
+Ces contrastes sont secondaires et exploratoires, et leurs intervalles ne sont pas ajustés pour les comparaisons multiples. Les intervalles de C−B et D−F incluent zéro : l’étude n’a donc pas établi d’effet positif distinct de l’orientation dans ces deux comparaisons, sans pour autant démontrer l’absence d’effet ou l’équivalence. En revanche, F−B et D−C sont positifs ; ils comparent tous deux l’ajout du bloc vérification-correction sous des politiques d’orientation différentes. Comme la vérification et la correction ont été testées ensemble, leurs effets respectifs ne peuvent pas être isolés. L’intervalle de l’interaction inclut également zéro et ne fournit pas de preuve claire d’une interaction.
 
 ## 7. Que signifie le terme « vérification » dans cette évaluation ?
 
@@ -182,19 +229,31 @@ Les critères d’acceptation doivent donc correspondre à la tâche. L’existe
 
 La qualité de l’évaluation dépend également de celle de l’évaluateur et de sa capacité à rejeter les sorties incorrectes et les effets secondaires interdits.
 
+### 7.1 Limites du vérificateur structurel
+
+Dans les bras dotés d’une porte de vérification, le vérificateur structurel a accepté 69 épisodes dans D, 60 dans E et 69 dans F alors que l’évaluateur indépendant les avait classés comme des échecs, soit 198 cas au total. Cela montre que vérifier la présence ou la structure d’un fichier ne revient pas à vérifier l’exactitude de son contenu.
+
+### 7.2 Déclarations d’achèvement
+
+La prépublication ne recense aucune déclaration de réussite structurée émise par le modèle via l’action prévue à cet effet. Le dénominateur du taux conditionnel de fausses déclarations était donc nul, et ce taux n’a pas pu être estimé. Les achèvements automatiques effectués par le moteur d’exécution lui ont été attribués, et non au modèle. L’expérience ne quantifie donc pas les fausses déclarations d’achèvement dans les réponses en langage naturel.
+
 ## 8. Limites des résultats et conclusions non établies
 
-Les résultats étayent une conclusion circonscrite : dans le corpus de tâches, l’environnement et le modèle testés, la politique D a obtenu un taux de réussite évalué indépendamment supérieur à celui du bras de référence B. Ils ne démontrent pas que le même résultat sera obtenu dans tous les déploiements.
+Les résultats étayent une conclusion circonscrite : dans le corpus de tâches, l’environnement et le modèle testés, la politique D a obtenu un taux de réussite évalué indépendamment supérieur à celui du bras de référence B. Ils ne démontrent pas que le même résultat sera obtenu dans tous les déploiements ou environnements de production.
 
 Les principales limites sont les suivantes :
 
 - **Un seul modèle :** l’évaluation a utilisé uniquement Gemma 4 12B IT QAT. Les résultats ne peuvent pas être généralisés automatiquement à d’autres modèles.
 - **Outils simulés :** les outils simulés ne reproduisent pas tous les problèmes liés aux services réels, aux réseaux ou aux permissions.
-- **Un corpus défini :** les 96 tâches de base ne représentent pas nécessairement toutes les tâches de longue durée ou les flux de travail professionnels.
+- **Un corpus défini :** l’analyse réservée a utilisé 96 tâches de base après exclusion de 24 tâches pilotes ; cet ensemble ne représente pas nécessairement toutes les tâches de longue durée ou les flux de travail professionnels.
+- **Métadonnées de routage publiques :** l’indicateur de routage était fourni dans le contrat de tâche ; l’expérience n’a pas testé l’inférence du parcours à partir du langage naturel.
 - **Types de défaillances spécifiques :** l’évaluation comprenait des échecs explicites contrôlés et des no-op silencieux ; elle ne démontre pas une robustesse à toutes les attaques ou défaillances persistantes.
-- **Limites de la vérification :** un contrôle structurel seul ne peut pas prouver l’exactitude sémantique ou la véracité de faits ouverts.
+- **Limites de la vérification :** un contrôle structurel seul ne peut pas prouver l’exactitude sémantique ou la véracité de faits ouverts ; certaines sorties acceptées structurellement ont été rejetées par l’évaluateur indépendant.
 - **Coût supplémentaire :** le bras D a consommé en moyenne davantage de temps et de jetons générés par épisode que le bras B.
-- **Statut de publication :** les résultats sont présentés dans une prépublication qui n’a pas été évaluée par les pairs.
+- **Inventaire incomplet de l’environnement :** la prépublication indique qu’un inventaire complet du matériel et du système d’exploitation n’était pas disponible pour cette version.
+- **Statut de publication :** les résultats sont présentés dans une prépublication qui n’a pas été évaluée par les pairs. L’intervalle de confiance décrit l’incertitude selon le plan de rééchantillonnage de ce benchmark ; il ne garantit pas la généralisation à d’autres environnements.
+
+La prépublication indique qu’une archive complémentaire contient les journaux, le calendrier apparié, les sources du moteur d’exécution, le script d’analyse, les résultats lisibles par machine et un manifeste de gel. Toutefois, la page du registre Zenodo lié ne présentait que le PDF de la prépublication lors de sa vérification le 27 novembre 2026 ; elle n’exposait pas de lien de téléchargement distinct vers cette archive. Un lien direct est nécessaire pour que les lecteurs puissent examiner ces éléments de manière indépendante. [2](https://doi.org/10.5281/zenodo.24549236)
 
 Le protocole de recherche et l’article de résultats sont deux documents distincts : le protocole décrit la conception et les règles d’analyse, tandis que la prépublication présente l’évaluation et ses résultats. [1](https://doi.org/10.5281/zenodo.24488951) [2](https://doi.org/10.5281/zenodo.24549236)
 
@@ -211,17 +270,17 @@ Les pratiques fondamentales comprennent :
 - **Limites de temps et de ressources :** définir des délais d’exécution, des limites d’appels d’outils et des budgets de correction.
 - **Considérer les contenus externes comme non fiables :** les fichiers, les pages web et les messages des outils peuvent contenir des instructions trompeuses et ne doivent pas être automatiquement considérés comme des commandes fiables.
 
-Des cadres tels que le profil NIST de gestion des risques liés à l’IA générative et l’OWASP Top 10 pour les applications agentiques abordent des aspects connexes de gouvernance et de sécurité, notamment le mauvais usage des outils, les abus de privilèges et la manipulation du contexte. Ce sont des références complémentaires, et non la preuve que l’évaluation ACO-LLM a testé tous ces risques. [4](https://doi.org/10.6028/NIST.AI.600-1) [5](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/)
+Des cadres tels que le profil NIST de gestion des risques liés à l’IA générative et l’OWASP Top 10 pour les applications agentiques abordent des aspects connexes de gouvernance et de sécurité, notamment le mauvais usage des outils, les abus de privilèges et la manipulation du contexte. Ce sont des références complémentaires, et non la preuve que l’évaluation ACO-LLM a testé tous ces risques. [5](https://doi.org/10.6028/NIST.AI.600-1) [6](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/)
 
 ## 10. Relations avec les travaux antérieurs
 
-ACO-LLM s’inscrit dans un domaine de recherche plus large qui étudie le passage des modèles de langage de la génération de texte à l’interaction avec des outils et des environnements.
+ACO-LLM s’inscrit dans un domaine de recherche plus large qui étudie le passage des modèles de langage de la génération de texte à l’interaction avec des outils et des environnements. Les travaux cités ci-dessous sont des exemples choisis en lien avec le sujet ; ils ne constituent pas une revue systématique de la littérature.
 
-- **ReAct** a proposé une approche combinant raisonnement, actions et interaction avec l’environnement. [6](https://arxiv.org/abs/2210.03629)
-- **Reflexion** a étudié l’utilisation du retour d’expérience et de la mémoire verbale pour améliorer les agents au fil des tentatives. [7](https://arxiv.org/abs/2303.11366)
-- **AgentBench** a introduit un cadre d’évaluation des modèles de langage en tant qu’agents dans des environnements interactifs. [8](https://arxiv.org/abs/2308.03688)
-- **τ-bench** s’est intéressé à l’interaction entre l’agent, l’outil et l’utilisateur, ainsi qu’à l’évaluation des résultats dans des domaines pratiques. [9](https://arxiv.org/abs/2406.12045)
-- **AgentDojo** a fourni un environnement pour étudier l’injection de prompts et les attaques contre les agents utilisant des outils. [10](https://arxiv.org/abs/2406.13352)
+- **ReAct** a proposé une approche combinant raisonnement, actions et interaction avec l’environnement. [7](https://arxiv.org/abs/2210.03629)
+- **Reflexion** a étudié l’utilisation du retour d’expérience et de la mémoire verbale pour améliorer les agents au fil des tentatives. [8](https://arxiv.org/abs/2303.11366)
+- **AgentBench** a introduit un cadre d’évaluation des modèles de langage en tant qu’agents dans des environnements interactifs. [9](https://arxiv.org/abs/2308.03688)
+- **τ-bench** s’est intéressé à l’interaction entre l’agent, l’outil et l’utilisateur, ainsi qu’à l’évaluation des résultats dans des domaines pratiques. [10](https://arxiv.org/abs/2406.12045)
+- **AgentDojo** a fourni un environnement pour étudier l’injection de prompts et les attaques contre les agents utilisant des outils. [11](https://arxiv.org/abs/2406.13352)
 
 ACO-LLM ne prétend pas que l’utilisation d’outils, la vérification externe ou l’orientation adaptative constituent individuellement des idées nouvelles. Sa question de recherche porte sur une intégration précise de l’orientation selon le contrat de tâche, de la vérification et de la correction limitée, sur un modèle local fixe, évaluée avec des tâches bilingues, des injections de défaillances contrôlées et une comptabilisation des ressources. [1](https://doi.org/10.5281/zenodo.24488951)
 
@@ -247,6 +306,14 @@ Non. L’évaluation a utilisé des outils simulés dans un environnement contr�
 
 Non. Il s’agit d’une prépublication de résultats qui n’a pas été évaluée par les pairs. Ses méthodes et ses résultats sont accessibles sur Zenodo et doivent être interprétés en tenant compte de ce statut.
 
+### ACO-LLM déduit-il automatiquement du texte libre de l’utilisateur qu’un outil est nécessaire ?
+
+Non. Dans l’évaluation, l’indicateur de routage était fourni dans le contrat de tâche. L’expérience n’a pas testé la précision du routage sur des demandes en langage naturel non contraintes.
+
+### L’expérience a-t-elle mesuré les fausses déclarations d’achèvement ?
+
+Non. La prépublication ne recense aucune déclaration de réussite structurée émise par le modèle ; il n’existait donc aucun dénominateur permettant d’estimer un taux conditionnel de fausses déclarations. L’expérience n’établit pas le taux de fausses déclarations dans les réponses en langage naturel.
+
 ## Publications de recherche et pages associées
 
 Pour consulter les documents de recherche à l’origine de cette analyse, voir :
@@ -265,13 +332,14 @@ L’évaluation ACO-LLM indique que l’orientation selon les exigences de la t�
 
 ## Références
 
-1. Adra, K. (2026). *Adaptive Cognitive Orchestration for Resource-Constrained Local Language Models (ACO-LLM): Research Protocol.* [Zenodo : 10.5281/zenodo.24488951](https://doi.org/10.5281/zenodo.24488951).
-2. Adra, K. (2026). *ACO-LLM: Evaluation Results.* Prépublication des résultats, non évaluée par les pairs. [Zenodo : 10.5281/zenodo.24549236](https://doi.org/10.5281/zenodo.24549236).
-3. Google DeepMind. *Gemma 4.* [Page officielle du modèle](https://deepmind.google/models/gemma/gemma-4/).
-4. Autio, C. et al. (2024). *Artificial Intelligence Risk Management Framework: Generative Artificial Intelligence Profile.* NIST AI 600-1. [DOI](https://doi.org/10.6028/NIST.AI.600-1).
-5. OWASP GenAI Security Project. *Top 10 for Agentic Applications 2026.* [Source](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/).
-6. Yao, S. et al. (2022). *ReAct: Synergizing Reasoning and Acting in Language Models.* [arXiv:2210.03629](https://arxiv.org/abs/2210.03629).
-7. Shinn, N. et al. (2023). *Reflexion: Language Agents with Verbal Reinforcement Learning.* [arXiv:2303.11366](https://arxiv.org/abs/2303.11366).
-8. Liu, X. et al. (2023). *AgentBench: Evaluating LLMs as Agents.* [arXiv:2308.03688](https://arxiv.org/abs/2308.03688).
-9. Yao, S. et al. (2024). *τ-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains.* [arXiv:2406.12045](https://arxiv.org/abs/2406.12045).
-10. Debenedetti, E. et al. (2024). *AgentDojo: A Dynamic Environment to Evaluate Prompt Injection Attacks and Defenses for LLM Agents.* [arXiv:2406.13352](https://arxiv.org/abs/2406.13352).
+1. Adra, K. (2026). *Adaptive Cognitive Orchestration for Resource-Constrained Local Language Models (ACO-LLM): A Contract-Driven Research Protocol with Formal Guarantees and Reference Implementation* (Version 1.7). Zenodo. [DOI : 10.5281/zenodo.24488951](https://doi.org/10.5281/zenodo.24488951).
+2. Adra, K. (2026). *Adaptive Cognitive Orchestration for Local Language Models: A Held-Out Evaluation of Structural Verification and Repair* [Prépublication, v1]. Zenodo, 26 novembre 2026. [DOI : 10.5281/zenodo.24549236](https://doi.org/10.5281/zenodo.24549236).
+3. Google DeepMind. *Gemma 4.* Présentation officielle du modèle. [Page du modèle](https://deepmind.google/models/gemma/gemma-4/).
+4. Ollama. *gemma4:12b-it-qat* [Fiche du modèle]. [Bibliothèque Ollama](https://ollama.com/library/gemma4:12b-it-qat).
+5. Autio, C. et al. (2024). *Artificial Intelligence Risk Management Framework: Generative Artificial Intelligence Profile.* NIST AI 600-1. [DOI](https://doi.org/10.6028/NIST.AI.600-1).
+6. OWASP GenAI Security Project. *Top 10 for Agentic Applications 2026.* [Source](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/).
+7. Yao, S. et al. (2022). *ReAct: Synergizing Reasoning and Acting in Language Models.* [arXiv:2210.03629](https://arxiv.org/abs/2210.03629).
+8. Shinn, N. et al. (2023). *Reflexion: Language Agents with Verbal Reinforcement Learning.* [arXiv:2303.11366](https://arxiv.org/abs/2303.11366).
+9. Liu, X. et al. (2023). *AgentBench: Evaluating LLMs as Agents.* [arXiv:2308.03688](https://arxiv.org/abs/2308.03688).
+10. Yao, S. et al. (2024). *τ-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains.* [arXiv:2406.12045](https://arxiv.org/abs/2406.12045).
+11. Debenedetti, E. et al. (2024). *AgentDojo: A Dynamic Environment to Evaluate Prompt Injection Attacks and Defenses for LLM Agents.* [arXiv:2406.13352](https://arxiv.org/abs/2406.13352).
