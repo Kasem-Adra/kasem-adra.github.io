@@ -76,6 +76,7 @@ UI = {
         "profile_archive": "Author profile",
         "open": "Open record",
         "about_archive": "About this archive",
+        "about_archive_text": "The site uses one consistent author identity across its multilingual profile, research records and archive.",
         "lang_gateway": "Choose a language",
         "gateway_label": "Official multilingual profile and knowledge archive",
         "gateway_desc": "Research, projects, writing and historical documentation by Kasem Adra.",
@@ -113,6 +114,7 @@ UI = {
         "profile_archive": "صفحة المؤلف",
         "open": "فتح السجل",
         "about_archive": "حول هذا الأرشيف",
+        "about_archive_text": "يعتمد الموقع هوية موحدة للمؤلف عبر الملف التعريفي متعدد اللغات والسجلات البحثية والأرشيف.",
         "lang_gateway": "اختر اللغة",
         "gateway_label": "الملف التعريفي والأرشيف المعرفي الرسمي",
         "gateway_desc": "أبحاث ومشاريع وكتابات وتوثيق تاريخي من إعداد قاسم عدرا.",
@@ -150,6 +152,7 @@ UI = {
         "profile_archive": "Profil de l’auteur",
         "open": "Consulter la fiche",
         "about_archive": "À propos de ces archives",
+        "about_archive_text": "Le site utilise une identité d’auteur cohérente dans son profil multilingue, ses publications de recherche et ses archives.",
         "lang_gateway": "Choisir une langue",
         "gateway_label": "Profil multilingue officiel et archives de connaissances",
         "gateway_desc": "Recherches, projets, écrits et documentation historique de Kasem Adra.",
@@ -403,7 +406,7 @@ def language_switcher(lang, route):
         for other in LANGS
     ) + '</div>'
 
-def shell_page(dist, lang, route, title, description, main, page_schema_type="WebPage"):
+def shell_page(dist, lang, route, title, description, main, public_build):
     u = UI[lang]
     direction = "rtl" if lang == "ar" else "ltr"
     canonical = ORIGIN + f"/{lang}" + route
@@ -419,7 +422,7 @@ def shell_page(dist, lang, route, title, description, main, page_schema_type="We
 <title>{escape(title)} · Kasem Adra</title>
 <meta name="description" content="{escape(description, quote=True)}">
 <meta name="author" content="Kasem Adra">
-<meta name="robots" content="{'index,follow' }">
+<meta name="robots" content="{'index,follow' if public_build else 'noindex'}">
 <link rel="canonical" href="{canonical}">
 {alternates}
 <link rel="icon" type="image/png" href="/assets/kasem-calligraphy-transparent.png">
@@ -464,7 +467,7 @@ def archive_index_html(lang):
 <h1>{escape(u["archive_title"])}</h1>
 <p class="archive-lead">{escape(u["archive_intro"])}</p>
 <section><h2>{escape(u["about_archive"])}</h2>
-<p>{escape(u["profile_archive"])}: <a href="/{lang}/about/">Kasem Adra / قاسم عدرا</a>. The site uses a single author identity across its multilingual profile, research records and archive.</p>
+<p>{escape(u["profile_archive"])}: <a href="/{lang}/about/">Kasem Adra / قاسم عدرا</a>. {escape(u["about_archive_text"])}</p>
 </section>
 <section><h2>{escape(u["archive"])}</h2>{cards}</section>
 <section><h2>{escape(u["research_archive"])}</h2>
@@ -583,7 +586,7 @@ def page_schema(lang, route, title, description):
             "identifier": {"@type":"PropertyValue","propertyID":"DOI","value":"10.5281/zenodo.24549236"},
             "inLanguage": "en",
             "isPartOf": {"@id": ORIGIN + f"/{lang}/publications/#collection"},
-            "creativeWorkStatus": "Preprint; not peer reviewed"
+            "description": "Research preprint; not peer reviewed."
         })
         webpage["mainEntity"] = {"@id": RESULTS_DOI}
     elif route.startswith("/blog/") and route != "/blog/":
@@ -753,6 +756,14 @@ def enrich_existing_pages(dist, public_build):
         doc = re.sub(r'<script type="application/ld\+json">.*?</script>',"",doc,flags=re.I|re.S)
         graph = page_schema(lang,route,title,desc)
         doc = doc.replace("</head>", '<script type="application/ld+json">' + dumps(graph,ensure_ascii=False,separators=(",",":")) + '</script></head>',1)
+        if route == "/about/":
+            profile_section = {
+                "en": '<section class="profile-identifiers"><h2>Public identity and research records</h2><p>Public identifiers and author-controlled records help distinguish this profile from people with similar names. They do not replace independent coverage or peer review.</p><ul><li><a href="' + ORCID + '">ORCID iD: 0009-0004-7615-4978</a></li><li><a href="' + LINKEDIN + '">LinkedIn profile</a></li><li><a href="' + GITHUB + '">GitHub profile</a></li><li><a href="' + PROTOCOL_DOI + '">ACO-LLM research protocol (DOI)</a></li><li><a href="' + RESULTS_DOI + '">ACO-LLM evaluation results (preprint DOI)</a></li><li><a href="/en/archive/">Research and historical archive</a></li></ul></section>',
+                "ar": '<section class="profile-identifiers"><h2>الهوية العامة والسجلات البحثية</h2><p>تساعد المعرّفات والسجلات التي يديرها المؤلف على تمييز هذا الملف عن الأشخاص المتشابهة أسماؤهم، لكنها لا تحل محل التغطية المستقلة أو التحكيم العلمي.</p><ul><li><a href="' + ORCID + '">معرّف ORCID: 0009-0004-7615-4978</a></li><li><a href="' + LINKEDIN + '">الملف المهني على LinkedIn</a></li><li><a href="' + GITHUB + '">ملف GitHub</a></li><li><a href="' + PROTOCOL_DOI + '">بروتوكول ACO-LLM البحثي (DOI)</a></li><li><a href="' + RESULTS_DOI + '">نتائج تقييم ACO-LLM (DOI الورقة الأولية)</a></li><li><a href="/ar/archive/">الأرشيف البحثي والتاريخي</a></li></ul></section>',
+                "fr": '<section class="profile-identifiers"><h2>Identité publique et références de recherche</h2><p>Les identifiants publics et les références contrôlées par l’auteur aident à distinguer ce profil des personnes portant un nom similaire. Ils ne remplacent ni la couverture indépendante ni l’évaluation par les pairs.</p><ul><li><a href="' + ORCID + '">Identifiant ORCID : 0009-0004-7615-4978</a></li><li><a href="' + LINKEDIN + '">Profil LinkedIn</a></li><li><a href="' + GITHUB + '">Profil GitHub</a></li><li><a href="' + PROTOCOL_DOI + '">Protocole de recherche ACO-LLM (DOI)</a></li><li><a href="' + RESULTS_DOI + '">Résultats de l’évaluation ACO-LLM (DOI de la prépublication)</a></li><li><a href="/fr/archive/">Archives de recherche et historiques</a></li></ul></section>'
+            }[lang]
+            if "profile-identifiers" not in doc:
+                doc = doc.replace("</div></main>", profile_section + "</div></main>", 1)
         if public_build:
             canonical = ORIGIN + f"/{lang}" + route
             if route == "/" and lang == "en":
@@ -823,8 +834,8 @@ def build_site(dist, origin, public_build):
     # Generate the two new archive layers before the sitemap is built.
     for lang in LANGS:
         u = UI[lang]
-        shell_page(dist,lang,ARCHIVE_ROUTE,u["archive_title"],u["archive_desc"],archive_index_html(lang),"CollectionPage")
-        shell_page(dist,lang,BANIYAS_ROUTE,u["baniyas_title"],u["baniyas_desc"],baniyas_html(lang),"Article")
+        shell_page(dist,lang,ARCHIVE_ROUTE,u["archive_title"],u["archive_desc"],archive_index_html(lang),public_build)
+        shell_page(dist,lang,BANIYAS_ROUTE,u["baniyas_title"],u["baniyas_desc"],baniyas_html(lang),public_build)
     # Preserve root-level legacy routes as English aliases; their canonicals point to /en/.
     for route in (ARCHIVE_ROUTE,BANIYAS_ROUTE):
         source = dist / "en" / route.strip("/") / "index.html"
