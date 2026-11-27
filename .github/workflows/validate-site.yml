@@ -1,0 +1,78 @@
+name: Validate static site
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "build.py"
+      - "article_render.py"
+      - "_posts/**"
+      - "dist/style.css"
+      - "results.py"
+      - "results.json"
+      - ".github/workflows/validate-site.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build indexable preview (no deployment)
+        env:
+          SITE_PUBLIC: "1"
+        run: python3 build.py
+      - name: Validate article pages and structured data
+        run: |
+          python3 - <<'PY'
+          import json
+          import re
+          from pathlib import Path
+
+          root = Path("dist")
+          article_path = "blog/local-ai-agent-reliability/index.html"
+          expected_titles = {
+              "ar": "هل يمكن الوثوق بمساعد ذكاء اصطناعي محلي؟",
+              "en": "Can We Trust a Local AI Assistant?",
+              "fr": "Peut-on faire confiance à un assistant IA local ?",
+          }
+
+          for lang, title in expected_titles.items():
+              path = root / lang / article_path
+              assert path.exists(), f"Missing article page: {path}"
+              html = path.read_text(encoding="utf-8")
+              assert title in html, f"Missing localized title: {lang}"
+              assert "20.83" in html or "20,83" in html, f"Missing primary estimate: {lang}"
+              assert "8,064" in html or "8 064" in html, f"Missing episode count: {lang}"
+              assert "not been peer reviewed" in html.lower() or "غير محكّمة" in html or "non évaluée par les pairs" in html.lower(), f"Missing preprint status: {lang}"
+              assert "rel=\"canonical\"" in html, f"Missing canonical: {lang}"
+              for alternate in ("hreflang=\"ar\"", "hreflang=\"en\"", "hreflang=\"fr\"", "hreflang=\"x-default\""):
+                  assert alternate in html, f"Missing {alternate}: {lang}"
+              if lang == "ar":
+                  assert 'lang="ar" dir="rtl"' in html, "Arabic page must be RTL"
+              scripts = re.findall(r'<script type="application/ld\+json">(.*?)</script>', html)
+              types = {json.loads(script).get("@type") for script in scripts}
+              assert "BlogPosting" in types, f"Missing BlogPosting schema: {lang}"
+              assert "BreadcrumbList" in types, f"Missing BreadcrumbList schema: {lang}"
+              assert "noindex" not in html.lower(), f"Unexpected noindex in public build: {lang}"
+
+          hero = root / "assets/local-ai-agent-reliability-hero.webp"
+          assert hero.exists(), "Missing generated hero image"
+          data = hero.read_bytes()
+          assert data[:4] == b"RIFF" and data[8:12] == b"WEBP", "Hero image is not a valid WebP file"
+
+          sitemap = (root / "sitemap.xml").read_text(encoding="utf-8")
+          for lang in expected_titles:
+              assert f"https://kasemadra.com/{lang}/{article_path}" in sitemap, f"Missing {lang} article in sitemap"
+
+          for lang in expected_titles:
+              protocol = (root / lang / "publications/aco-llm/index.html").read_text(encoding="utf-8")
+              results = (root / lang / "publications/aco-llm-results/index.html").read_text(encoding="utf-8")
+              assert article_path.replace("blog/", "blog/") in protocol or "local-ai-agent-reliability" in protocol
+              assert "local-ai-agent-reliability" in results
+
+          print("Validated: three localized article pages, structured data, canonicals, hreflang, sitemap, cross-links and WebP hero image.")
+          PY
