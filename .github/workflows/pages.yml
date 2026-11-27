@@ -1,28 +1,39 @@
 name: Deploy website to GitHub Pages
+
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
     inputs:
       indexable:
-        description: Enable indexing after the official domain works over HTTPS
+        description: Enable indexing on the official HTTPS domain
         type: boolean
         default: false
+
 permissions:
   contents: read
   pages: write
   id-token: write
+
 concurrency:
   group: pages
   cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
       - uses: actions/configure-pages@v5
       - name: Build website
         env:
-          SITE_PUBLIC: ${{ inputs.indexable && '1' || '0' }}
+          SITE_PUBLIC: ${{ (github.event_name == 'push' || inputs.indexable) && '1' || '0' }}
         run: python3 build.py
+      - name: Validate generated website before deployment
+        run: python3 tests/validate_site.py
       - uses: actions/upload-pages-artifact@v5.0.0
         with:
           path: dist
