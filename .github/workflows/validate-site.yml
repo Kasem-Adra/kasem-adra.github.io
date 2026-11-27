@@ -69,7 +69,7 @@ jobs:
 
           sitemap = (root / "sitemap.xml").read_text(encoding="utf-8")
           for lang in expected_titles:
-              assert f"https://kasemadra.com/{lang}/{article_path}" in sitemap, f"Missing {lang} article in sitemap"
+              assert f"https://kasemadra.com/{lang}/blog/local-ai-agent-reliability/" in sitemap, f"Missing {lang} article in sitemap"
 
           for lang in expected_titles:
               protocol = (root / lang / "publications/aco-llm/index.html").read_text(encoding="utf-8")
