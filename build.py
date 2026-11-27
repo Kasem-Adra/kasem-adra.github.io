@@ -309,7 +309,7 @@ def localize_pages():
                     seo_title = fields.get('seo_title', fields['title'] + ' · Kasem Adra')
                     head = sub(r'<title>[^<]*</title>', lambda _: f'<title>{escape(seo_title)}</title>', head)
                     head = sub(r'<meta name="description" content="[^"]*">', lambda _: f'<meta name="description" content="{escape(fields["description"], quote=True)}">', head)
-                    head = re.sub(r'<meta property="og:image"[^>]*>', '', head)
+                    head = sub(r'<meta property="og:image"[^>]*>', '', head)
                     _, word_count, reading_time = article_renderer.render_article(fields, content, lang)
                     article_meta = article_renderer.build_article_head(
                         fields, lang, origin + locale_path(lang, path), origin, person, word_count, reading_time
