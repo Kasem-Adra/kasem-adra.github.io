@@ -121,7 +121,7 @@ def page(route, title, section, main):
     target = Path('dist'+route+'index.html')
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(f'''<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">{robots_meta}<meta name="description" content="Kasem Adra’s portfolio, research, and writing."><title>{title} · Kasem Adra</title>{metadata}<link rel="icon" type="image/png" href="{logo}"><meta property="og:image" content="{origin}/assets/kasem-adra-portrait.jpg"><link rel="stylesheet" href="/style.css"><style>header .wordmark {{ font-size: .96rem; }}</style></head>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">{robots_meta}<meta name="description" content="Kasem Adra’s portfolio, research, and writing."><title>{title} · Kasem Adra</title>{metadata}<link rel="icon" type="image/png" href="{logo}"><meta property="og:image" content="{origin}/assets/kasem-adra-portrait.jpg"><link rel="stylesheet" href="/style.css"><style>.hero > figure > img {{ transform: scale(.88); }}</style></head>
 <body><div class="shell"><header><a class="wordmark" href="/">Kasem Adra</a><nav aria-label="Main navigation">{navigation}</nav></header>
 <main>{main}</main><footer><span>Kasem Adra</span>{profile}</footer></div></body></html>''', encoding='utf-8')
 
