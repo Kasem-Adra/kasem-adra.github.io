@@ -10,9 +10,11 @@ WEBSITE_ID = ORIGIN + "/#website"
 LANGS = ("en", "ar", "fr")
 LINKEDIN = "https://www.linkedin.com/in/kasem-adra/"
 GITHUB = "https://github.com/Kasem-Adra"
+GITHUB_PROJECTS = "https://github.com/Qassemai"
 ORCID = "https://orcid.org/0009-0004-7615-4978"
 QASSEM_SITE = "https://qassem.net/"
-X_PROFILE = "https://x.com/qassemadra"
+X_PROFILE = "https://x.com/QassemAdra"
+INSTAGRAM = "https://www.instagram.com/qassemadra/"
 PROTOCOL_DOI = "https://doi.org/10.5281/zenodo.24488951"
 RESULTS_DOI = "https://doi.org/10.5281/zenodo.24549236"
 ARCHIVE_ROUTE = "/archive/"
@@ -32,7 +34,7 @@ PERSON = {
         "value": "0009-0004-7615-4978",
         "url": ORCID
     },
-    "sameAs": [ORCID, GITHUB, LINKEDIN, QASSEM_SITE, X_PROFILE],
+    "sameAs": [ORCID, GITHUB, GITHUB_PROJECTS, LINKEDIN, QASSEM_SITE, X_PROFILE, INSTAGRAM],
     "subjectOf": [
         {
             "@type": "ScholarlyArticle",
@@ -176,7 +178,7 @@ def shell_page(dist, lang, route, title, description, main, public_build):
 <div class="shell">
 <header><a class="wordmark" href="/{lang}/">Kasem Adra</a><nav aria-label="Main navigation">{nav(lang)}</nav><div class="header-controls">{language_switcher(lang, route)}</div></header>
 <main><div class="subpage" dir="{direction}">{main}</div></main>
-<footer><span>{escape(u["footer"])}</span><div class="profiles"><a href="{GITHUB}">GitHub</a><a href="{ORCID}">ORCID</a><a href="{LINKEDIN}">LinkedIn</a><a href="{X_PROFILE}">X</a><a href="{QASSEM_SITE}">Qassem.net</a></div></footer>
+<footer><span>{escape(u["footer"])}</span><div class="profiles"><a href="{GITHUB}">GitHub</a><a href="{GITHUB_PROJECTS}">Qassem projects</a><a href="{ORCID}">ORCID</a><a href="{LINKEDIN}">LinkedIn</a><a href="{X_PROFILE}">X</a><a href="{INSTAGRAM}">Instagram</a><a href="{QASSEM_SITE}">Qassem.net</a></div></footer>
 </div>
 </body>
 </html>'''
@@ -532,9 +534,9 @@ def enrich_existing_pages(dist, public_build):
                 if 'id="research-profile"' not in doc:
                     doc = doc.replace("</div></main>", extras + "</div></main>", 1)
             profile_section = {
-                "en": '<section class="profile-identifiers" id="identifiers"><h2>Public identity and research records</h2><p>Public identifiers and author-controlled records help distinguish this profile from people with similar names. They do not replace independent coverage or peer review.</p><ul><li><a href="' + ORCID + '">ORCID iD: 0009-0004-7615-4978</a></li><li><a href="' + LINKEDIN + '">LinkedIn profile</a></li><li><a href="' + GITHUB + '">Primary GitHub profile</a></li><li><a href="' + X_PROFILE + '">X profile</a></li><li><a href="' + QASSEM_SITE + '">Qassem.net · related personal domain</a></li><li><a href="' + PROTOCOL_DOI + '">ACO-LLM research protocol (DOI)</a></li><li><a href="' + RESULTS_DOI + '">ACO-LLM evaluation results (preprint DOI)</a></li><li><a href="/en/archive/">Research archive</a></li></ul></section>',
-                "ar": '<section class="profile-identifiers" id="identifiers"><h2>الهوية العامة والسجلات البحثية</h2><p>تساعد المعرّفات والسجلات التي يديرها المؤلف على تمييز هذا الملف عن الأشخاص المتشابهة أسماؤهم، لكنها لا تحل محل التغطية المستقلة أو التحكيم العلمي.</p><ul><li><a href="' + ORCID + '">معرّف ORCID: 0009-0004-7615-4978</a></li><li><a href="' + LINKEDIN + '">الملف المهني على LinkedIn</a></li><li><a href="' + GITHUB + '">ملف GitHub الأساسي</a></li><li><a href="' + X_PROFILE + '">حساب X</a></li><li><a href="' + QASSEM_SITE + '">Qassem.net · النطاق الشخصي المرتبط</a></li><li><a href="' + PROTOCOL_DOI + '">بروتوكول ACO-LLM البحثي (DOI)</a></li><li><a href="' + RESULTS_DOI + '">نتائج تقييم ACO-LLM (DOI الورقة الأولية)</a></li><li><a href="/ar/archive/">الأرشيف البحثي</a></li></ul></section>',
-                "fr": '<section class="profile-identifiers" id="identifiers"><h2>Identité publique et références de recherche</h2><p>Les identifiants publics et les références contrôlées par l’auteur aident à distinguer ce profil des personnes portant un nom similaire. Ils ne remplacent ni la couverture indépendante ni l’évaluation par les pairs.</p><ul><li><a href="' + ORCID + '">Identifiant ORCID : 0009-0004-7615-4978</a></li><li><a href="' + LINKEDIN + '">Profil LinkedIn</a></li><li><a href="' + GITHUB + '">Profil GitHub principal</a></li><li><a href="' + X_PROFILE + '">Profil X</a></li><li><a href="' + QASSEM_SITE + '">Qassem.net · domaine personnel associé</a></li><li><a href="' + PROTOCOL_DOI + '">Protocole de recherche ACO-LLM (DOI)</a></li><li><a href="' + RESULTS_DOI + '">Résultats de l’évaluation ACO-LLM (DOI de la prépublication)</a></li><li><a href="/fr/archive/">Archives de recherche</a></li></ul></section>'
+                "en": '<section class="profile-identifiers" id="identifiers"><h2>Public identity and research records</h2><p>Public identifiers and author-controlled records help distinguish this profile from people with similar names. They do not replace independent coverage or peer review.</p><ul><li><a href="' + ORCID + '">ORCID iD: 0009-0004-7615-4978</a></li><li><a href="' + LINKEDIN + '">LinkedIn profile</a></li><li><a href="' + GITHUB + '">Primary GitHub profile</a></li><li><a href="' + GITHUB_PROJECTS + '">Qassem projects GitHub account</a></li><li><a href="' + X_PROFILE + '">X profile</a></li><li><a href="' + INSTAGRAM + '">Instagram profile</a></li><li><a href="' + QASSEM_SITE + '">Qassem.net · related personal domain</a></li><li><a href="' + PROTOCOL_DOI + '">ACO-LLM research protocol (DOI)</a></li><li><a href="' + RESULTS_DOI + '">ACO-LLM evaluation results (preprint DOI)</a></li><li><a href="/en/archive/">Research archive</a></li></ul></section>',
+                "ar": '<section class="profile-identifiers" id="identifiers"><h2>الهوية العامة والسجلات البحثية</h2><p>تساعد المعرّفات والسجلات التي يديرها المؤلف على تمييز هذا الملف عن الأشخاص المتشابهة أسماؤهم، لكنها لا تحل محل التغطية المستقلة أو التحكيم العلمي.</p><ul><li><a href="' + ORCID + '">معرّف ORCID: 0009-0004-7615-4978</a></li><li><a href="' + LINKEDIN + '">الملف المهني على LinkedIn</a></li><li><a href="' + GITHUB + '">ملف GitHub الأساسي</a></li><li><a href="' + GITHUB_PROJECTS + '">حساب GitHub لمشاريع Qassem</a></li><li><a href="' + X_PROFILE + '">حساب X</a></li><li><a href="' + INSTAGRAM + '">حساب Instagram</a></li><li><a href="' + QASSEM_SITE + '">Qassem.net · النطاق الشخصي المرتبط</a></li><li><a href="' + PROTOCOL_DOI + '">بروتوكول ACO-LLM البحثي (DOI)</a></li><li><a href="' + RESULTS_DOI + '">نتائج تقييم ACO-LLM (DOI الورقة الأولية)</a></li><li><a href="/ar/archive/">الأرشيف البحثي</a></li></ul></section>',
+                "fr": '<section class="profile-identifiers" id="identifiers"><h2>Identité publique et références de recherche</h2><p>Les identifiants publics et les références contrôlées par l’auteur aident à distinguer ce profil des personnes portant un nom similaire. Ils ne remplacent ni la couverture indépendante ni l’évaluation par les pairs.</p><ul><li><a href="' + ORCID + '">Identifiant ORCID : 0009-0004-7615-4978</a></li><li><a href="' + LINKEDIN + '">Profil LinkedIn</a></li><li><a href="' + GITHUB + '">Profil GitHub principal</a></li><li><a href="' + GITHUB_PROJECTS + '">Compte GitHub des projets Qassem</a></li><li><a href="' + X_PROFILE + '">Profil X</a></li><li><a href="' + INSTAGRAM + '">Profil Instagram</a></li><li><a href="' + QASSEM_SITE + '">Qassem.net · domaine personnel associé</a></li><li><a href="' + PROTOCOL_DOI + '">Protocole de recherche ACO-LLM (DOI)</a></li><li><a href="' + RESULTS_DOI + '">Résultats de l’évaluation ACO-LLM (DOI de la prépublication)</a></li><li><a href="/fr/archive/">Archives de recherche</a></li></ul></section>'
             }[lang]
             if "profile-identifiers" not in doc:
                 doc = doc.replace("</div></main>", profile_section + "</div></main>", 1)
@@ -628,7 +630,7 @@ def write_root_gateway(dist, public_build):
 <body><div class="shell"><header><a class="wordmark" href="/">Kasem Adra</a><span>قاسم عدرا</span></header>
 <main class="gateway"><figure><img src="/assets/kasem-adra-portrait.jpg" alt="Portrait of Kasem Adra" width="782" height="1024"></figure>
 <div><p class="label">{escape(UI["en"]["gateway_label"])}</p><h1>Kasem Adra</h1><p class="gateway-desc">{escape(UI["en"]["gateway_desc"])}</p><h2>{escape(UI["en"]["lang_gateway"])}</h2><div class="language-choices">{buttons}</div></div>
-</main><footer><span>Kasem Adra · قاسم عدرا</span><div class="profiles"><a href="{GITHUB}">GitHub</a><a href="{ORCID}">ORCID</a><a href="{LINKEDIN}">LinkedIn</a><a href="{X_PROFILE}">X</a><a href="{QASSEM_SITE}">Qassem.net</a></div></footer></div></body></html>'''
+</main><footer><span>Kasem Adra · قاسم عدرا</span><div class="profiles"><a href="{GITHUB}">GitHub</a><a href="{GITHUB_PROJECTS}">Qassem projects</a><a href="{ORCID}">ORCID</a><a href="{LINKEDIN}">LinkedIn</a><a href="{X_PROFILE}">X</a><a href="{INSTAGRAM}">Instagram</a><a href="{QASSEM_SITE}">Qassem.net</a></div></footer></div></body></html>'''
     (dist/"index.html").write_text(doc,encoding="utf-8")
 
 def build_site(dist, origin, public_build):
