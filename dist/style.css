@@ -76,3 +76,7 @@ html[dir=rtl] .article-content{line-height:1.95}
   .article-content h2{font-size:1.55rem}
   .article-table table{min-width:31rem}
 }
+
+.related-article{margin:1.2rem 0 0!important;padding:1rem 0;border-top:1px solid var(--line);font-size:.94rem}
+.related-article span{font-weight:650;color:var(--muted)}
+.related-article a{color:var(--red);font-weight:650}
