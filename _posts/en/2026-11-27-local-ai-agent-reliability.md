@@ -235,7 +235,7 @@ Across the arms with a verification gate, the structural verifier accepted 69 ep
 
 ### 7.2 Completion claims
 
-The preprint records no model-authored structured success claims through the designated action. The denominator for a conditional false-claim rate was therefore zero, so that rate could not be estimated. Automatic completion performed by the runner was attributed to the runner, not to the model. The experiment consequently does not quantify false-completion claims in natural-language responses.
+The preprint records no model-authored structured success claims through the structured final_success action. The denominator for a conditional false-claim rate was therefore zero, so that rate could not be estimated. Automatic completion performed by the runner was attributed to the runner, not to the model. The experiment consequently does not quantify false-completion claims in natural-language responses.
 
 ## 8. Limits of the results and claims that are not established
 
@@ -337,7 +337,7 @@ The ACO-LLM evaluation indicates that task-aware routing, verification and bound
 3. Google DeepMind. *Gemma 4.* Official model overview. [Model page](https://deepmind.google/models/gemma/gemma-4/).
 4. Ollama. *gemma4:12b-it-qat* [Model listing]. [Ollama Library](https://ollama.com/library/gemma4:12b-it-qat).
 5. Autio, C. et al. (2024). *Artificial Intelligence Risk Management Framework: Generative Artificial Intelligence Profile.* NIST AI 600-1. [DOI](https://doi.org/10.6028/NIST.AI.600-1).
-6. OWASP GenAI Security Project. *Top 10 for Agentic Applications 2026.* [Source](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/).
+6. OWASP GenAI Security Project. (2025). *OWASP Top 10 for Agentic Applications for 2026.* [Source](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/).
 7. Yao, S. et al. (2022). *ReAct: Synergizing Reasoning and Acting in Language Models.* [arXiv:2210.03629](https://arxiv.org/abs/2210.03629).
 8. Shinn, N. et al. (2023). *Reflexion: Language Agents with Verbal Reinforcement Learning.* [arXiv:2303.11366](https://arxiv.org/abs/2303.11366).
 9. Liu, X. et al. (2023). *AgentBench: Evaluating LLMs as Agents.* [arXiv:2308.03688](https://arxiv.org/abs/2308.03688).
