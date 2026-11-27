@@ -202,7 +202,7 @@ def render_article(fields, content, lang):
         image_html = (
             f'<figure class="article-hero"><img src="{escape(fields["image"], quote=True)}" '
             f'alt="{escape(fields.get("image_alt", fields["title"]), quote=True)}" '
-            'width="1024" height="576" loading="eager" fetchpriority="high" decoding="async">'
+            'width="800" height="450" loading="eager" fetchpriority="high" decoding="async">'
             f'<figcaption>{escape(fields.get("image_caption", ""))}</figcaption></figure>'
         )
     summary_html = (
@@ -247,8 +247,8 @@ def build_article_head(fields, lang, page_url, origin, person, word_count, readi
         "image": {
             "@type": "ImageObject",
             "url": image_url,
-            "width": 1024,
-            "height": 576,
+            "width": 800,
+            "height": 450,
             "caption": fields.get("image_caption", ""),
         },
         "author": {"@type": "Person", "@id": person["@id"], "name": person["name"]},
