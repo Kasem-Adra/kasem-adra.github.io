@@ -499,7 +499,7 @@ def localize_pages():
                 paragraphs = ''.join(f'<p>{escape(paragraph)}</p>' for paragraph in bio)
                 portrait = f'<img class="portrait" src="/assets/kasem-adra-portrait.jpg" alt="{escape(portrait_alt, quote=True)}" width="782" height="1024" style="width:min(160px,100%);height:auto">'
                 identity = {k: v for k, v in person.items() if k != '@context'}
-                identity['name'], identity['alternateName'] = ('قاسم عدرا', 'Kasem Adra') if lang == 'ar' else ('Kasem Adra', 'قاسم عدرا')
+                display_name, alternate_display_name = ('قاسم عدرا', 'Kasem Adra') if lang == 'ar' else ('Kasem Adra', 'قاسم عدرا')
                 profile_page = {
                     '@context': 'https://schema.org', '@type': 'ProfilePage',
                     'url': origin + locale_path(lang, path), 'inLanguage': lang,
@@ -509,7 +509,7 @@ def localize_pages():
                 research_label = {'en': 'ACO-LLM research', 'ar': 'أبحاث ACO-LLM', 'fr': 'Recherche ACO-LLM'}[lang]
                 research_links = f'<p><a href="{locale_path(lang, paper)}">{research_label}</a></p>'
                 identity_links = ''
-                body = body.replace('<main></main>', f'<main><div class="subpage"><h1>{about_title} · {identity["name"]}</h1><p>{identity["alternateName"]}</p>{portrait}{paragraphs}<p>{membership}</p>{identity_links}{research_links}</div></main>')
+                body = body.replace('<main></main>', f'<main><div class="subpage"><h1>{about_title} · {display_name}</h1><p>{alternate_display_name}</p>{portrait}{paragraphs}<p>{membership}</p>{identity_links}{research_links}</div></main>')
                 head = sub(r'<title>[^<]*</title>', lambda _: '<title>قاسم عدرا | نبذة عني</title>' if lang == 'ar' else f'<title>{about_title} · Kasem Adra</title>', head)
             theme_label = {'en': 'Dark mode', 'ar': 'الوضع الداكن', 'fr': 'Mode sombre'}[lang]
             theme_button = f'<button class="theme-toggle" type="button" aria-label="{theme_label}" aria-pressed="false" hidden><span aria-hidden="true"></span></button>'
