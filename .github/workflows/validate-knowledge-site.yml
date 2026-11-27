@@ -12,7 +12,9 @@ on:
       - "_posts/**"
       - "_publications/**"
       - "dist/style.css"
+      - "tests/**"
       - ".github/workflows/validate-knowledge-site.yml"
+      - ".github/workflows/pages.yml"
   workflow_dispatch:
 
 permissions:
@@ -30,122 +32,8 @@ jobs:
         env:
           SITE_PUBLIC: "1"
         run: python3 build.py
-      - name: Validate profile, research archive, article metadata and sitemap
-        run: |
-          python3 - <<'PY'
-          import json
-          import re
-          import xml.etree.ElementTree as ET
-          from pathlib import Path
-
-          root = Path("dist")
-          langs = ("en", "ar", "fr")
-          ns = {
-              "sm": "http://www.sitemaps.org/schemas/sitemap/0.9",
-              "xhtml": "http://www.w3.org/1999/xhtml"
-          }
-
-          def page(lang, route):
-              return (root / lang / route.strip("/") / "index.html") if route != "/" else (root / lang / "index.html")
-
-          def schemas(html):
-              scripts = re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.S)
-              values = [json.loads(s) for s in scripts]
-              return [node for value in values for node in value.get("@graph", [])]
-
-          home = (root / "index.html").read_text(encoding="utf-8")
-          home_graph = schemas(home)
-          assert any(x.get("@type") == "WebSite" and x.get("name") == "Kasem Adra" for x in home_graph), "Missing root WebSite entity"
-          person = next(x for x in home_graph if x.get("@type") == "Person" and x.get("@id") == "https://kasemadra.com/#person")
-          assert "https://orcid.org/0009-0004-7615-4978" in person["sameAs"]
-          assert "https://github.com/Kasem-Adra" in person["sameAs"]
-          assert "https://www.linkedin.com/in/kasem-adra/" in person["sameAs"]
-          assert "قاسم عدرا" in person["alternateName"]
-
-          for lang in langs:
-              about = page(lang, "/about/").read_text(encoding="utf-8")
-              about_graph = schemas(about)
-              assert any(x.get("@type") == "ProfilePage" and x.get("mainEntity", {}).get("@id") == person["@id"] for x in about_graph), f"Missing ProfilePage schema: {lang}"
-              assert "profile-identifiers" in about and "LinkedIn" in about
-              obsolete_archive_labels = ("historical archive", "الأرشيف البحثي والتاريخي", "archives de recherche et historiques")
-              assert not any(label in about.lower() for label in obsolete_archive_labels), f"Obsolete historical-archive label remains: {lang}"
-              assert f'href="/{lang}/archive/"' in about, f"Profile archive link missing: {lang}"
-              for section_id in ("profile-facts", "biography", "research-profile", "projects-profile", "writing-profile", "identifiers"):
-                  assert f'id="{section_id}"' in about, f"Missing encyclopedic profile section {section_id}: {lang}"
-              assert 'class="profile-toc"' in about and 'class="profile-infobox"' in about
-              assert 'rel="canonical"' in about and f'hreflang="{lang}"' in about
-              assert 'name="robots" content="noindex"' not in about
-
-              archive = page(lang, "/archive/").read_text(encoding="utf-8")
-              archive_graph = schemas(archive)
-              assert any(x.get("@type") == "CollectionPage" for x in archive_graph), f"Missing research archive CollectionPage: {lang}"
-              assert "baniyas-revolution-2010-2025" not in archive.lower(), f"Baniyas chronology must not be linked from the research archive: {lang}"
-              assert "ACO-LLM" in archive, f"Research archive missing publications: {lang}"
-              assert not page(lang, "/archive/baniyas-revolution-2010-2025/").exists(), f"Baniyas archive page must not be generated: {lang}"
-
-              for route in ("/", "/projects/", "/publications/", "/blog/"):
-                  html = page(lang, route).read_text(encoding="utf-8")
-                  assert "application/ld+json" in html, f"Missing JSON-LD: {lang} {route}"
-                  assert 'rel="canonical"' in html, f"Missing canonical: {lang} {route}"
-                  assert f'hreflang="{lang}"' in html, f"Missing hreflang: {lang} {route}"
-                  assert f'href="/{lang}/archive/"' in html, f"Archive not internally linked: {lang} {route}"
-
-              featured = page(lang, "/blog/local-ai-agent-reliability/").read_text(encoding="utf-8")
-              article_titles = {
-                  "en": "Can We Trust a Local AI Assistant?",
-                  "ar": "هل يمكن الوثوق بمساعد ذكاء اصطناعي محلي؟",
-                  "fr": "Peut-on faire confiance à un assistant IA local ?"
-              }
-              assert article_titles[lang] in featured, f"Missing localized featured article: {lang}"
-              assert "20.83" in featured or "20,83" in featured, f"Missing primary evaluation estimate: {lang}"
-              assert "8,064" in featured or "8 064" in featured, f"Missing episode count: {lang}"
-              assert "not been peer reviewed" in featured.lower() or "غير محكّمة" in featured or "non évaluée par les pairs" in featured.lower(), f"Missing preprint status: {lang}"
-              article_urls = [
-                  "https://doi.org/10.5281/zenodo.24488951",
-                  "https://doi.org/10.5281/zenodo.24549236",
-                  "https://deepmind.google/models/gemma/gemma-4/",
-                  "https://ollama.com/library/gemma4:12b-it-qat",
-                  "https://doi.org/10.6028/NIST.AI.600-1",
-                  "https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/",
-                  "https://arxiv.org/abs/2210.03629",
-                  "https://arxiv.org/abs/2303.11366",
-                  "https://arxiv.org/abs/2308.03688",
-                  "https://arxiv.org/abs/2406.12045",
-                  "https://arxiv.org/abs/2406.13352"
-              ]
-              for url in article_urls:
-                  assert url in featured, f"Missing featured article reference {url}: {lang}"
-              article_graph = schemas(featured)
-              article_node = next(x for x in article_graph if x.get("@type") == "BlogPosting")
-              assert len(article_node.get("citation", [])) == 11, f"Expected 11 structured article citations: {lang}"
-              assert article_node.get("datePublished") == "2026-11-27"
-              assert article_node.get("image") == "https://kasemadra.com/assets/local-ai-agent-reliability-hero.webp"
-              assert featured.count('property="og:image"') == 1
-              toc_ids = set(re.findall(r'href="#(section-[0-9]+)"', featured))
-              heading_ids = set(re.findall(r'id="(section-[0-9]+)"', featured))
-              assert toc_ids and toc_ids == heading_ids, f"Broken featured article table of contents: {lang}"
-              assert 'name="robots" content="noindex"' not in featured
-              assert f'href="/{lang}/blog/local-ai-agent-reliability/"' in page(lang, "/blog/").read_text(encoding="utf-8")
-              for route in ("/publications/aco-llm/", "/publications/aco-llm-results/"):
-                  assert "local-ai-agent-reliability" in page(lang, route).read_text(encoding="utf-8"), f"Missing article cross-link: {lang} {route}"
-
-          hero = root / "assets/local-ai-agent-reliability-hero.webp"
-          assert hero.exists(), "Missing generated hero image"
-          import hashlib
-          hero_bytes = hero.read_bytes()
-          assert hero_bytes[:4] == b"RIFF" and hero_bytes[8:12] == b"WEBP", "Hero image is not a valid WebP"
-          assert hashlib.sha256(hero_bytes).hexdigest() == "02e985665e63a3988c01ddfbfb64f546134c958898962cd9a8d9462518e1929b", "Hero image hash mismatch"
-
-          robots = (root / "robots.txt").read_text(encoding="utf-8")
-          assert "Allow: /" in robots and "sitemap.xml" in robots
-          sitemap = ET.parse(root / "sitemap.xml").getroot()
-          urls = sitemap.findall("sm:url", ns)
-          assert len(urls) == 37, f"Expected 37 sitemap URLs without a Baniyas archive page, found {len(urls)}"
-          assert all(url.find("sm:loc", ns) is not None for url in urls)
-          assert all(url.findall("xhtml:link", ns) for url in urls), "Missing hreflang alternates in sitemap"
-          assert (root / "index.html").exists()
-          print("PASS: root WebSite entity, Person graph, encyclopedic ProfilePage, featured article, research-only archive, three languages, crawlable canonicals, hreflang and 37 sitemap URLs; no Baniyas archive page generated.")
-          PY
+      - name: Validate HTML, SEO metadata, internal links and structured data
+        run: python3 tests/validate_site.py
       - name: Upload static review preview (not deployed)
         uses: actions/upload-artifact@v4
         with:
