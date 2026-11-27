@@ -343,6 +343,23 @@ def localize_pages():
                     'ar': ('ورقة أولية', 'نتائج تقييم ACO‑LLM', 'نتائج تقييم التحقق البنيوي والإصلاح على مجموعة مهام مستقلة عن التجربة التمهيدية.'),
                     'fr': ('PRÉPUBLICATION', 'Résultats de l’évaluation ACO‑LLM', 'Résultats de l’évaluation de la vérification structurelle et de la réparation sur des tâches réservées au test.'),
                 }[lang]
+                overview, protocol_label, results_label, pdf_label = {
+                    'ar': ('قاسم عدرا (Kasem Adra) باحث مستقل يدرس كيف تتحقق المساعدات الذكية المحلية من إنجاز المهام وتتعافى من الأخطاء. اختبرت دراسة ACO-LLM هذه الآليات على مهام بالعربية والإنجليزية باستخدام نموذج محلي واحد وأدوات محاكاة.', 'البروتوكول البحثي', 'ورقة نتائج التقييم', 'النص الكامل'),
+                    'en': ('Kasem Adra (قاسم عدرا) is an independent researcher studying how local AI assistants verify task completion and recover from errors. The ACO-LLM evaluation tested these mechanisms on Arabic and English tasks using one local model and simulated tools.', 'Research protocol', 'Evaluation results paper', 'Full text'),
+                    'fr': ('Kasem Adra (قاسم عدرا) étudie en tant que chercheur indépendant comment les assistants d’IA locaux vérifient l’exécution des tâches et corrigent leurs erreurs. L’étude ACO-LLM évalue ces mécanismes sur des tâches en arabe et en anglais, avec un seul modèle local et des outils simulés.', 'Protocole de recherche', 'Article de résultats', 'Texte intégral'),
+                }[lang]
+                works = (
+                    (protocol_label, paper, publication['doi'], publication['pdf']),
+                    (results_label, results.PATH, '10.5281/zenodo.24549236', results_pdf),
+                )
+                links = ''.join(
+                    f'<li><a href="{locale_path(lang, route)}">{label}</a> · '
+                    f'<a href="https://doi.org/{work_doi}">DOI: {work_doi}</a> · '
+                    f'<a href="{escape(pdf, quote=True)}">{pdf_label} (PDF)</a></li>'
+                    for label, route, work_doi, pdf in works
+                )
+                summary = f'<p>{escape(overview)}</p><ul>{links}</ul><p><a href="https://orcid.org/0009-0004-7615-4978">ORCID · Kasem Adra</a></p>'
+                body = body.replace('</h1>', '</h1>' + summary, 1)
                 card = row(category, card_title, card_description, locale_path(lang, results.PATH))
                 body = body.replace('</div></main>', card + '</div></main>', 1)
             about_title, membership = {
