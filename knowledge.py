@@ -329,7 +329,6 @@ def page_schema(lang, route, title, description):
         graph.append({
             "@type":"CreativeWork",
             "@id":canonical+"#project",
-            "name":"A local AI assistant for Arabic",
             "author":{"@id":PERSON_ID},
             "name": {
                 "en": "A local AI assistant for Arabic",
