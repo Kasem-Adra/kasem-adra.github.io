@@ -18,7 +18,7 @@ Une vérification fiable distingue donc trois éléments : ce que l’assistant 
 Supposons que vous demandiez à un assistant de créer un fichier texte contenant les deux lignes suivantes :
 
     CHECK-5831
-    The price is zero, not missing.
+    Le prix est zéro, pas une donnée manquante.
 
 La vérification ne doit pas s’arrêter au message indiquant que le fichier a été créé. Il faut examiner le chemin attendu, confirmer que le fichier existe, le relire en UTF-8 et comparer son contenu au texte demandé. La comparaison doit également détecter les lignes supplémentaires ou manquantes et les différences de ponctuation lorsqu’une correspondance exacte est requise.
 
