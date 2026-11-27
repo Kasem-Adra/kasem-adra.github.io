@@ -349,7 +349,6 @@ def main():
             for identifier in (
                 "https://orcid.org/0009-0004-7615-4978",
                 "https://github.com/Kasem-Adra",
-                "https://github.com/Qassemai",
                 "https://www.linkedin.com/in/kasem-adra/",
                 "https://qassem.net/",
                 "https://x.com/QassemAdra",
@@ -357,6 +356,15 @@ def main():
             ):
                 if identifier not in same_as:
                     fail(f"Person entity is missing sameAs identifier: {identifier}")
+            if "https://github.com/QassemAi" in same_as:
+                fail("QassemAi is an organization and must not appear in the Person sameAs list")
+            if person.get("affiliation", {}).get("@id") != ORIGIN + "/#qassem-ai":
+                fail("Person entity must link QassemAi through an affiliation relationship")
+            organization = next((x for x in root_nodes if x.get("@type") == "Organization" and x.get("@id") == ORIGIN + "/#qassem-ai"), None)
+            if organization is None:
+                fail("Root page is missing the QassemAi Organization entity")
+            elif organization.get("url") != "https://github.com/QassemAi" or organization.get("sameAs") != ["https://github.com/QassemAi"]:
+                fail("QassemAi Organization entity must identify its GitHub organization URL")
             if "قاسم عدرا" not in person.get("alternateName", []):
                 fail("Person entity is missing the Arabic alternate name")
             if "Qassem Adra" not in person.get("alternateName", []):
@@ -364,9 +372,9 @@ def main():
             if person.get("name") != "Kasem Adra":
                 fail("Person entity must use Kasem Adra as the canonical name")
         for lang, expected_links in {
-            "en": ("https://github.com/Qassemai", "https://www.instagram.com/qassemadra/"),
-            "ar": ("https://github.com/Qassemai", "https://www.instagram.com/qassemadra/"),
-            "fr": ("https://github.com/Qassemai", "https://www.instagram.com/qassemadra/"),
+            "en": ("https://github.com/QassemAi", "https://www.instagram.com/qassemadra/"),
+            "ar": ("https://github.com/QassemAi", "https://www.instagram.com/qassemadra/"),
+            "fr": ("https://github.com/QassemAi", "https://www.instagram.com/qassemadra/"),
         }.items():
             profile = page_path(lang, "/about/").read_text(encoding="utf-8")
             for link in expected_links:
@@ -391,7 +399,6 @@ def main():
             for identifier in (
                 "https://orcid.org/0009-0004-7615-4978",
                 "https://github.com/Kasem-Adra",
-                "https://github.com/Qassemai",
                 "https://www.linkedin.com/in/kasem-adra/",
                 "https://qassem.net/",
                 "https://x.com/QassemAdra",
@@ -399,6 +406,11 @@ def main():
             ):
                 if identifier not in profile_person.get("sameAs", []):
                     fail(f"{lang}: Person entity in ProfilePage graph is missing sameAs identifier {identifier}")
+            if "https://github.com/QassemAi" in profile_person.get("sameAs", []):
+                fail(f"{lang}: QassemAi organization must not be listed as a Person sameAs URL")
+            profile_org = next((x for x in about_nodes if x.get("@type") == "Organization" and x.get("@id") == ORIGIN + "/#qassem-ai"), None)
+            if profile_org is None or profile_person.get("affiliation", {}).get("@id") != ORIGIN + "/#qassem-ai":
+                fail(f"{lang}: Person and QassemAi Organization entities are not connected through affiliation")
             if len(profile_person.get("subjectOf", [])) != 2:
                 fail(f"{lang}: Person entity in ProfilePage graph must link both ACO-LLM scholarly records")
         for section_id in ("profile-facts", "biography", "research-profile", "projects-profile", "writing-profile", "identifiers"):
@@ -464,6 +476,13 @@ def main():
         }
         if results_summary_labels[lang] not in results_page:
             fail(f"{lang}: results page is missing a plain-language summary")
+        rate_clarity = {
+            "en": ("62.05%", "88.69%", "+26.64", "+20.83"),
+            "ar": ("62.05%", "88.69%", "+26.64", "+20.83"),
+            "fr": ("62,05 %", "88,69 %", "+26,64", "+20,83"),
+        }[lang]
+        if not all(value in results_page for value in rate_clarity):
+            fail(f"{lang}: results page must explicitly distinguish raw pooled rates from the equal-task-weighted primary estimate")
 
         featured_path = page_path(lang, "/blog/local-ai-agent-reliability/")
         featured = featured_path.read_text(encoding="utf-8")

@@ -7,10 +7,11 @@ import xml.etree.ElementTree as ET
 ORIGIN = "https://kasemadra.com"
 PERSON_ID = ORIGIN + "/#person"
 WEBSITE_ID = ORIGIN + "/#website"
+ORGANIZATION_ID = ORIGIN + "/#qassem-ai"
 LANGS = ("en", "ar", "fr")
 LINKEDIN = "https://www.linkedin.com/in/kasem-adra/"
 GITHUB = "https://github.com/Kasem-Adra"
-GITHUB_PROJECTS = "https://github.com/Qassemai"
+GITHUB_PROJECTS = "https://github.com/QassemAi"
 ORCID = "https://orcid.org/0009-0004-7615-4978"
 QASSEM_SITE = "https://qassem.net/"
 X_PROFILE = "https://x.com/QassemAdra"
@@ -34,7 +35,8 @@ PERSON = {
         "value": "0009-0004-7615-4978",
         "url": ORCID
     },
-    "sameAs": [ORCID, GITHUB, GITHUB_PROJECTS, LINKEDIN, QASSEM_SITE, X_PROFILE, INSTAGRAM],
+    "sameAs": [ORCID, GITHUB, LINKEDIN, QASSEM_SITE, X_PROFILE, INSTAGRAM],
+    "affiliation": {"@id": ORGANIZATION_ID},
     "subjectOf": [
         {
             "@type": "ScholarlyArticle",
@@ -56,6 +58,15 @@ PERSON = {
         "Tool use and error recovery in AI agents",
         "Arabic language technology",
     ]
+}
+
+ORGANIZATION = {
+    "@type": "Organization",
+    "@id": ORGANIZATION_ID,
+    "name": "QassemAi",
+    "url": GITHUB_PROJECTS,
+    "description": "GitHub organization hosting technical projects associated with Kasem Adra.",
+    "sameAs": [GITHUB_PROJECTS]
 }
 
 UI = {
@@ -225,7 +236,7 @@ def page_schema(lang, route, title, description):
         "about": {"@id": PERSON_ID},
         "author": {"@id": PERSON_ID}
     }
-    graph = [PERSON, webpage]
+    graph = [PERSON, ORGANIZATION, webpage]
     if route == "/about/":
         webpage["@type"] = "ProfilePage"
         webpage["mainEntity"] = {"@id": PERSON_ID}
@@ -388,7 +399,11 @@ def page_schema(lang, route, title, description):
                 "projects":UI[lang]["projects"],"local-assistant":"A local AI assistant",
                 "publications":UI[lang]["research"],"aco-llm":UI[lang]["protocol_title"],
                 "aco-llm-results":UI[lang]["results_title"],"blog":UI[lang]["writing"],
-                "checking-work":"How do we verify an assistant’s work?",
+                "checking-work":{
+                    "en":"How to Verify an AI Assistant’s Work",
+                    "ar":"كيف نتحقّق من عمل المساعد الذكي؟",
+                    "fr":"Comment vérifier le travail d’un assistant IA ?"
+                }[lang],
                 "arabic-calligraphy":"When Letters Become a Drawing"
             }
             crumbs.append({"name":labels.get(segment,segment.replace("-"," ").title()),"item":href})
@@ -534,9 +549,9 @@ def enrich_existing_pages(dist, public_build):
                 if 'id="research-profile"' not in doc:
                     doc = doc.replace("</div></main>", extras + "</div></main>", 1)
             profile_section = {
-                "en": '<section class="profile-identifiers" id="identifiers"><h2>Public identity and research records</h2><p>Public identifiers and author-controlled records help distinguish this profile from people with similar names. They do not replace independent coverage or peer review.</p><ul><li><a href="' + ORCID + '">ORCID iD: 0009-0004-7615-4978</a></li><li><a href="' + LINKEDIN + '">LinkedIn profile</a></li><li><a href="' + GITHUB + '">Primary GitHub profile</a></li><li><a href="' + GITHUB_PROJECTS + '">Qassem projects GitHub account</a></li><li><a href="' + X_PROFILE + '">X profile</a></li><li><a href="' + INSTAGRAM + '">Instagram profile</a></li><li><a href="' + QASSEM_SITE + '">Qassem.net · related personal domain</a></li><li><a href="' + PROTOCOL_DOI + '">ACO-LLM research protocol (DOI)</a></li><li><a href="' + RESULTS_DOI + '">ACO-LLM evaluation results (preprint DOI)</a></li><li><a href="/en/archive/">Research archive</a></li></ul></section>',
-                "ar": '<section class="profile-identifiers" id="identifiers"><h2>الهوية العامة والسجلات البحثية</h2><p>تساعد المعرّفات والسجلات التي يديرها المؤلف على تمييز هذا الملف عن الأشخاص المتشابهة أسماؤهم، لكنها لا تحل محل التغطية المستقلة أو التحكيم العلمي.</p><ul><li><a href="' + ORCID + '">معرّف ORCID: 0009-0004-7615-4978</a></li><li><a href="' + LINKEDIN + '">الملف المهني على LinkedIn</a></li><li><a href="' + GITHUB + '">ملف GitHub الأساسي</a></li><li><a href="' + GITHUB_PROJECTS + '">حساب GitHub لمشاريع Qassem</a></li><li><a href="' + X_PROFILE + '">حساب X</a></li><li><a href="' + INSTAGRAM + '">حساب Instagram</a></li><li><a href="' + QASSEM_SITE + '">Qassem.net · النطاق الشخصي المرتبط</a></li><li><a href="' + PROTOCOL_DOI + '">بروتوكول ACO-LLM البحثي (DOI)</a></li><li><a href="' + RESULTS_DOI + '">نتائج تقييم ACO-LLM (DOI الورقة الأولية)</a></li><li><a href="/ar/archive/">الأرشيف البحثي</a></li></ul></section>',
-                "fr": '<section class="profile-identifiers" id="identifiers"><h2>Identité publique et références de recherche</h2><p>Les identifiants publics et les références contrôlées par l’auteur aident à distinguer ce profil des personnes portant un nom similaire. Ils ne remplacent ni la couverture indépendante ni l’évaluation par les pairs.</p><ul><li><a href="' + ORCID + '">Identifiant ORCID : 0009-0004-7615-4978</a></li><li><a href="' + LINKEDIN + '">Profil LinkedIn</a></li><li><a href="' + GITHUB + '">Profil GitHub principal</a></li><li><a href="' + GITHUB_PROJECTS + '">Compte GitHub des projets Qassem</a></li><li><a href="' + X_PROFILE + '">Profil X</a></li><li><a href="' + INSTAGRAM + '">Profil Instagram</a></li><li><a href="' + QASSEM_SITE + '">Qassem.net · domaine personnel associé</a></li><li><a href="' + PROTOCOL_DOI + '">Protocole de recherche ACO-LLM (DOI)</a></li><li><a href="' + RESULTS_DOI + '">Résultats de l’évaluation ACO-LLM (DOI de la prépublication)</a></li><li><a href="/fr/archive/">Archives de recherche</a></li></ul></section>'
+                "en": '<section class="profile-identifiers" id="identifiers"><h2>Public identity and research records</h2><p>Public identifiers and author-controlled records help distinguish this profile from people with similar names. They do not replace independent coverage or peer review.</p><ul><li><a href="' + ORCID + '">ORCID iD: 0009-0004-7615-4978</a></li><li><a href="' + LINKEDIN + '">LinkedIn profile</a></li><li><a href="' + GITHUB + '">Primary GitHub profile</a></li><li><a href="' + GITHUB_PROJECTS + '">QassemAi GitHub organization</a></li><li><a href="' + X_PROFILE + '">X profile</a></li><li><a href="' + INSTAGRAM + '">Instagram profile</a></li><li><a href="' + QASSEM_SITE + '">Qassem.net · related personal domain</a></li><li><a href="' + PROTOCOL_DOI + '">ACO-LLM research protocol (DOI)</a></li><li><a href="' + RESULTS_DOI + '">ACO-LLM evaluation results (preprint DOI)</a></li><li><a href="/en/archive/">Research archive</a></li></ul></section>',
+                "ar": '<section class="profile-identifiers" id="identifiers"><h2>الهوية العامة والسجلات البحثية</h2><p>تساعد المعرّفات والسجلات التي يديرها المؤلف على تمييز هذا الملف عن الأشخاص المتشابهة أسماؤهم، لكنها لا تحل محل التغطية المستقلة أو التحكيم العلمي.</p><ul><li><a href="' + ORCID + '">معرّف ORCID: 0009-0004-7615-4978</a></li><li><a href="' + LINKEDIN + '">الملف المهني على LinkedIn</a></li><li><a href="' + GITHUB + '">ملف GitHub الأساسي</a></li><li><a href="' + GITHUB_PROJECTS + '">منظمة QassemAi على GitHub</a></li><li><a href="' + X_PROFILE + '">حساب X</a></li><li><a href="' + INSTAGRAM + '">حساب Instagram</a></li><li><a href="' + QASSEM_SITE + '">Qassem.net · النطاق الشخصي المرتبط</a></li><li><a href="' + PROTOCOL_DOI + '">بروتوكول ACO-LLM البحثي (DOI)</a></li><li><a href="' + RESULTS_DOI + '">نتائج تقييم ACO-LLM (DOI الورقة الأولية)</a></li><li><a href="/ar/archive/">الأرشيف البحثي</a></li></ul></section>',
+                "fr": '<section class="profile-identifiers" id="identifiers"><h2>Identité publique et références de recherche</h2><p>Les identifiants publics et les références contrôlées par l’auteur aident à distinguer ce profil des personnes portant un nom similaire. Ils ne remplacent ni la couverture indépendante ni l’évaluation par les pairs.</p><ul><li><a href="' + ORCID + '">Identifiant ORCID : 0009-0004-7615-4978</a></li><li><a href="' + LINKEDIN + '">Profil LinkedIn</a></li><li><a href="' + GITHUB + '">Profil GitHub principal</a></li><li><a href="' + GITHUB_PROJECTS + '">Organisation GitHub QassemAi</a></li><li><a href="' + X_PROFILE + '">Profil X</a></li><li><a href="' + INSTAGRAM + '">Profil Instagram</a></li><li><a href="' + QASSEM_SITE + '">Qassem.net · domaine personnel associé</a></li><li><a href="' + PROTOCOL_DOI + '">Protocole de recherche ACO-LLM (DOI)</a></li><li><a href="' + RESULTS_DOI + '">Résultats de l’évaluation ACO-LLM (DOI de la prépublication)</a></li><li><a href="/fr/archive/">Archives de recherche</a></li></ul></section>'
             }[lang]
             if "profile-identifiers" not in doc:
                 doc = doc.replace("</div></main>", profile_section + "</div></main>", 1)
@@ -603,7 +618,7 @@ def write_root_gateway(dist, public_build):
         "description":desc,"inLanguage":["en","ar","fr"],
         "publisher":{"@id":PERSON_ID}
     }
-    graph = {"@context":"https://schema.org","@graph":[person,website,{
+    graph = {"@context":"https://schema.org","@graph":[person,ORGANIZATION,website,{
         "@type":"WebPage","@id":ORIGIN+"/#webpage","url":ORIGIN+"/","name":title,
         "description":desc,"inLanguage":"en","isPartOf":{"@id":WEBSITE_ID},
         "about":{"@id":PERSON_ID},"mainEntity":{"@id":PERSON_ID}
