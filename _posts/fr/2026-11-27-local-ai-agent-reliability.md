@@ -247,6 +247,14 @@ Non. L’évaluation a utilisé des outils simulés dans un environnement contr�
 
 Non. Il s’agit d’une prépublication de résultats qui n’a pas été évaluée par les pairs. Ses méthodes et ses résultats sont accessibles sur Zenodo et doivent être interprétés en tenant compte de ce statut.
 
+## Publications de recherche et pages associées
+
+Pour consulter les documents de recherche à l’origine de cette analyse, voir :
+- [Page du protocole ACO-LLM sur ce site](https://kasemadra.com/fr/publications/aco-llm/).
+- [Page des résultats de l’évaluation ACO-LLM sur ce site](https://kasemadra.com/fr/publications/aco-llm-results/).
+- [Protocole de recherche ACO-LLM sur Zenodo](https://doi.org/10.5281/zenodo.24488951).
+- [Prépublication des résultats ACO-LLM sur Zenodo](https://doi.org/10.5281/zenodo.24549236).
+
 ## Conclusion
 
 La fiabilité d’un assistant IA ne devrait pas être mesurée à l’assurance de ses réponses ni à sa facilité à annoncer l’achèvement d’une tâche. Le critère le plus important est la conformité de l’état final à la demande et la possibilité de fournir des éléments de preuve appropriés.
