@@ -155,7 +155,7 @@ Il s’agit des paramètres d’exécution indiqués dans la prépublication des
 
 L’estimation principale indique que le bras D a augmenté le taux de réussite des tâches, selon l’évaluateur indépendant, de **20,83 points de pourcentage** par rapport au bras B. L’intervalle de confiance à 95 % s’étend de 18,23 à 23,44 points de pourcentage.
 
-Cette estimation a été calculée à partir des différences appariées au sein de chacune des 96 tâches de base, chaque tâche recevant le même poids. Un bootstrap en grappes comprenant 10 000 rééchantillonnages des tâches de base au sein de leurs strates a servi à estimer l’intervalle de confiance. [2](https://doi.org/10.5281/zenodo.24549236)
+Cette estimation a été calculée à partir des différences appariées au sein de chacune des 96 tâches de base, chaque tâche recevant le même poids. Les intervalles percentiles reposent sur 10 000 rééchantillonnages de grappes complètes de tâches de base au sein de chaque strate, avec la graine 20261126 et les identifiants des tâches triés avant le rééchantillonnage. L’estimation dépasse également le seuil provisoire de pertinence pratique de cinq points de pourcentage défini dans le protocole ; il s’agissait d’un seuil proposé pour cette étude, et non d’une norme opérationnelle établie. [2](https://doi.org/10.5281/zenodo.24549236)
 
 ### 6.2 Taux bruts de réussite
 
