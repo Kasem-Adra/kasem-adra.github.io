@@ -132,7 +132,7 @@ def shell_page(dist, lang, route, title, description, main, public_build):
         f'<link rel="alternate" hreflang="{other}" href="{ORIGIN}/{other}{route}">'
         for other in LANGS
     ) + f'<link rel="alternate" hreflang="x-default" href="{ORIGIN}/">'
-    og_image = f'<meta property="og:image" content="{ORIGIN}/assets/kasem-adra-portrait.jpg>'
+    og_image = f'<meta property="og:image" content="{ORIGIN}/assets/kasem-adra-portrait.jpg">'
     head = f'''<!doctype html>
 <html lang="{lang}" dir="{direction}">
 <head>
@@ -528,6 +528,21 @@ def enrich_existing_pages(dist, public_build):
             doc = meta_replace(doc,pattern,tag)
             if not re.search(pattern,doc,flags=re.I):
                 doc = doc.replace("</head>",tag+"</head>",1)
+        if public_build:
+            # Normalize indexability and canonical metadata on every generated language page.
+            doc = re.sub(r'<meta name="robots" content="[^"]*">', "", doc, flags=re.I)
+            doc = doc.replace("</head>", '<meta name="robots" content="index,follow"></head>', 1)
+            canonical = ORIGIN + f"/{lang}" + route
+            doc = re.sub(r'<link rel="canonical" href="[^"]*">', "", doc, flags=re.I)
+            doc = doc.replace("</head>", f'<link rel="canonical" href="{canonical}"></head>', 1)
+
+        # One consistent hreflang set per page; x-default is the root language selector.
+        alternate_tags = "".join(
+            f'<link rel="alternate" hreflang="{other}" href="{ORIGIN}/{other}{route}">'
+            for other in LANGS
+        ) + f'<link rel="alternate" hreflang="x-default" href="{ORIGIN}/">'
+        doc = re.sub(r'<link rel="alternate" hreflang="[^"]+" href="[^"]*">', "", doc, flags=re.I)
+        doc = doc.replace("</head>", alternate_tags + "</head>", 1)
         file.write_text(doc,encoding="utf-8")
 
 def write_root_gateway(dist, public_build):
