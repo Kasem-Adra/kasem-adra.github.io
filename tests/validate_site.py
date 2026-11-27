@@ -372,9 +372,9 @@ def main():
             if person.get("name") != "Kasem Adra":
                 fail("Person entity must use Kasem Adra as the canonical name")
         for lang, expected_links in {
-            "en": ("https://github.com/Qassemai", "https://www.instagram.com/qassemadra/"),
-            "ar": ("https://github.com/Qassemai", "https://www.instagram.com/qassemadra/"),
-            "fr": ("https://github.com/Qassemai", "https://www.instagram.com/qassemadra/"),
+            "en": ("https://github.com/QassemAi", "https://www.instagram.com/qassemadra/"),
+            "ar": ("https://github.com/QassemAi", "https://www.instagram.com/qassemadra/"),
+            "fr": ("https://github.com/QassemAi", "https://www.instagram.com/qassemadra/"),
         }.items():
             profile = page_path(lang, "/about/").read_text(encoding="utf-8")
             for link in expected_links:
