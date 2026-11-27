@@ -80,7 +80,10 @@ jobs:
               assert banyias.count('class="timeline-entry"') == 20, f"Expected 20 chronology entries: {lang}"
               assert len(re.findall(r'<li id="ref-\d+">', banyias)) == 26, f"Expected 26 references including local source: {lang}"
               assert banyias.count('class="citation"') >= 20, f"Missing inline source citations: {lang}"
-              assert "not been released" not in banyias.lower()
+              event_7 = re.search(r'<article class="timeline-entry" id="event-7">(.*?)</article>', banyias, re.S).group(1)
+              event_13 = re.search(r'<article class="timeline-entry" id="event-13">(.*?)</article>', banyias, re.S).group(1)
+              assert 'href="#ref-4"' in event_7 and all(f'href="#ref-{n}"' not in event_7 for n in (21,22,23,26)), f"April 10 references misattributed: {lang}"
+              assert all(f'href="#ref-{n}"' in event_13 for n in (21,22,23,26)), f"May 7 casualty references missing: {lang}"
               assert 'name="robots" content="noindex"' not in banyias
               for source_id in range(1, 27):
                   assert f'id="ref-{source_id}"' in banyias, f"Missing source {source_id}: {lang}"
