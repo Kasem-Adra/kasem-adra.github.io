@@ -382,10 +382,12 @@ def main():
         profile_schema = next((x for x in about_nodes if x.get("@type") == "ProfilePage" and x.get("mainEntity", {}).get("@id") == ORIGIN + "/#person"), None)
         if profile_schema is None:
             fail(f"{lang}: missing connected ProfilePage schema")
+        profile_person = next((x for x in about_nodes if x.get("@type") == "Person" and x.get("@id") == ORIGIN + "/#person"), None)
+        if profile_person is None:
+            fail(f"{lang}: ProfilePage graph is missing its referenced canonical Person entity")
         else:
-            profile_person = profile_schema.get("mainEntity", {})
             if profile_person.get("name") != "Kasem Adra":
-                fail(f"{lang}: ProfilePage mainEntity must use the canonical author name")
+                fail(f"{lang}: Person entity must use the canonical author name")
             for identifier in (
                 "https://orcid.org/0009-0004-7615-4978",
                 "https://github.com/Kasem-Adra",
@@ -396,9 +398,9 @@ def main():
                 "https://www.instagram.com/qassemadra/",
             ):
                 if identifier not in profile_person.get("sameAs", []):
-                    fail(f"{lang}: ProfilePage mainEntity is missing sameAs identifier {identifier}")
+                    fail(f"{lang}: Person entity in ProfilePage graph is missing sameAs identifier {identifier}")
             if len(profile_person.get("subjectOf", [])) != 2:
-                fail(f"{lang}: ProfilePage mainEntity must link both ACO-LLM scholarly records")
+                fail(f"{lang}: Person entity in ProfilePage graph must link both ACO-LLM scholarly records")
         for section_id in ("profile-facts", "biography", "research-profile", "projects-profile", "writing-profile", "identifiers"):
             if f'id="{section_id}"' not in about:
                 fail(f"{lang}: missing encyclopedic profile section {section_id}")
