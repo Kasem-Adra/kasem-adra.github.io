@@ -56,6 +56,7 @@ jobs:
                   assert 'lang="ar" dir="rtl"' in html, "Arabic page must be RTL"
               scripts = re.findall(r'<script type="application/ld\+json">(.*?)</script>', html)
               types = {json.loads(script).get("@type") for script in scripts}
+              assert "Person" in types, f"Missing Person schema: {lang}"
               assert "BlogPosting" in types, f"Missing BlogPosting schema: {lang}"
               assert "BreadcrumbList" in types, f"Missing BreadcrumbList schema: {lang}"
               assert "noindex" not in html.lower(), f"Unexpected noindex in public build: {lang}"
