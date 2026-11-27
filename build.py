@@ -62,7 +62,8 @@ person = {
     'name': 'Kasem Adra',
     'alternateName': 'قاسم عدرا',
     'url': 'https://kasemadra.com/',
-    'jobTitle': 'Independent AI researcher',
+    'jobTitle': 'Independent AI Researcher',
+    'description': 'Independent AI researcher based in France studying task verification and error recovery in local AI assistants through ACO-LLM.',
     'sameAs': [
         'https://github.com/Kasem-Adra',
         'https://orcid.org/0009-0004-7615-4978',
@@ -277,6 +278,12 @@ def localize_pages():
             ) + '</div>'
             if path == '/':
                 *paragraphs, portrait_alt = biographies[lang]
+                lead = {
+                    'ar': 'أدرس كيف تتحقّق مساعدات الذكاء الاصطناعي المحلية من إنجاز مهامها وتصحّح أخطاءها.',
+                    'en': 'I study how local AI assistants verify that they’ve completed tasks and recover from errors.',
+                    'fr': 'J’étudie comment les assistants d’IA locaux vérifient qu’ils ont accompli leurs tâches et corrigent leurs erreurs.',
+                }[lang]
+                paragraphs.insert(0, lead)
                 bio = ''.join(f'<p>{escape(paragraph)}</p>' for paragraph in paragraphs)
                 portrait = f'<img class="portrait" src="/assets/kasem-adra-portrait.jpg" alt="{escape(portrait_alt, quote=True)}" width="782" height="1024">'
                 body = re.sub(r'<p class="bio">.*?</p>', lambda _: f'<div class="bio-panel"><div class="bio">{bio}</div>{portrait}</div>', body, count=1)
@@ -357,8 +364,8 @@ def localize_pages():
             if path == '/':
                 title, description = {
                     'en': ('Kasem Adra | Independent AI Researcher', 'Kasem Adra is an independent AI researcher in France. Explore his work on local AI assistants, the ACO‑LLM protocol, and Arabic calligraphy.'),
-                    'ar': ('قاسم عدرا', 'قاسم عدرا، باحث مستقل في الذكاء الاصطناعي من بانياس ويعيش في فرنسا. تعرّف على مشاريعه في الذكاء الاصطناعي المحلي وبروتوكول ACO‑LLM وكتاباته عن الخط العربي.'),
-                    'fr': ('Kasem Adra', 'Kasem Adra est chercheur indépendant en IA en France. Découvrez ses projets sur les assistants IA locaux, le protocole ACO‑LLM et ses articles sur la calligraphie arabe.'),
+                    'ar': ('قاسم عدرا | باحث مستقل في الذكاء الاصطناعي', 'قاسم عدرا، باحث مستقل في الذكاء الاصطناعي من بانياس ويعيش في فرنسا. تعرّف على مشاريعه في الذكاء الاصطناعي المحلي وبروتوكول ACO‑LLM وكتاباته عن الخط العربي.'),
+                    'fr': ('Kasem Adra | Chercheur indépendant en intelligence artificielle', 'Kasem Adra est chercheur indépendant en IA en France. Découvrez ses projets sur les assistants IA locaux, le protocole ACO‑LLM et ses articles sur la calligraphie arabe.'),
                 }[lang]
                 head = sub(r'<title>[^<]*</title>', lambda _: f'<title>{escape(title)}</title>', head)
                 head = sub(r'<meta name="description" content="[^"]*">', lambda _: f'<meta name="description" content="{escape(description, quote=True)}">', head)
