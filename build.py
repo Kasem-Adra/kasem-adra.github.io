@@ -52,11 +52,14 @@ def render_post(body, lang, path):
     if path == article:
         article_html, _, _ = article_renderer.render_article(fields, content, lang)
         return sub(r'<main>.*?</main>', lambda _: f'<main>{article_html}</main>', body, count=1, flags=16)
-    paragraphs = ''.join(f'<p>{escape(part)}</p>' for part in content.split('\n\n'))
+    if path == note:
+        rendered_content, _, _ = article_renderer.render_markdown(content)
+    else:
+        rendered_content = ''.join(f'<p>{escape(part)}</p>' for part in content.split('\n\n'))
     image = ''
     if 'image' in fields:
         image = f'<img class="article-logo" src="{escape(fields["image"])}" alt="{escape(fields["image_alt"])}" width="1254" height="1254">'
-    post_html = f'<h1>{escape(fields["title"])}</h1>{paragraphs}{image}'
+    post_html = f'<h1>{escape(fields["title"])}</h1><div class="article-content">{rendered_content}</div>{image}'
     return sub(r'(<div class="subpage"[^>]*>).*?(</div>)', lambda m: m[1] + post_html + m[2], body, count=1, flags=16)
 
 
@@ -352,15 +355,41 @@ def localize_pages():
                 }[lang]
                 steps_html = ''.join(f'<li>{escape(step)}</li>' for step in steps)
                 example = f'<h2>{escape(heading)}</h2><p>{escape(introduction)}</p><ol>{steps_html}</ol><p><a href="{locale_path(lang, paper)}">{research_label}</a></p>'
-                body = body.replace('</div></main>', example + '</div></main>', 1)
+                project_details = {
+                    'en': (
+                        ('Current configuration', 'The current Hermes-based configuration uses <code>gemma4:12b-it-qat</code> as its sole language model. Model inference runs locally; this does not mean every connected service is local.'),
+                        ('Speech pipeline', 'Speech recognition uses local Whisper. Speech synthesis currently uses Edge TTS; because this path may depend on an external service, the complete voice workflow should not be described as fully offline.'),
+                        ('Verification and repair', 'Task tools can create and read files. A completion message is not accepted as proof: the resulting state is checked against the requested content, and repair attempts are bounded.'),
+                        ('Availability and scope', 'The implementation repository is not currently published as a public source-code repository. This page documents the current configuration and tested behavior; it does not claim that a public software release is available.')
+                    ),
+                    'ar': (
+                        ('الإعداد الحالي', 'يعتمد إعداد Hermes الحالي على <code>gemma4:12b-it-qat</code> بوصفه النموذج اللغوي الوحيد. يعمل استدلال النموذج محلياً، لكن ذلك لا يعني أن كل خدمة متصلة تعمل محلياً.'),
+                        ('مسار الصوت', 'يُنفَّذ التعرف على الكلام محلياً باستخدام Whisper. أما توليد الصوت فيستخدم حالياً Edge TTS؛ ولأن هذا المسار قد يعتمد على خدمة خارجية، فلا يصح وصف مسار الصوت بالكامل بأنه يعمل دون اتصال.'),
+                        ('التحقق والإصلاح', 'تستطيع أدوات المهام إنشاء الملفات وقراءتها. ولا تُعد رسالة المساعد التي تعلن الإنجاز دليلاً كافياً؛ بل تُفحص النتيجة مقابل المحتوى المطلوب، وتبقى محاولات الإصلاح محدودة.'),
+                        ('الإتاحة ونطاق المشروع', 'المستودع الذي يحتوي على التنفيذ غير منشور حالياً كمستودع شيفرة عام. توثّق هذه الصفحة الإعداد الحالي والسلوك الذي جرى اختباره، ولا تدّعي وجود إصدار برمجي عام متاح.')
+                    ),
+                    'fr': (
+                        ('Configuration actuelle', 'La configuration actuelle de Hermes utilise <code>gemma4:12b-it-qat</code> comme unique modèle de langage. L’inférence du modèle s’effectue localement, mais cela ne signifie pas que tous les services connectés sont locaux.'),
+                        ('Chaîne vocale', 'La reconnaissance vocale utilise Whisper en local. La synthèse vocale utilise actuellement Edge TTS ; comme ce chemin peut dépendre d’un service externe, il ne faut pas décrire l’ensemble du parcours vocal comme entièrement hors ligne.'),
+                        ('Vérification et correction', 'Les outils peuvent créer et relire des fichiers. Le message de fin de l’assistant ne suffit pas comme preuve : le résultat est comparé au contenu demandé et les tentatives de correction sont limitées.'),
+                        ('Disponibilité et périmètre', 'Le dépôt contenant l’implémentation n’est pas actuellement publié comme dépôt de code source public. Cette page décrit la configuration et le comportement testés ; elle ne prétend pas qu’une version publique est disponible.')
+                    )
+                }[lang]
+                details = ''.join(f'<section><h2>{escape(title)}</h2><p>{text}</p></section>' for title, text in project_details)
+                related = {
+                    'en': '<section><h2>Related research</h2><p><a href="' + locale_path(lang, paper) + '">ACO-LLM research protocol</a> · <a href="' + locale_path(lang, results.PATH) + '">Evaluation results</a> · <a href="' + locale_path(lang, article) + '">Can We Trust a Local AI Assistant?</a></p></section>',
+                    'ar': '<section><h2>الأبحاث المرتبطة</h2><p><a href="' + locale_path(lang, paper) + '">بروتوكول ACO-LLM البحثي</a> · <a href="' + locale_path(lang, results.PATH) + '">نتائج التقييم</a> · <a href="' + locale_path(lang, article) + '">هل يمكن الوثوق بمساعد ذكاء اصطناعي محلي؟</a></p></section>',
+                    'fr': '<section><h2>Recherche associée</h2><p><a href="' + locale_path(lang, paper) + '">Protocole de recherche ACO-LLM</a> · <a href="' + locale_path(lang, results.PATH) + '">Résultats de l’évaluation</a> · <a href="' + locale_path(lang, article) + '">Peut-on faire confiance à un assistant IA local ?</a></p></section>'
+                }[lang]
+                body = body.replace('</div></main>', example + details + related + '</div></main>', 1)
             if path == paper:
                 label = {'en': 'Download PDF', 'ar': 'تحميل ملف PDF', 'fr': 'Télécharger le PDF'}[lang]
-                heading, summary = {
-                    'en': ('Protocol summary', 'ACO‑LLM proposes a controller that uses a task contract to choose between direct inference and bounded tool use. Observable failures can trigger limited repair attempts. The evaluation compared it with the fixed-route reference arm with tool support using the same local model and execution budgets, on matched Arabic and English tasks with controlled tool failures. The protocol describes the study design. The evaluation results were published separately.'),
-                    'ar': ('ملخّص البروتوكول', 'يقترح ACO‑LLM آلية تستخدم عقد المهمة للاختيار بين الاستدلال المباشر واستخدام الأدوات ضمن حدود محددة، مع محاولات إصلاح محدودة عند رصد إخفاق. وقارن التقييم هذه الآلية بالذراع المرجعية ذات المسار الثابت الداعم للأدوات باستخدام النموذج المحلي نفسه وميزانيات تنفيذ متساوية، على مهام متكافئة بالعربية والإنجليزية مع إدخال أعطال مضبوطة في الأدوات. يصف البروتوكول تصميم الدراسة. ونُشرت نتائج التقييم في ورقة مستقلة.'),
-                    'fr': ('Résumé du protocole', 'ACO‑LLM propose un contrôleur qui s’appuie sur un contrat de tâche pour choisir entre inférence directe et usage limité des outils. Une défaillance observable peut déclencher un nombre limité de tentatives de correction. L’évaluation a comparé ce contrôleur au bras de référence utilisant un routage fixe avec accès aux outils, avec le même modèle local et les mêmes budgets, sur des tâches équivalentes en arabe et en anglais avec injection de pannes contrôlées. Le protocole décrit le plan de l’étude. Les résultats de l’évaluation ont été publiés séparément.'),
+                plain_heading, plain_summary, heading, summary = {
+                    'en': ('In plain language', 'ACO-LLM is a method for making a local AI assistant check whether a task was actually completed instead of relying only on its own completion message. It defines when tools may be used, what evidence should be checked and how many repair attempts are allowed. This page describes the research plan; it does not itself report the experimental results.', 'Protocol summary', 'ACO‑LLM proposes a controller that uses a task contract to choose between direct inference and bounded tool use. Observable failures can trigger limited repair attempts. The evaluation compared it with the fixed-route reference arm with tool support using the same local model and execution budgets, on matched Arabic and English tasks with controlled tool failures. The protocol describes the study design. The evaluation results were published separately.'),
+                    'ar': ('بعبارة مبسطة', 'يقترح ACO-LLM طريقة تجعل المساعد الذكي المحلي يتحقق مما إذا كانت المهمة قد أُنجزت فعلاً، بدلاً من الاعتماد على إعلانه الذاتي عن الإنجاز. يحدد البروتوكول متى يمكن استخدام الأدوات، وما الأدلة التي ينبغي فحصها، وعدد محاولات الإصلاح المسموح بها. هذه الصفحة تشرح خطة البحث، ولا تعرض بحد ذاتها النتائج التجريبية.', 'ملخّص البروتوكول', 'يقترح ACO‑LLM آلية تستخدم عقد المهمة للاختيار بين الاستدلال المباشر واستخدام الأدوات ضمن حدود محددة، مع محاولات إصلاح محدودة عند رصد إخفاق. وقارن التقييم هذه الآلية بالذراع المرجعية ذات المسار الثابت الداعم للأدوات باستخدام النموذج المحلي نفسه وميزانيات تنفيذ متساوية، على مهام متكافئة بالعربية والإنجليزية مع إدخال أعطال مضبوطة في الأدوات. يصف البروتوكول تصميم الدراسة. ونُشرت نتائج التقييم في ورقة مستقلة.'),
+                    'fr': ('En termes simples', 'ACO-LLM propose une méthode pour qu’un assistant IA local vérifie si une tâche a réellement été accomplie, au lieu de s’appuyer uniquement sur son propre message de fin. Le protocole précise quand utiliser des outils, quelles preuves examiner et combien de tentatives de correction autoriser. Cette page décrit le plan de recherche ; elle ne présente pas à elle seule les résultats expérimentaux.', 'Résumé du protocole', 'ACO‑LLM propose un contrôleur qui s’appuie sur un contrat de tâche pour choisir entre inférence directe et usage limité des outils. Une défaillance observable peut déclencher un nombre limité de tentatives de correction. L’évaluation a comparé ce contrôleur au bras de référence utilisant un routage fixe avec accès aux outils, avec le même modèle local et les mêmes budgets, sur des tâches équivalentes en arabe et en anglais avec injection de pannes contrôlées. Le protocole décrit le plan de l’étude. Les résultats de l’évaluation ont été publiés séparément.')
                 }[lang]
-                abstract = f'<h2>{heading}</h2><p>{summary}</p>'
+                abstract = f'<h2>{plain_heading}</h2><p>{plain_summary}</p><h2>{heading}</h2><p>{summary}</p>'
                 pdf_link = f'<p><a href="{escape(publication["pdf"], quote=True)}">{label} · v1.7</a></p>'
                 results_label = {'en': 'Read the separate empirical results paper on Zenodo', 'ar': 'اقرأ ورقة النتائج التجريبية المستقلة على Zenodo', 'fr': 'Lire la publication distincte des résultats empiriques sur Zenodo'}[lang]
                 results_link = f'<p><a href="https://doi.org/10.5281/zenodo.24549236">{results_label}</a></p>'
