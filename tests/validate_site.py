@@ -357,7 +357,13 @@ def main():
             ):
                 if identifier not in same_as:
                     fail(f"Person entity is missing sameAs identifier: {identifier}")
-            for lang, expected_links in {
+            if "قاسم عدرا" not in person.get("alternateName", []):
+                fail("Person entity is missing the Arabic alternate name")
+            if "Qassem Adra" not in person.get("alternateName", []):
+                fail("Person entity is missing the documented alternate Latin transliteration")
+            if person.get("name") != "Kasem Adra":
+                fail("Person entity must use Kasem Adra as the canonical name")
+        for lang, expected_links in {
             "en": ("https://github.com/Qassemai", "https://www.instagram.com/qassemadra/"),
             "ar": ("https://github.com/Qassemai", "https://www.instagram.com/qassemadra/"),
             "fr": ("https://github.com/Qassemai", "https://www.instagram.com/qassemadra/"),
@@ -366,12 +372,6 @@ def main():
             for link in expected_links:
                 if f'href="{link}"' not in profile:
                     fail(f"{lang}: author profile is missing verified identity link {link}")
-        if "قاسم عدرا" not in person.get("alternateName", []):
-                fail("Person entity is missing the Arabic alternate name")
-            if "Qassem Adra" not in person.get("alternateName", []):
-                fail("Person entity is missing the documented alternate Latin transliteration")
-            if person.get("name") != "Kasem Adra":
-                fail("Person entity must use Kasem Adra as the canonical name")
         if website is not None and website.get("alternateName") != ["قاسم عدرا"]:
             fail("WebSite entity must use the canonical site name and Arabic alternate name only")
 
